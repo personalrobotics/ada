@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package>
+  <name>ada_launch</name>
+  <version>0.0.0</version>
+  <description>The ada_launch package</description>
+  <maintainer email="cdellin@gmail.com">Chris Dellin</maintainer>
+  <license>None</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>mico_hardware</run_depend>
+  <run_depend>pr_ros_controllers</run_depend>
+  <run_depend>ada_description</run_depend>
+</package>
