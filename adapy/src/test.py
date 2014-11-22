@@ -1,8 +1,92 @@
+#!/usr/bin/env python
 import adapy, openravepy, numpy
+from IPython import embed
 
-simulation = True
 
 openravepy.RaveInitialize(True, level=openravepy.DebugLevel.Debug)
 openravepy.misc.InitOpenRAVELogging();
 
-env, robot = adapy.initialize_sim(attach_viewer=True, arm_sim=True)
+env, robot = adapy.initialize(attach_viewer=True, sim=False)
+manip = robot.arm
+joint_values1 = robot.GetDOFValues()
+joint_values2 = robot.GetDOFValues()
+joint_values1[2] = joint_values1[2] - 0.1;
+joint_values1[3] = joint_values1[3] - 0.1;
+joint_values2[2] = joint_values2[2] + 0.1;
+joint_values2[3] = joint_values2[3] + 0.1;
+
+import time
+
+
+
+robot.PlanToConfiguration(joint_values2)
+time.sleep(3)
+robot.PlanToConfiguration(joint_values1)
+
+embed()
+# print "testing ik_planner"
+# controller = robot.GetController()
+# traj1 = robot.ik_planner.PlanToConfiguration(robot,joint_values1)
+# robot.SetPath(traj1)
+# time.sleep(1)
+# traj2 = robot.ik_planner.PlanToConfiguration(robot,joint_values2)
+# robot.SetPath(traj2)
+
+
+
+# print "testing named_planner"
+# controller = robot.GetController()
+# traj1 = robot.named_planner.PlanToConfiguration(robot,joint_values1)
+# robot.SetPath(traj1)
+# time.sleep(1)
+# traj2 = robot.named_planner.PlanToConfiguration(robot,joint_values2)
+# robot.SetPath(traj2)
+
+#print "testing snap_planner"
+#controller = robot.GetController()
+#traj1 = robot.snap_planner.PlanToConfiguration(robot,joint_values1)
+#controller.SetPath(traj1)
+#time.sleep(1)
+#traj2 = robot.snap_planner.PlanToConfiguration(robot,joint_values2)
+#controller.SetPath(traj2)
+#error: distance to goal larger than snap tolerance
+
+#print "testing ompl_planner"
+#controller = robot.GetController()
+#traj1 = robot.ompl_planner.PlanToConfiguration(robot,joint_values1)
+#controller.SetPath(traj1)
+#time.sleep(1)
+#traj2 = robot.ompl_planner.PlanToConfiguration(robot,joint_values2)
+#controller.SetPath(traj2)
+#crashes
+
+#print "testing chomp_planner"
+#controller = robot.GetController()
+#traj1 = robot.chomp_planner.PlanToConfiguration(robot,joint_values1)
+#controller.SetPath(traj1)
+#time.sleep(1)
+#traj2 = robot.chomp_planner.PlanToConfiguration(robot,joint_values2)
+#controller.SetPath(traj2)
+
+# print "testing mk_planner"
+# controller = robot.GetController()
+# traj1 = robot.mk_planner.PlanToConfiguration(robot,joint_values1)
+# controller.SetPath(traj1)
+# time.sleep(1)
+# traj2 = robot.mk_planner.PlanToConfiguration(robot,joint_values2)
+# controller.SetPath(traj2)
+
+# print "testing cbirrt_planner"
+# controller = robot.GetController()
+# traj1 = robot.cbirrt_planner.PlanToConfiguration(robot,joint_values1)
+# controller.SetPath(traj1)
+# time.sleep(1)
+# traj2 = robot.cbirrt_planner.PlanToConfiguration(robot,joint_values2)
+# controller.SetPath(traj2)
+
+
+#robot.SetPath
+#.PlanToConfiguration(joint_values)
+#time.sleep(3)
+#controller.SetPath(traj)
+#robot.PlanToConfiguration(joint_values)
