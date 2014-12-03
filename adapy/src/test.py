@@ -8,20 +8,39 @@ openravepy.misc.InitOpenRAVELogging();
 
 env, robot = adapy.initialize(attach_viewer=True, sim=False)
 manip = robot.arm
-joint_values1 = robot.GetDOFValues()
-joint_values2 = robot.GetDOFValues()
-joint_values1[2] = joint_values1[2] - 0.1;
-joint_values1[3] = joint_values1[3] - 0.1;
-joint_values2[2] = joint_values2[2] + 0.1;
-joint_values2[3] = joint_values2[3] + 0.1;
+#joint_values1 = manip.GetDOFValues()
+#joint_values2 = manip.GetDOFValues()
+#embed()
+#robot.SetActiveDOFs([0,1,2,3,4,5])
+joint_values1 = robot.GetActiveDOFValues()
+joint_values2 = robot.GetActiveDOFValues()
+joint_values1[2] = joint_values1[2] + 0.3;
+joint_values1[3] = joint_values1[3] + 0.3;
+#joint_values2[2] = joint_values2[2];
+#joint_values2[3] = joint_values2[3];
 
 import time
 
+#dof_indices=self.GetArmIndices(), affine_dofs=0, simulated=sim)    
+#from IPython import embed
+#embed()
 
 
-robot.PlanToConfiguration(joint_values2)
-time.sleep(3)
+#test 1 planner
+# curr_values = robot.GetActiveDOFValues();
+# traj = openravepy.RaveCreateTrajectory(env, '')
+# traj.Init(robot.GetActiveConfigurationSpecification())
+# traj.Insert(0,curr_values)
+# traj.Insert(1,joint_values1)
+# traj.Insert(2,joint_values2)
+# openravepy.planningutils.RetimeActiveDOFTrajectory(traj, robot)
+# robot.arm.controller.SetPath(traj)
+# embed()
+#robot.controller.SetPath(joint_values2)
 robot.PlanToConfiguration(joint_values1)
+time.sleep(2)
+robot.PlanToConfiguration(joint_values2)
+#robot.controller.SetPath(joint_values1)
 
 embed()
 # print "testing ik_planner"
@@ -53,7 +72,7 @@ embed()
 
 #print "testing ompl_planner"
 #controller = robot.GetController()
-#traj1 = robot.ompl_planner.PlanToConfiguration(robot,joint_values1)
+#traj1 = robot.omplplanner.PlanToConfiguration(robot,joint_values1)
 #controller.SetPath(traj1)
 #time.sleep(1)
 #traj2 = robot.ompl_planner.PlanToConfiguration(robot,joint_values2)

@@ -22,25 +22,12 @@ class ADARobot(prpy.base.MicoRobot):
         # Dynamically switch to self-specific subclasses.
         from prpy.base import MicoHand, Mico
         prpy.bind_subclass(self.arm, Mico, sim=sim, controller_namespace='/mico_controller')
-        #prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm,  controller_namespace='/mico_hand_controller', hand_namespace='/mico_hand')
+        if(sim == True): #for now this works only in simulation
+           prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm,  controller_namespace='/mico_controller', hand_namespace='/mico_hand')
+        prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm)
+
         #prpy.bind_subclass(self.left_hand, R2Hand, manipulator=self.left_arm, sim=sim)
-        #prpy.bind_subclass(self.right_hand, R2Hand, manipulator=self.right_arm, sim=sim)
-        #prpy.bind_subclass(self.head, R2Head, sim=sim)
-        #print "*******************hello!*********************"
 
-        # Create a controller and (optionally) connect it to the real hardware.
-        #if sim:
-        #    controller_args = 'IdealController'
-        #else:
-        #    controller_args = ("roscontroller openrave {0} 1".format(self.sup.ns))
-
-        #if self.controller is None:
-        #    raise openravepy.openrave_exception(
-        #        'Creating controller "{:s}" failed.'.format(controller_args))
-
-        #self.controller = openravepy.RaveCreateController(self.GetEnv(), controller_args)
-        #controlled_dofs = range(self.GetDOF())
-        #self.SetController(self.controller, controlled_dofs, 0)
 
         # Support for named configurations.
         import os.path
@@ -53,6 +40,25 @@ class ADARobot(prpy.base.MicoRobot):
         except IOError as e:
             logger.warning('Failed loading named configurations from "%s".', configurations_path)
 
+                # Support for loading tsrs from yaml
+        if prpy.dependency_manager.is_catkin():
+            from catkin.find_in_workspaces import find_in_workspaces
+            tsrs_paths = find_in_workspaces(search_dirs=['share'], project='adapy',
+                             path='config/tsrs.yaml', first_match_only=True)
+            if not tsrs_paths:
+                raise ValueError('Unable to load named tsrs from "config/tsrs.yaml".')
+
+            tsrs_path = tsrs_paths[0]
+        else:
+            tsrs_path = os.path.join(package_path, 'config/tsrs.yaml')
+
+        try:
+            self.tsrlibrary.load_yaml(tsrs_path)
+        except IOError as e:
+            raise ValueError('Failed loading named tsrs from "{:s}".'.format(
+                tsrs_path))
+
+
         # Initialize a default planning pipeline.
         from prpy.planning import Planner, Sequence, Ranked
         from prpy.planning import (CBiRRTPlanner, CHOMPPlanner, IKPlanner, OMPLPlanner,
@@ -64,13 +70,14 @@ class ADARobot(prpy.base.MicoRobot):
         self.named_planner = NamedPlanner()
         self.ompl_planner = OMPLPlanner('RRTConnect')
         self.ik_planner = IKPlanner()
-        self.planner = Sequence(self.cbirrt_planner)
+        self.planner = Sequence(
+        #self.cbirrt_planner,
         #self.ik_planner,
                                 #self.named_planner
                                 #self.snap_planner)
                                 #self.mk_planner)
                                 #self.ompl_planner)
-                                #self.cbirrt_planner)
+                                self.cbirrt_planner)
 
     """
     def ExecuteTrajectory(self, traj, retime=True, **kw_args):
