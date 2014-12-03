@@ -22,8 +22,8 @@ class ADARobot(prpy.base.MicoRobot):
         # Dynamically switch to self-specific subclasses.
         from prpy.base import MicoHand, Mico
         prpy.bind_subclass(self.arm, Mico, sim=sim, controller_namespace='/mico_controller')
-        if(sim == True): #for now this works only in simulation
-           prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm,  controller_namespace='/mico_controller', hand_namespace='/mico_hand')
+        #if(sim == True): #for now this works only in simulation
+        #   prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm,  controller_namespace='/mico_controller', hand_namespace='/mico_hand')
         prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm)
 
         #prpy.bind_subclass(self.left_hand, R2Hand, manipulator=self.left_arm, sim=sim)
