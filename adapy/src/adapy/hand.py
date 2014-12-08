@@ -33,7 +33,6 @@ class MicoHand(openravepy.Robot.Link):
         if f2     is not None: preshape[1] = f2
         if spread is not None: preshape[3] = spread
 
-
         hand.controller.SetDesired(preshape)
         util.WaitForControllers([ hand.controller ], timeout=timeout) 
        
