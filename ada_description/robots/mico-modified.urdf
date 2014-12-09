@@ -97,11 +97,11 @@
       lower="-3.14"
       upper="3.14"
       effort="0"
-      velocity="0.785398163" />
+      velocity="0.94" />
     -->
     <limit
       effort="18"
-      velocity="0.785398163" />
+      velocity="0.94" />
   </joint>
   <transmission name="Shoulder_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -168,13 +168,13 @@
       lower="-3.92"
       upper="0.78"
       effort="0"
-      velocity="0.785398163" />
+      velocity="0.94" />
     -->
     <limit
       lower="0.785"
       upper="5.4981853"
       effort="18"
-      velocity="0.785398163" />
+      velocity="0.94" />
   </joint>
   <transmission name="Arm_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -241,13 +241,13 @@
       lower="-0.87"
       upper="4.01"
       effort="0"
-      velocity="0.785398163" />
+      velocity="0.94" />
     -->
     <limit
       lower="0.65"
       upper="5.6331853"
       effort="18"
-      velocity="0.785398163" />
+      velocity="0.94" />
   </joint>
   <transmission name="Forearm_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -314,11 +314,11 @@
       lower="-3.14"
       upper="3.14"
       effort="8"
-      velocity="0.785398163" />
+      velocity="2.0" />
     -->
     <limit
       effort="0"
-      velocity="0.785398163" />
+      velocity="2.0" />
   </joint>
   <transmission name="Wrist_1_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -385,11 +385,11 @@
       lower="-3.14"
       upper="3.14"
       effort="0"
-      velocity="0.785398163" />
+      velocity="2.0" />
     -->
     <limit
       effort="8"
-      velocity="0.785398163" />
+      velocity="2.0" />
   </joint>
   <transmission name="Wrist_2_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -456,11 +456,11 @@
       lower="-3.14"
       upper="3.14"
       effort="0"
-      velocity="0.785398163" />
+      velocity="2.0" />
     -->
     <limit
       effort="8"
-      velocity="0.785398163" />
+      velocity="2.0" />
   </joint>
   <transmission name="Hand_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
