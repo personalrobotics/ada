@@ -421,7 +421,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ada_description/meshes/Hand_Link.STL" />
+          filename="package://ada_description/meshes/Hand_Link_camera.STL" />
       </geometry>
       <material
         name="">
@@ -435,7 +435,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ada_description/meshes/Hand_Link.STL" />
+          filename="package://ada_description/meshes/Hand_Link_camera.STL" />
       </geometry>
     </collision>
   </link>
