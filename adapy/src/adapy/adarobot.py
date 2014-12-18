@@ -1,11 +1,15 @@
 PACKAGE = 'adapy'
 import logging, prpy
 import openravepy
+from prpy.base.mico import Mico
+from prpy.base.micohand import MicoHand
+from prpy.base.micorobot import MicoRobot
+
 logger = logging.getLogger(PACKAGE)
 
-class ADARobot(prpy.base.MicoRobot):
+class ADARobot(MicoRobot):
     def __init__(self, sim):
-        prpy.base.MicoRobot.__init__(self)
+        MicoRobot.__init__(self)
 
         # Absolute path to this package.
         from rospkg import RosPack
@@ -20,7 +24,6 @@ class ADARobot(prpy.base.MicoRobot):
         # TODO: Add the head.
         # TODO: Add the hands.
         # Dynamically switch to self-specific subclasses.
-        from prpy.base import MicoHand, Mico
         prpy.bind_subclass(self.arm, Mico, sim=sim, controller_namespace='/mico_controller')
         #if(sim == True): #for now this works only in simulation
         #   prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm,  controller_namespace='/mico_controller', hand_namespace='/mico_hand')
@@ -99,7 +102,7 @@ class ADARobot(prpy.base.MicoRobot):
 
     def CloneBindings(self, parent):
         from prpy import Cloned
-        prpy.base.MicoRobot.CloneBindings(self, parent)
+        MicoRobot.CloneBindings(self, parent)
         self.arm = Cloned(parent.arm)
         self.manipulators = [ self.arm ]
         self.planner = parent.planner
