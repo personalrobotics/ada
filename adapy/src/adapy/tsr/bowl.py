@@ -62,13 +62,13 @@ def bowl_grasp(robot, glass, manip=None):
     #                      [1., 0., 0., 0.], 
     #                      [0., 1., 0., 0.08], 
     #                      [0., 0., 0., 1.]])
-    Tw_e = numpy.array([[1., 0., 0., 0.08], [0., -1., 0., 0.], [0., 0., 1., 0.06], [0., 0., 0., 1.]])
+    Tw_e = numpy.array([[1., 0., 0., 0.08], [0., -1., 0., 0.], [0., 0., 1., 0.09], [0., 0., 0., 1.]])
     Bw = numpy.zeros((6,2))
     #Bw[2,:] = [-0.02, 0.02]  # Allow a little vertical movement
 
     #Bw[2,:] = [-0.001, 0.001]  # Allow a little vertical movement
 
-    Bw[5,:] = [-numpy.pi/6, numpy.pi/6]  # Allow any orientation
+    Bw[5,:] = [numpy.pi/2-numpy.pi/6, numpy.pi/2+numpy.pi/6]  # Allow any orientation
     #Bw[5,:] = [0,0] 
     
     grasp_tsr = TSR(T0_w = T0_w, Tw_e = Tw_e, Bw = Bw, manip = manip_idx)
