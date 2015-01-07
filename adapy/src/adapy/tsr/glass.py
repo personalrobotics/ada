@@ -2,7 +2,7 @@ import numpy
 
 from prpy.tsr.tsrlibrary import TSRFactory
 from prpy.tsr.tsr import *
-@TSRFactory('ada', 'glass', 'grasp')
+@TSRFactory('ada', 'glass', 'move')
 def move_glass(robot, glass, manip=None):
     '''
     @param robot The robot performing the grasp

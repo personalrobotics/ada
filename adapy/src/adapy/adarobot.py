@@ -43,23 +43,34 @@ class ADARobot(MicoRobot):
         except IOError as e:
             logger.warning('Failed loading named configurations from "%s".', configurations_path)
 
-                # Support for loading tsrs from yaml
-        if prpy.dependency_manager.is_catkin():
-            from catkin.find_in_workspaces import find_in_workspaces
-            tsrs_paths = find_in_workspaces(search_dirs=['share'], project='adapy',
-                             path='config/tsrs.yaml', first_match_only=True)
-            if not tsrs_paths:
-                raise ValueError('Unable to load named tsrs from "config/tsrs.yaml".')
+        if self.tsrlibrary is not None:
+            tsrPaths = ['config/glass_grasp_tsr.yaml', 'config/glass_move_tsr.yaml']
+            for tsrPath in tsrPaths:
+              if prpy.dependency_manager.is_catkin():
+                  from catkin.find_in_workspaces import find_in_workspaces
+                  tsrs_paths = find_in_workspaces(search_dirs=['share'], project='adapy',
+                                 path=tsrPath, first_match_only=True)
+                  if not tsrs_paths:
+                    raise ValueError('Unable to load named tsrs from path "%s".'. tsrPath)
 
-            tsrs_path = tsrs_paths[0]
-        else:
-            tsrs_path = os.path.join(package_path, 'config/tsrs.yaml')
+                  tsrs_path = tsrs_paths[0]
+              else:
+                  tsrs_path = os.path.join(package_path, tsrPath)
+
+              try:
+                self.tsrlibrary.robot_name = 'ada' #need to hardcode this, otherwise the name becomes mico-modified
+                self.tsrlibrary.load_yaml(tsrs_path)
+                #self.tsrlibrary.load_yaml(tsrs_path)
+              except IOError as e:
+                  raise ValueError('Failed loading named tsrs from "{:s}".'.format(
+                    tsrs_path))
 
         try:
-            self.tsrlibrary.load_yaml(tsrs_path)
+            import os.path
+            configurations_path = os.path.join(package_path, 'config/configurations.yaml')
+            self.configurations.load_yaml(configurations_path)
         except IOError as e:
-            raise ValueError('Failed loading named tsrs from "{:s}".'.format(
-                tsrs_path))
+            logger.warning('Failed loading named configurations from "%s".', configurations_path)
 
 
         # Initialize a default planning pipeline.
