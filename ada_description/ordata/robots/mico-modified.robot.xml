@@ -349,7 +349,7 @@
                 <transparency>0.000000</transparency>
             </Geom>
         </Body>
-        <Joint name="Finger_1_Distal_Joint" type="hinge" enable="true" mimic_pos="f1*0.0" mimic_vel="|f1 0.3">
+        <Joint name="Finger_1_Distal_Joint" type="hinge" enable="true" mimic_pos="f1*0.5" mimic_vel="|f1 0.3">
             <Body>Finger_1_Proximal_Link</Body>
             <Body>Finger_1_Distal_Link</Body>
             <offsetfrom>Finger_1_Proximal_Link</offsetfrom>
@@ -377,7 +377,7 @@
                 <transparency>0.000000</transparency>
             </Geom>
         </Body>
-        <Joint name="Finger_2_Distal_Joint" type="hinge" enable="true" mimic_pos="f2*0.0" mimic_vel="|f2 0.3">
+        <Joint name="Finger_2_Distal_Joint" type="hinge" enable="true" mimic_pos="f2*0.5" mimic_vel="|f2 0.3">
             <Body>Finger_2_Proximal_Link</Body>
             <Body>Finger_2_Distal_Link</Body>
             <offsetfrom>Finger_2_Proximal_Link</offsetfrom>
