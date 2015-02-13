@@ -72,11 +72,12 @@ def glass_grasp(robot, glass, manip=None):
     #Bw[5,:] = [0, numpy.pi/2]  # Allow any orientation
     #Bw[5.:] = [numpy.pi -numpy.pi/6, numpy.pi + numpy.pi/2]
     #Bw[5.:] = [numpy.pi + numpy.pi/2 + numpy.pi/3, numpy.pi + numpy.pi/2 + 2*numpy.pi/3]
-    Bw[5.:] = [numpy.pi - numpy.pi/2, numpy.pi]
-    #Bw[5,:] = [numpy.pi, numpy.pi + numpy.pi]# works for the glass demo
+    #Bw[5.:] = [numpy.pi - numpy.pi/2, numpy.pi]
+    Bw[5,:] = [numpy.pi, numpy.pi + numpy.pi]# works for the glass demo
 
     
     grasp_tsr = TSR(T0_w = T0_w, Tw_e = Tw_e, Bw = Bw, manip = manip_idx)
     grasp_chain = TSRChain(sample_start=False, sample_goal = True, constrain=False, TSR = grasp_tsr)
 
     return [grasp_chain]
+
