@@ -387,7 +387,11 @@
 	    <maxvel>0.785398162</maxvel>
             <limitsrad>0.000000 1.050000</limitsrad>
         </Joint>
-        
+    <adjacent>Finger_1_Distal_Link Finger_2_Distal_Link</adjacent>   
+    <adjacent>Finger_1_Proximal_Link Finger_2_Proximal_Link</adjacent>   
+    <adjacent>Finger_1_Proximal_Link Finger_2_Distal_Link</adjacent>
+    <adjacent>Finger_1_Distal_Link Finger_2_Proximal_Link</adjacent>
+
     </KinBody>
     
     <Manipulator name="Mico">

@@ -64,13 +64,15 @@ def glass_grasp(robot, glass, manip=None):
 
 
     Bw = numpy.zeros((6,2))
-    Bw[2,:] = [-0.02, 0.02]  # Allow a little vertical movement
+    Bw[2,:] = [0.0, 0.02]  # Allow a little vertical movement
 
     #Bw[2,:] = [-0.001, 0.001]  # Allow a little vertical movement
 
     #Bw[5,:] = [-numpy.pi/2, numpy.pi/2]  # Allow any orientation
     #Bw[5,:] = [0, numpy.pi/2]  # Allow any orientation
-    Bw[5.:] = [numpy.pi, numpy.pi + numpy.pi/2]
+    #Bw[5.:] = [numpy.pi -numpy.pi/6, numpy.pi + numpy.pi/2]
+    #Bw[5.:] = [numpy.pi + numpy.pi/2 + numpy.pi/3, numpy.pi + numpy.pi/2 + 2*numpy.pi/3]
+    Bw[5.:] = [numpy.pi - numpy.pi/2, numpy.pi]
     #Bw[5,:] = [numpy.pi, numpy.pi + numpy.pi]# works for the glass demo
 
     

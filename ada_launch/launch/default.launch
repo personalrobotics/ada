@@ -48,9 +48,9 @@
    <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
 
    <!-- Camera -->
-   <include file="$(find softkinetic_driver)/launch/softkinetic_camera_ds325.launch"/>
+   <!--include file="$(find softkinetic_driver)/launch/softkinetic_camera_ds325.launch"/-->
 
    <!-- April Tags -->
-   <include file="$(find apriltags)/launch/percy.launch"/>
+   <!--include file="$(find apriltags)/launch/percy.launch"/-->
 
 </launch>
