@@ -48,7 +48,12 @@
    <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
 
    <!-- Camera -->
-   <!--include file="$(find softkinetic_driver)/launch/softkinetic_camera_ds325.launch"/-->
+   <include file="$(find softkinetic_driver)/launch/softkinetic_camera_ds325.launch"/>
+
+   <!-- Camera Transform -->
+   <node name="static_transform" pkg="tf" type="static_transform_publisher" respawn="false" output="screen" 
+      args="0.0473 0.0741 -0.09 -0.6947 0.7030 -0.1396 0.0619 Hand_Link /base_rgbd_camera_link 10"/>
+"
 
    <!-- April Tags -->
    <!--include file="$(find apriltags)/launch/percy.launch"/-->

@@ -1,3 +1,3 @@
 #!/bin/bash
-sudo chmod 777 /dev/mico
+gksudo chmod 777 /dev/mico
 
