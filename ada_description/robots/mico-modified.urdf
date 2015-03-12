@@ -418,7 +418,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 3.14" />
       <geometry>
         <mesh
           filename="package://ada_description/meshes/Hand_Link_camera.STL" />
@@ -432,7 +432,7 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 3.14" />
       <geometry>
         <mesh
           filename="package://ada_description/meshes/Hand_Link_camera.STL" />
