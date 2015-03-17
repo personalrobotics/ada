@@ -119,14 +119,14 @@ pid_f2_controller:
 
 # trajectory controller
 traj_controller:
-   type: "velocity_controllers/JointTrajectoryController"
+   type: "position_controllers/JointTrajectoryController"
    joints: [j1,j2,j3,j4,j5,j6,f1,f2]
    gains: # Required because we're controlling a velocity interface
-     j1: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j2: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j3: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j4: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j5: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j6: {p: 5,  d: 0, i: 0, i_clamp: 1}
+     j1: {p: 1,  d: 0.1, i: 0, i_clamp: 1}
+     j2: {p: 1,  d: 0.1, i: 0, i_clamp: 1}
+     j3: {p: 1,  d: 0.1, i: 0, i_clamp: 1}
+     j4: {p: 1,  d: 0.1, i: 0, i_clamp: 1}
+     j5: {p: 1,  d: 0.1, i: 0, i_clamp: 1}
+     j6: {p: 1,  d: 0.1, i: 0, i_clamp: 1}
      f1: {p: 1,  d: 0, i: 0, i_clamp: 1}
      f2: {p: 1,  d: 0, i: 0, i_clamp: 1}     
