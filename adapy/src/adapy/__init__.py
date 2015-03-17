@@ -44,12 +44,12 @@ def initialize(robot_xml=None, env_path=None, attach_viewer=False, **kw_args):
 
 #     # Start by attempting to load or_rviz.
     if attach_viewer == True:
-        attach_viewer = 'or_rviz'
+        attach_viewer = 'rviz'
         env.SetViewer(attach_viewer)
 
 #         # Fall back on qtcoin if loading or_rviz failed
         if env.GetViewer() is None:
-           logger.warning('Loading or_rviz failed. Falling back on qt_coin.')
+           logger.warning('Loading rviz failed. Falling back on qt_coin.')
            attach_viewer = 'qtcoin'
 
     if attach_viewer and env.GetViewer() is None:

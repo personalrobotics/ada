@@ -23,6 +23,7 @@
     <run_depend>cbirrt2</run_depend>
     <run_depend>orcdchomp</run_depend>
     <run_depend>ada_description</run_depend>
+    <build_depend>prpy</build_depend>
 </package>
 
 
