@@ -1,7 +1,29 @@
 # Ada
-Ada (or Autonomous Dextrous ... a?) is a package for controlling the Mico robot arm through the Personal Robotics pipeline. It is a high-level package, pulling from ROS, OpenRAVE, and other lower-level parts of the system. At the highest level, it provides scripts for controlling the robot, planning trajectories, finding inverse kinematics solutions, and more. 
+Ada (or Autonomous Dextrous ... a?) is a package for controlling the Mico robot arm through the Personal Robotics pipeline. It is a high-level package, pulling from ROS, OpenRAVE, and other lower-level parts of the system. At the highest level, it provides scripts for controlling the robot, planning trajectories, finding inverse kinematics solutions, and more.
 
-# Installing The full software pipeline in ROS indigo
+# Installing The full software pipeline in ROS indigo and 140.04
+A. **Instal Dependencies**
+
+    Before you start, you will need to install the following debians:
+    
+    ```
+    libnewmat10-dev
+    liblapacke-dev
+    ipython
+    libnlopt-dev
+    libsoqt-dev
+    libode-dev
+    libgeos-dev
+    gsl-bin
+    ```
+    
+    You will also need the following python dependencies:
+    
+    ```
+    numpy
+    scipy
+    ```
+
 1. **Install ROS**
 
     To install ROS, follow [these stesp](http://wiki.ros.org/indigo/Installation/Ubuntu). Ada will work on ROS hydro     or indigo. These instructions are for indigo. You will want to install the following ROS debians:
