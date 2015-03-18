@@ -25,7 +25,7 @@ scipy
 
 1. **Install ROS**
 
-    To install ROS, follow [these stesp](http://wiki.ros.org/indigo/Installation/Ubuntu). Ada will work on ROS hydro     or indigo. These instructions are for indigo. You will want to install the following ROS debians:
+    To install ROS, follow [these steps](http://wiki.ros.org/indigo/Installation/Ubuntu). Ada will work on ROS hydro     or indigo. These instructions are for indigo. You will want to install the following ROS debians:
   ```
   ros-indigo-desktop-full 
   ros-indigo-ros-control 
