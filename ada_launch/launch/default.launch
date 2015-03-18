@@ -48,7 +48,7 @@
    <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
 
    <!-- Camera -->
-   <include file="$(find softkinetic_driver)/launch/softkinetic_camera_ds325.launch"/>
+   <!--<include file="$(find softkinetic_driver)/launch/softkinetic_camera_ds325.launch"/>-->
 
    <!-- Camera Transform -->
    <node name="static_transform" pkg="tf" type="static_transform_publisher" respawn="false" output="screen" 
