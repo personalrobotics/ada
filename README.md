@@ -1,7 +1,7 @@
 # Ada
 Ada (or Autonomous Dextrous ... a?) is a package for controlling the Mico robot arm through the Personal Robotics pipeline. It is a high-level package, pulling from ROS, OpenRAVE, and other lower-level parts of the system. At the highest level, it provides scripts for controlling the robot, planning trajectories, finding inverse kinematics solutions, and more.
 
-# Installing The full software pipeline in ROS indigo and 140.04
+# Installing The full software pipeline in ROS indigo and 14.04
 
 Before you start, you will need to install the following debians:
 
@@ -94,7 +94,17 @@ scipy
     source ./devel/setup.bash
     catkin_make
     ```
-6. **Connect to the robot**
+6. **Set up the udev rules**
+
+   Create a file called `/etc/udev/rules.d/45-jaco.rules` with the content:
+   
+   ```
+   SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor} =="22cd", MODE="0666", GROUP="pr", SYMLINK+="mico"
+   ```
+
+   > A note on USB 3.0: the mico arm does not work with USB 3.0 ports. If your computer has no USB 2.0 ports, you will need to disable xHCI in your BIOS.
+
+7. **Connect to the robot**
 
   To connect to the robot, run the launch script:
   
@@ -104,7 +114,7 @@ scipy
   
   You may have to re-launch several times before the robot will connect. This will also start up all the controllers.
   
-7. **Run a test script**
+8. **Run a test script**
 
    After connecting to the robot, open up a new terminal and set it up:
    ```
@@ -117,6 +127,6 @@ scipy
    
    `rosrun adapy test.py`
 
-8. **Play around**
+9. **Play around**
 
   This will open up a python console that you can use to send commands to the robot. See `prpy` for more info.
