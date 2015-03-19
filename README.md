@@ -13,7 +13,7 @@ libnlopt-dev
 libsoqt-dev
 libode-dev
 libgeos-dev
-gsl-bin
+libgsl0-dev
 ```
 
 You will also need the following python dependencies:
