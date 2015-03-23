@@ -62,7 +62,6 @@ scipy
   - git: {local-name: or_ompl, uri: 'git@github.com:personalrobotics/or_ompl.git'}
   - git: {local-name: ada, uri: 'git@github.com:personalrobotics/ada.git'}
   - git: {local-name: mico_hardware, uri: 'git@github.com:personalrobotics/mico_hardware.git'}
-  - git: {local-name: openrave, uri: 'git@github.com:personalrobotics/openrave.git'}
   - git: {local-name: or_nlopt_ik, uri: 'git@github.com:personalrobotics/or_nlopt_ik.git'}
   - git: {local-name: or_urdf, uri: 'git@github.com:personalrobotics/or_urdf.git'}
   - git: {local-name: pr-ordata, uri: 'git@github.com:personalrobotics/pr-ordata.git'}
@@ -77,9 +76,9 @@ scipy
   cd ~/pr_catkin/src
   wstool up
   ```
-4. **Install Openrave**
+4. **Install OpenRAVE**
 
-  For 14.04/indigo, you must install OpenRAVE from source. Luckily, it was pulled already by the `.rosinstall` file. To build and install openrave do this:
+  For 14.04/indigo, you must install OpenRAVE from source. Luckily, it was pulled already by the `.rosinstall` file. To build and install OpenRAVE do this:
   
   ```
   cd ~/pr_catkin/src/openrave
