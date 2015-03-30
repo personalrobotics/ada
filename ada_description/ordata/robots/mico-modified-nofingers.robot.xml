@@ -245,33 +245,6 @@
         <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
         <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
         </Joint>
-        <Body name = "Camera_RGB_Frame" type = "dynamic">
-            <offsetfrom>j6</offsetfrom>
-            <translation>0.0273 0.0141 -0.03</translation>
-            <!--translation>0 0 0</translation>-->
-            <quat>0.0619 -0.6947 0.7030 -0.1396</quat>
-            <Mass>
-                <total>0.05</total>
-                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
-                <com>-0.00 0 0.0000</com>
-            </Mass>
-           <Geom type="box">
-             <Extents>0.05 0.02 0.02</Extents>
-             <Translation>0 0 0</Translation>
-             <RotationAxis>0 0 0 0</RotationAxis>
-           </Geom>
-        </Body>
-        <Joint name="dummy" type="hinge" enable="false" circular="true">
-            <Body>j6</Body>
-            <Body>Camera_RGB_Frame</Body>
-            <offsetfrom>j6</offsetfrom>
-            <anchor>0.000000 0. 0.0</anchor>
-            <axis>0.000000  0 1.0</axis>
-        <maxvel>2.0</maxvel>
-        <!--<maxvel>0.785398162</maxvel>-->
-        <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
-        <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
-        </Joint>
 
 
         <Body name="Finger_1_Proximal_Link" type="dynamic">
@@ -330,62 +303,7 @@
         <maxvel>0.785398162</maxvel>
             <limitsrad>0.000000 1.050000</limitsrad>
         </Joint>
-    <Body name="Finger_1_Distal_Link" type="dynamic">
-            <offsetfrom>Finger_1_Proximal_Link</offsetfrom>
-            <translation>-0.003000 -0.044000 0.000000</translation>
-            <quat>0.995396 0.000000 0.000000 -0.095848</quat>
-            <Mass>
-                <total>0.012194</total>
-                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
-                <com>-0.004769 -0.013340 0.000000</com>
-            </Mass>
-            <Geom type="trimesh">
-        <Data>../../meshes/Finger_1_Distal_Link.STL</Data>
-                <Render>../../meshes/Finger_1_Distal_Link.STL</Render>
-                <translation>0.000000 0.000000 0.000000</translation>
-                <quat>1.000000 0.000000 0.000000 0.000000</quat>
-                <diffusecolor>0.792157 0.819608 0.933333</diffusecolor>
-                <transparency>0.000000</transparency>
-            </Geom>
-        </Body>
-        <Joint name="Finger_1_Distal_Joint" type="hinge" enable="true" mimic_pos="f1*0.5" mimic_vel="|f1 0.3">
-            <Body>Finger_1_Proximal_Link</Body>
-            <Body>Finger_1_Distal_Link</Body>
-            <offsetfrom>Finger_1_Proximal_Link</offsetfrom>
-            <anchor>-0.003000 -0.044000 0.000000</anchor>
-            <axis>0.000000 0.000000 1.000000</axis>
-        <!--<maxvel>0.872664625</maxvel>-->
-        <maxvel>0.785398162</maxvel>
-            <limitsrad>0.000000 1.050000</limitsrad>
-        </Joint>
-        <Body name="Finger_2_Distal_Link" type="dynamic">
-            <offsetfrom>Finger_2_Proximal_Link</offsetfrom>
-            <translation>-0.003000 -0.044000 0.000000</translation>
-            <quat>0.995396 0.000000 0.000000 -0.095848</quat>
-            <Mass>
-                <total>0.012194</total>
-                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
-                <com>-0.004769 -0.013340 0.000000</com>
-            </Mass>
-            <Geom type="trimesh">
-        <Data>../../meshes/Finger_2_Distal_Link.STL</Data>
-                <Render>../../meshes/Finger_2_Distal_Link.STL</Render>
-                <translation>0.000000 0.000000 0.000000</translation>
-                <quat>1.000000 0.000000 0.000000 0.000000</quat>
-                <diffusecolor>0.792157 0.819608 0.933333</diffusecolor>
-                <transparency>0.000000</transparency>
-            </Geom>
-        </Body>
-        <Joint name="Finger_2_Distal_Joint" type="hinge" enable="true" mimic_pos="f2*0.5" mimic_vel="|f2 0.3">
-            <Body>Finger_2_Proximal_Link</Body>
-            <Body>Finger_2_Distal_Link</Body>
-            <offsetfrom>Finger_2_Proximal_Link</offsetfrom>
-            <anchor>-0.003000 -0.044000 0.000000</anchor>
-            <axis>0.000000 0.000000 1.000000</axis>
-        <!--<maxvel>0.872664625</maxvel>-->
-        <maxvel>0.785398162</maxvel>
-            <limitsrad>0.000000 1.050000</limitsrad>
-        </Joint>
+
         
     </KinBody>
     
