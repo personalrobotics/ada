@@ -78,7 +78,7 @@ class ADARobot(MicoRobot):
         from prpy.planning import (CBiRRTPlanner, CHOMPPlanner, IKPlanner, OMPLPlanner,
                                    MKPlanner, NamedPlanner, SnapPlanner)
         self.cbirrt_planner = CBiRRTPlanner()
-        self.chomp_planner = CHOMPPlanner()
+        #self.chomp_planner = CHOMPPlanner()
         self.mk_planner = MKPlanner()
         self.snap_planner = SnapPlanner()
         self.named_planner = NamedPlanner()
