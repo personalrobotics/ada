@@ -1,7 +1,7 @@
 <launch>
 
    <!-- Setup Script -->
-   <node name="setup" pkg="ada_launch" type="set_permissions.sh" />
+   <!--node name="setup" pkg="ada_launch" type="set_permissions.sh" /-->
 
    <!-- the controller node itself -->
    <node pkg="mico_hardware" 
