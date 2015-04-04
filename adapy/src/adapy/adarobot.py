@@ -75,20 +75,37 @@ class ADARobot(MicoRobot):
 
         # Initialize a default planning pipeline.
         from prpy.planning import Planner, Sequence, Ranked
-        from prpy.planning import (CBiRRTPlanner, CHOMPPlanner, IKPlanner, OMPLPlanner,
-                                   MKPlanner, NamedPlanner, SnapPlanner)
+         
+        from prpy.planning import (
+        BiRRTPlanner,
+        CBiRRTPlanner,
+        CHOMPPlanner,
+        GreedyIKPlanner,
+        IKPlanner,
+        NamedPlanner,
+        SBPLPlanner,
+        SnapPlanner,
+        TSRPlanner,
+        VectorFieldPlanner
+        )
+
+
         self.cbirrt_planner = CBiRRTPlanner()
+        self.vectorfield_planner = VectorFieldPlanner()
+        self.greedyik_planner = GreedyIKPlanner()
         #self.chomp_planner = CHOMPPlanner()
-        self.mk_planner = MKPlanner()
-        self.snap_planner = SnapPlanner()
-        self.named_planner = NamedPlanner()
-        self.ompl_planner = OMPLPlanner('RRTConnect')
-        self.ik_planner = IKPlanner()
+    #    self.mk_planner = MKPlanner()
+        #self.snap_planner = SnapPlanner()
+        #self.named_planner = NamedPlanner()
+        #self.ompl_planner = OMPLPlanner('RRTConnect')
+        #self.ik_planner = IKPlanner()
+
+        #self.vectorfield_planner = VectorFieldPlanner()
         self.planner = Sequence(
         #self.cbirrt_planner,
         #self.ik_planner,
                                 #self.named_planner
-                                #self.snap_planner)
+                                #self.snap_planner,
                                 #self.mk_planner)
                                 #self.ompl_planner)
                                 self.cbirrt_planner)
