@@ -74,26 +74,50 @@ class ADARobot(MicoRobot):
 
 
         # Initialize a default planning pipeline.
+        #from prpy.planning import Planner, Sequence, Ranked
+ 
+        # Initialize a default planning pipeline.
         from prpy.planning import Planner, Sequence, Ranked
-         
-        from prpy.planning import (
-        BiRRTPlanner,
-        CBiRRTPlanner,
-        CHOMPPlanner,
-        GreedyIKPlanner,
-        IKPlanner,
-        NamedPlanner,
-        SBPLPlanner,
-        SnapPlanner,
-        TSRPlanner,
-        VectorFieldPlanner
-        )
+        from prpy.planning import CBiRRTPlanner, CHOMPPlanner, IKPlanner, MKPlanner, NamedPlanner, SnapPlanner, SBPLPlanner, OMPLPlanner, GreedyIKPlanner
+        
+        potential_planners = [(SnapPlanner, 'snap_planner', {}),
+                              (GreedyIKPlanner, 'greedy_ik_planner', {}),
+                              (MKPlanner, 'mk_planner', {}),
+                              (NamedPlanner, 'named_planner', {}),
+                              (IKPlanner, 'ik_planner', {}),
+                              (OMPLPlanner, 'ompl_planner',
+                                            {'algorithm':'RRTConnect'}),
+                              (CBiRRTPlanner, 'cbirrt_planner', {}),
+                              (CHOMPPlanner, 'chomp_planner', {})]
+        planners = []
+        for potential_planner, attr_name, planner_args in potential_planners:
+            try:
+                planner = potential_planner(**planner_args)
+                setattr(self, attr_name, planner)
+                planners.append(planner)
+            except UnsupportedPlanningError:
+                pass
+        
+        self.planner = Sequence(*planners)
+
+        # from prpy.planning import (
+        # BiRRTPlanner,
+        # CBiRRTPlanner,
+        # CHOMPPlanner,
+        # GreedyIKPlanner,
+        # IKPlanner,
+        # NamedPlanner,
+        # SBPLPlanner,
+        # SnapPlanner,
+        # TSRPlanner,
+        # VectorFieldPlanner
+        # )
 
 
-        self.cbirrt_planner = CBiRRTPlanner()
-        self.vectorfield_planner = VectorFieldPlanner()
-        self.greedyik_planner = GreedyIKPlanner()
-        #self.chomp_planner = CHOMPPlanner()
+        # self.cbirrt_planner = CBiRRTPlanner()
+        # self.vectorfield_planner = VectorFieldPlanner()
+        # self.greedyik_planner = GreedyIKPlanner()
+        # #self.chomp_planner = CHOMPPlanner()
     #    self.mk_planner = MKPlanner()
         #self.snap_planner = SnapPlanner()
         #self.named_planner = NamedPlanner()
@@ -101,14 +125,14 @@ class ADARobot(MicoRobot):
         #self.ik_planner = IKPlanner()
 
         #self.vectorfield_planner = VectorFieldPlanner()
-        self.planner = Sequence(
+        #self.planner = Sequence(
         #self.cbirrt_planner,
         #self.ik_planner,
                                 #self.named_planner
                                 #self.snap_planner,
                                 #self.mk_planner)
                                 #self.ompl_planner)
-                                self.cbirrt_planner)
+        #                        self.cbirrt_planner)
 
     """
     def ExecuteTrajectory(self, traj, retime=True, **kw_args):
