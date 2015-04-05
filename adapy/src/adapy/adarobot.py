@@ -61,7 +61,7 @@ class ADARobot(MicoRobot):
                         'Unable to load named tsrs from path "%s".'.format(
                             tsr_path_relative))
 
-                tsr_path = tsr[0]
+                tsr_path = tsr_paths[0]
 
                 try:
                     self.tsrlibrary.load_yaml(tsr_path)
