@@ -3,50 +3,57 @@ Ada (or Assistive Dextrous Arm) is a package for controlling the Mico robot arm 
 
 # Installing The full software pipeline in ROS indigo and 14.04
 
-Before you start, you will need to install the following debians:
+Before you start, you will need to install the following system dependencies:
 
-```
-libnewmat10-dev
-liblapacke-dev
-ipython
-libnlopt-dev
-libsoqt-dev
-libode-dev
-libgeos-dev
-libgsl0-dev
-```
+- libnewmat10-dev
+- liblapacke-dev
+- ipython
+- libnlopt-dev
+- libsoqt-dev
+- libode-dev
+- libgeos-dev
+- libgsl0-dev
 
-You will also need the following python dependencies:
+You will also need the following Python dependencies:
 
-```
-numpy
-scipy
+- numpy
+- scipy
+
+To install all of these using Apt, run:
+
+```bash
+apt-get install libnewmat10-dev liblapacke-dev ipython libnlopt-dev libsoqt-dev libode-dev libgeos-dev libgsl0-dev python-numpy python-scipy
 ```
 
 1. **Install ROS**
 
-    To install ROS, follow [these steps](http://wiki.ros.org/indigo/Installation/Ubuntu). Ada will work on ROS hydro     or indigo. These instructions are for indigo. You will want to install the following ROS debians:
-  ```
-  ros-indigo-desktop-full 
-  ros-indigo-ros-control 
-  ros-indigo-ros-controllers 
-  ros-indigo-ompl 
-  ros-indigo-srdfdom
-  ```
+To install ROS, follow [these steps](http://wiki.ros.org/indigo/Installation/Ubuntu). Ada will work on ROS hydro     or indigo. These instructions are for indigo. You will want to install the following ROS debians:
+
+- ros-indigo-desktop-full
+- ros-indigo-ros-control
+- ros-indigo-ros-controllers
+- ros-indigo-ompl
+- ros-indigo-srdfdom
+
+To install these, run:
+
+```bash
+apt-get install ros-indigo-ros-control ros-indigo-ros-controllers ros-indigo-ompl ros-indigo-srdfdom
+```
 
   > A note on controllers: Ada requires `velocity_controller/JointTrajectoryController` which does not exist in hydro. That means you must check out and build `ros_controllers` from [ROS indigo](https://github.com/ros-controls/ros_controllers) from source if you are running ros hydro.
 
 2. **Create a `catkin` workspace**
 
-  Create a folder for your catkin workspace. We called it `~/pr_catkin/`. Then, create a folder inside it called `src`.   Then, run the following:
+Create a folder for your catkin workspace. We called it `~/pr_catkin/`. Then, create a folder inside it called `src`.   Then, run the following:
 
-  ```
-  source /opt/ros/indigo/setup.bash
-  cd ~/pr_catkin/src
-  catkin_init_workspace
-  cd ..
-  catkin_make
-  ```
+```
+source /opt/ros/indigo/setup.bash
+cd ~/pr_catkin/src
+catkin_init_workspace
+cd ..
+catkin_make
+```
   This will generate a `catkin` source tree for you, which all the code will live in.
 
 3. **Create a `.rosinstall` file**
