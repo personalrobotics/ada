@@ -131,7 +131,7 @@ class ADARobot(MicoRobot):
         self.planner = FirstSupported(
             actual_planner,
             # Special purpose meta-planner.
-            NamedPlanner(delegate_planner=actual_planner),
+            #NamedPlanner(delegate_planner=actual_planner),
         )
        
         #from herbpy.action import *
