@@ -74,66 +74,68 @@ class ADARobot(MicoRobot):
 
 
         # Initialize a default planning pipeline.
-        #from prpy.planning import Planner, Sequence, Ranked
- 
-        # Initialize a default planning pipeline.
-        from prpy.planning import Planner, Sequence, Ranked
-        from prpy.planning import CBiRRTPlanner, CHOMPPlanner, IKPlanner, MKPlanner, NamedPlanner, SnapPlanner, SBPLPlanner, OMPLPlanner, GreedyIKPlanner
-        
-        potential_planners = [(SnapPlanner, 'snap_planner', {}),
-                              (GreedyIKPlanner, 'greedy_ik_planner', {}),
-                              (MKPlanner, 'mk_planner', {}),
-                              (NamedPlanner, 'named_planner', {}),
-                              (IKPlanner, 'ik_planner', {}),
-                              (OMPLPlanner, 'ompl_planner',
-                                            {'algorithm':'RRTConnect'}),
-                              (CBiRRTPlanner, 'cbirrt_planner', {}),
-                              (CHOMPPlanner, 'chomp_planner', {})]
-        planners = []
-        for potential_planner, attr_name, planner_args in potential_planners:
-            try:
-                planner = potential_planner(**planner_args)
-                setattr(self, attr_name, planner)
-                planners.append(planner)
-            except UnsupportedPlanningError:
-                pass
-        
-        self.planner = Sequence(*planners)
+        from prpy.planning import (
+            FirstSupported,
+            MethodMask,
+            Ranked,
+            Sequence,
+        )
+        from prpy.planning import (
+            BiRRTPlanner,
+            CBiRRTPlanner,
+            CHOMPPlanner,
+            GreedyIKPlanner,
+            IKPlanner,
+            NamedPlanner,
+            SBPLPlanner,
+            SnapPlanner,
+            TSRPlanner,
+            VectorFieldPlanner
+        )
 
-        # from prpy.planning import (
-        # BiRRTPlanner,
-        # CBiRRTPlanner,
-        # CHOMPPlanner,
-        # GreedyIKPlanner,
-        # IKPlanner,
-        # NamedPlanner,
-        # SBPLPlanner,
-        # SnapPlanner,
-        # TSRPlanner,
-        # VectorFieldPlanner
-        # )
+        # TODO: These should be meta-planners.
+        self.named_planner = NamedPlanner()
+        self.ik_planner = IKPlanner()
 
+        # Special-purpose planners.
+        self.snap_planner = SnapPlanner()
+        self.vectorfield_planner = VectorFieldPlanner()
+        self.greedyik_planner = GreedyIKPlanner()
 
-        # self.cbirrt_planner = CBiRRTPlanner()
-        # self.vectorfield_planner = VectorFieldPlanner()
-        # self.greedyik_planner = GreedyIKPlanner()
-        # #self.chomp_planner = CHOMPPlanner()
-    #    self.mk_planner = MKPlanner()
-        #self.snap_planner = SnapPlanner()
-        #self.named_planner = NamedPlanner()
-        #self.ompl_planner = OMPLPlanner('RRTConnect')
-        #self.ik_planner = IKPlanner()
+        # General-purpose planners.
+        self.birrt_planner = BiRRTPlanner()
+        self.cbirrt_planner = CBiRRTPlanner()
 
-        #self.vectorfield_planner = VectorFieldPlanner()
-        #self.planner = Sequence(
-        #self.cbirrt_planner,
-        #self.ik_planner,
-                                #self.named_planner
-                                #self.snap_planner,
-                                #self.mk_planner)
-                                #self.ompl_planner)
-        #                        self.cbirrt_planner)
-
+        actual_planner = Sequence(
+            # First, try the straight-line trajectory.
+            self.snap_planner,
+            # Then, try a few simple (and fast!) heuristics.
+            self.vectorfield_planner,
+            self.greedyik_planner,
+            # Next, try a trajectory optimizer.
+            #self.trajopt_planner or self.chomp_planner,
+            # If all else fails, call an RRT.
+            self.birrt_planner,
+            MethodMask(
+                FirstSupported(
+                    # Try sampling the TSR and planning with BiRRT. This only
+                    # works for PlanToIK and PlanToTSR with strictly goal TSRs.
+                    TSRPlanner(delegate_planner=self.birrt_planner),
+                    # Fall back on CBiRRT, which also handles start and
+                    # constraint TSRs.
+                    self.cbirrt_planner,
+                ),
+                methods=['PlanToIK', 'PlanToTSR', 'PlanToEndEffectorPose', 'PlanToEndEffectorOffset']
+            )
+        )
+        self.planner = FirstSupported(
+            actual_planner,
+            # Special purpose meta-planner.
+            NamedPlanner(delegate_planner=actual_planner),
+        )
+       
+        #from herbpy.action import *
+        from adapy.tsr import * 
     """
     def ExecuteTrajectory(self, traj, retime=True, **kw_args):
         if retime:
