@@ -1,25 +1,39 @@
 PACKAGE = 'adapy'
 import logging
 import prpy
-from catkin.find_in_workspaces import find_in_workspaces
-from prpy.base.mico import Mico
-from prpy.base.micohand import MicoHand
-from prpy.base.micorobot import MicoRobot
+from prpy import Cloned
+from prpy.base.robot import Robot
 
 logger = logging.getLogger(PACKAGE)
 
-class ADARobot(MicoRobot):
+CONFIGURATIONS_PATH = 'config/configurations.yaml'
+TSR_PATHS = [
+    'config/glass_grasp_tsr.yaml',
+    'config/glass_move_tsr.yaml',
+]
+
+
+def find_adapy_resource(relative_path):
+    from catkin.find_in_workspaces import find_in_workspaces
+
+    paths = find_in_workspaces(project='adapy', search_dirs=['share'],
+                               path=relative_path, first_match_only=True)
+
+    if paths and len(paths) == 1:
+        return paths[0]
+    else:
+        raise IOError('Loading AdaPy resource "{:s}" failed.'.format(
+                      relative_path))
+
+
+class ADARobot(Robot):
     def __init__(self, sim):
-        import os.path
-        from rospkg import RosPack
+        from prpy.base.mico import Mico
+        from prpy.base.micohand import MicoHand
 
         # We need to hard-code the name. Otherwise, it defaults to
         # "mico-modified".
-        MicoRobot.__init__(self, robot_name='ada')
-
-        # Absolute path to this package.
-        ros_pack = RosPack()
-        package_path = ros_pack.get_path(PACKAGE)
+        Robot.__init__(self, robot_name='ada')
 
         # Convenience attributes for accessing self components.
         self.arm = self.GetManipulator('Mico')
@@ -27,51 +41,32 @@ class ADARobot(MicoRobot):
         self.manipulators = [ self.arm ]
 
         # Bind robot-specific subclasses.
-        prpy.bind_subclass(self.arm, Mico, sim=sim,
-                           controller_namespace='/mico_controller')
+        prpy.bind_subclass(self.arm, Mico, sim=sim)
         prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim,
                            manipulator=self.arm)
 
-        # Support for named configurations.
-        self.configurations.add_group('arm', self.arm.GetIndices())
+        # TODO: Load an IdealController controller in simulation.
 
+        # Load default named configurations from YAML.
+        self.configurations.add_group('arm', self.arm.GetIndices())
         try:
-            configurations_path = os.path.join(
-                    package_path, 'config/configurations.yaml')
-            self.configurations.load_yaml(configurations_path)
+            self.configurations.load_yaml(
+                find_adapy_resource(CONFIGURATIONS_PATH))
         except IOError as e:
             logger.warning('Failed loading named configurations from "%s": %s',
                            configurations_path, e.message)
 
+        # Load default TSRs from YAML.
+        for tsr_path_relative in TSR_PATHS:
+            try:
+                tsr_path = find_adapy_resource(tsr_path_relative)
+                self.tsrlibrary.load_yaml(tsr_path)
+            except IOError as e:
+                raise ValueError(
+                    'Failed loading TSRs from "{:s}": {:s}'.format(
+                        tsr_path, e.message))
 
-        if self.tsrlibrary is not None:
-            tsr_paths_relative = [
-                'config/glass_grasp_tsr.yaml',
-                'config/glass_move_tsr.yaml'
-            ]
-
-            for tsr_path_relative in tsr_paths_relative:
-                tsr_paths = find_in_workspaces(
-                    search_dirs=['share'], project='adapy',
-                    path=tsr_path_relative, first_match_only=True
-                )
-
-                if not tsr_paths:
-                    raise ValueError(
-                        'Unable to load named tsrs from path "%s".'.format(
-                            tsr_path_relative))
-
-                tsr_path = tsr_paths[0]
-
-                try:
-                    self.tsrlibrary.load_yaml(tsr_path)
-                except IOError as e:
-                    raise ValueError(
-                        'Failed loading TSRs from "{:s}": {:s}'.format(
-                            tsr_path, e.message))
-
-
-        # Initialize a default planning pipeline.
+        # Initialize the default planning pipeline.
         from prpy.planning import Sequence, Ranked
         from prpy.planning import (
             BiRRTPlanner,
@@ -86,17 +81,14 @@ class ADARobot(MicoRobot):
             VectorFieldPlanner
         )
 
-
         self.snap_planner = SnapPlanner()
         self.cbirrt_planner = CBiRRTPlanner()
         self.vectorfield_planner = VectorFieldPlanner()
         self.greedyik_planner = GreedyIKPlanner()
-        self.planner = Sequence(self.cbirrt_planner)
+        self.planner = self.cbirrt_planner
 
     def CloneBindings(self, parent):
-        from prpy import Cloned
-
-        MicoRobot.CloneBindings(self, parent)
+        super(ADARobot, self).CloneBindings(parent)
 
         self.arm = Cloned(parent.arm)
         self.manipulators = [ self.arm ]
