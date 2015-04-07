@@ -67,7 +67,7 @@ class ADARobot(Robot):
                         tsr_path, e.message))
 
         # Initialize the default planning pipeline.
-        from prpy.planning import Sequence, Ranked
+        from prpy.planning import Sequence, Ranked, FirstSupported
         from prpy.planning import (
             BiRRTPlanner,
             CBiRRTPlanner,
@@ -85,7 +85,15 @@ class ADARobot(Robot):
         self.cbirrt_planner = CBiRRTPlanner()
         self.vectorfield_planner = VectorFieldPlanner()
         self.greedyik_planner = GreedyIKPlanner()
-        self.planner = self.cbirrt_planner
+
+        actual_planner = Sequence(
+            self.snap_planner,
+            self.cbirrt_planner
+        )
+        self.planner = FirstSupported(
+            actual_planner,
+            NamedPlanner(delegate_planner=actual_planner)
+        )
 
     def CloneBindings(self, parent):
         super(ADARobot, self).CloneBindings(parent)
