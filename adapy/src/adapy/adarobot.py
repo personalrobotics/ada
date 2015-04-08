@@ -107,33 +107,33 @@ class ADARobot(MicoRobot):
         self.cbirrt_planner = CBiRRTPlanner()
 
         actual_planner = Sequence(
-            # First, try the straight-line trajectory.
-            self.snap_planner,
-            # Then, try a few simple (and fast!) heuristics.
-            self.vectorfield_planner,
-            self.greedyik_planner,
-            # Next, try a trajectory optimizer.
-            #self.trajopt_planner or self.chomp_planner,
-            # If all else fails, call an RRT.
-            self.birrt_planner,
-            MethodMask(
-                FirstSupported(
-                    # Try sampling the TSR and planning with BiRRT. This only
-                    # works for PlanToIK and PlanToTSR with strictly goal TSRs.
-                    TSRPlanner(delegate_planner=self.birrt_planner),
-                    # Fall back on CBiRRT, which also handles start and
-                    # constraint TSRs.
-                    self.cbirrt_planner,
-                ),
-                methods=['PlanToIK', 'PlanToTSR', 'PlanToEndEffectorPose', 'PlanToEndEffectorOffset']
-            )
-        )
+        #     # First, try the straight-line trajectory.
+              self.snap_planner,
+        #     # Then, try a few simple (and fast!) heuristics.
+              self.vectorfield_planner,
+              self.greedyik_planner,
+        #     # Next, try a trajectory optimizer.
+        #     #self.trajopt_planner or self.chomp_planner,
+        #     # If all else fails, call an RRT.
+             self.birrt_planner,
+             MethodMask(
+                 FirstSupported(
+        #             # Try sampling the TSR and planning with BiRRT. This only
+        #             # works for PlanToIK and PlanToTSR with strictly goal TSRs.
+                     TSRPlanner(delegate_planner=self.birrt_planner),
+        #             # Fall back on CBiRRT, which also handles start and
+        #             # constraint TSRs.
+                     self.cbirrt_planner,
+                 ),
+                 methods=['PlanToIK', 'PlanToTSR', 'PlanToEndEffectorPose', 'PlanToEndEffectorOffset']
+             )
+         )
         self.planner = FirstSupported(
             actual_planner,
-            # Special purpose meta-planner.
-            #NamedPlanner(delegate_planner=actual_planner),
+             # Special purpose meta-planner.
+             #NamedPlanner(delegate_planner=actual_planner),
         )
-       
+       # self.planner = self.cbirrt_planner
         #from herbpy.action import *
         from adapy.tsr import * 
     """
