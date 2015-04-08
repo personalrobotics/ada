@@ -9,7 +9,7 @@ logger = logging.getLogger(PACKAGE)
 
 class ADARobot(MicoRobot):
     def __init__(self, sim):
-        MicoRobot.__init__(self)
+        MicoRobot.__init__(self, robot_name = 'ADA')
 
         # Absolute path to this package.
         from rospkg import RosPack
@@ -29,8 +29,6 @@ class ADARobot(MicoRobot):
         #   prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm,  controller_namespace='/mico_controller', hand_namespace='/mico_hand')
         prpy.bind_subclass(self.arm.hand, MicoHand, sim=sim, manipulator = self.arm)
 
-        #prpy.bind_subclass(self.left_hand, R2Hand, manipulator=self.left_arm, sim=sim)
-
 
         # Support for named configurations.
         import os.path
@@ -38,10 +36,11 @@ class ADARobot(MicoRobot):
 
         try:
             import os.path
-            configurations_path = os.path.join(package_path, 'config/configurations.yaml')
+            configurations_path = os.path.join(package_path, 'config/configurations2.yaml')
             self.configurations.load_yaml(configurations_path)
         except IOError as e:
             logger.warning('Failed loading named configurations from "%s".', configurations_path)
+
 
         if self.tsrlibrary is not None:
             tsrPaths = ['config/glass_grasp_tsr.yaml', 'config/glass_move_tsr.yaml']
@@ -58,19 +57,13 @@ class ADARobot(MicoRobot):
                   tsrs_path = os.path.join(package_path, tsrPath)
 
               try:
-                self.tsrlibrary.robot_name = 'ada' #need to hardcode this, otherwise the name becomes mico-modified
+                self.tsrlibrary.robot_name = 'ADA' #need to hardcode this, otherwise the name becomes mico-modified
                 self.tsrlibrary.load_yaml(tsrs_path)
                 #self.tsrlibrary.load_yaml(tsrs_path)
               except IOError as e:
                   raise ValueError('Failed loading named tsrs from "{:s}".'.format(
                     tsrs_path))
 
-        try:
-            import os.path
-            configurations_path = os.path.join(package_path, 'config/configurations.yaml')
-            self.configurations.load_yaml(configurations_path)
-        except IOError as e:
-            logger.warning('Failed loading named configurations from "%s".', configurations_path)
 
 
         # Initialize a default planning pipeline.
