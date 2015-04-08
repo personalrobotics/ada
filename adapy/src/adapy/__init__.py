@@ -7,7 +7,7 @@ logger = logging.getLogger('adapy')
 # Add dependencies to our OpenRAVE plugin and data search paths.
 
 
-def initialize(robot_xml=None, env_path=None, attach_viewer=False, load_xml = False, **kw_args):
+def initialize(robot_xml=None, env_path=None, attach_viewer=False, load_xml = True, **kw_args):
     prpy.logger.initialize_logging()
 
     # Create the environment.
