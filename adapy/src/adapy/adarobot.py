@@ -82,6 +82,10 @@ class ADARobot(Robot):
             NamedPlanner(delegate_planner=actual_planner)
         )
 
+        # Disable path simplification since OMPLSimplifier does not support
+        # continuous joints. 
+        self.simplifier = None
+
     def CloneBindings(self, parent):
         super(ADARobot, self).CloneBindings(parent)
 

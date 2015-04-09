@@ -3,12 +3,13 @@ import logging, prpy, openravepy, adapy
 
 URDF_PATH = 'robots/mico-modified-updated.urdf'
 URDF_PACKAGE = 'ada_description'
-SRDF_PATH = ''
+
+SRDF_PATH = 'robots/mico-modified.srdf'
 SRDF_PACKAGE = 'ada_description'
 
 def initialize(env_path=None, attach_viewer=False, **kw_args):
     from adarobot import ADARobot
-    from util import find_adapy_resource
+    from util import AdaPyException, find_adapy_resource
 
     prpy.logger.initialize_logging()
 
@@ -26,7 +27,7 @@ def initialize(env_path=None, attach_viewer=False, **kw_args):
                              ' package {:s} installed?'.format(
                                 URDF_PATH, URDF_PACKAGE))
 
-    srdf_path = ''
+    srdf_path = find_adapy_resource(SRDF_PATH, package=SRDF_PACKAGE)
     if srdf_path is None:
         raise AdaPyException('Failed loading SRDF "{:s}". Do you have the'
                              ' package {:s} installed?'.format(
@@ -66,4 +67,3 @@ def initialize(env_path=None, attach_viewer=False, **kw_args):
     prpy.logger.remove_ros_logger()
 
     return env, robot
-
