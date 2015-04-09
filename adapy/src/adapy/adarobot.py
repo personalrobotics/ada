@@ -36,7 +36,7 @@ class ADARobot(MicoRobot):
 
         try:
             import os.path
-            configurations_path = os.path.join(package_path, 'config/configurations2.yaml')
+            configurations_path = os.path.join(package_path, 'config/configurations.yaml')
             self.configurations.load_yaml(configurations_path)
         except IOError as e:
             logger.warning('Failed loading named configurations from "%s".', configurations_path)
@@ -124,7 +124,7 @@ class ADARobot(MicoRobot):
         self.planner = FirstSupported(
             actual_planner,
              # Special purpose meta-planner.
-             #NamedPlanner(delegate_planner=actual_planner),
+             NamedPlanner(delegate_planner=actual_planner),
         )
        # self.planner = self.cbirrt_planner
         #from herbpy.action import *

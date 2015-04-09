@@ -20,7 +20,7 @@ configurations:
          arm: [0.59867355, -1.39080925, -0.65546094,  0.9805578 , -1.22807706, 1.55532642]
     ada_meal_scenario_servingConfiguration:
          arm: [0.56979876, -1.40909664, -0.68818586,  0.9805578 , -1.22807706, 0.58785866]
-    ada_meal_scenario_ lookingAtFaceConfiguration:
+    ada_meal_scenario_lookingAtFaceConfiguration:
          arm: [0.37537415, -0.81812309, -0.06833738,  1.13049803, -1.11502733,1.96230524]
-    ada_meal_scenario_ lookingAtPlateConfiguration:
+    ada_meal_scenario_lookingAtPlateConfiguration:
          arm: [0.81812309, -1.14344739,  0.36382416,  2.64179402, -1.37920679, -0.55691865]
