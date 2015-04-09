@@ -92,16 +92,9 @@
       link="Shoulder_Link" />
     <axis
       xyz="0 0 -1" />
-    <!--
     <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      effort="18"
-      velocity="0.785398163" />
+      effort="9.5"
+      velocity="0.9425" />
   </joint>
   <transmission name="Shoulder_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -163,18 +156,11 @@
       link="Arm_Link" />
     <axis
       xyz="0 0 1" />
-    <!--
     <limit
-      lower="-3.92"
-      upper="0.78"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      lower="0.785"
-      upper="5.4981853"
-      effort="18"
-      velocity="0.785398163" />
+      lower="-3.84"
+      upper="0.70"
+      effort="9.5"
+      velocity="0.9425" />
   </joint>
   <transmission name="Arm_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -236,18 +222,11 @@
       link="Forearm_Link" />
     <axis
       xyz="0 0 1" />
-    <!--  
     <limit
-      lower="-0.87"
-      upper="4.01"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      lower="0.65"
-      upper="5.6331853"
-      effort="18"
-      velocity="0.785398163" />
+      lower="-0.96"
+      upper="4.10"
+      effort="9.5"
+      velocity="0.9425" />
   </joint>
   <transmission name="Forearm_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -309,16 +288,9 @@
       link="Wrist_1_Link" />
     <axis
       xyz="0 0 1" />
-    <!--
     <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="8"
-      velocity="0.785398163" />
-    -->
-    <limit
-      effort="0"
-      velocity="0.785398163" />
+      effort="3.8"
+      velocity="1.885" />
   </joint>
   <transmission name="Wrist_1_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -380,16 +352,9 @@
       link="Wrist_2_Link" />
     <axis
       xyz="0 0 1" />
-    <!--
     <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      effort="8"
-      velocity="0.785398163" />
+      effort="3.8"
+      velocity="1.885" />
   </joint>
   <transmission name="Wrist_2_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
@@ -451,16 +416,9 @@
       link="Hand_Link" />
     <axis
       xyz="0 0 1" />
-    <!--
     <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      effort="8"
-      velocity="0.785398163" />
+      effort="3.6"
+      velocity="1.885" />
   </joint>
   <transmission name="Hand_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
