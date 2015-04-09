@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 import logging, prpy, openravepy, adapy
 
-URDF_PATH = 'robots/mico-modified-updated.urdf'
-URDF_PACKAGE = 'ada_description'
-
-SRDF_PATH = 'robots/mico-modified.srdf'
-SRDF_PACKAGE = 'ada_description'
+URDF_PATH = 'package://ada_description/robots/mico-modified-updated.urdf'
+SRDF_PATH = 'package://ada_description/robots/mico-modified.srdf'
 
 def initialize(env_path=None, attach_viewer=False, **kw_args):
     from adarobot import ADARobot
@@ -20,24 +17,11 @@ def initialize(env_path=None, attach_viewer=False, **kw_args):
             raise IOError(
                 'Unable to load environment "{:s}".'.format(env_path))
 
-    # Load ADA from URDF.
-    urdf_path = find_adapy_resource(URDF_PATH, package=URDF_PACKAGE)
-    if urdf_path is None:
-        raise AdaPyException('Failed loading URDF "{:s}". Do you have the'
-                             ' package {:s} installed?'.format(
-                                URDF_PATH, URDF_PACKAGE))
-
-    srdf_path = find_adapy_resource(SRDF_PATH, package=SRDF_PACKAGE)
-    if srdf_path is None:
-        raise AdaPyException('Failed loading SRDF "{:s}". Do you have the'
-                             ' package {:s} installed?'.format(
-                                SRDF_PATH, SRDF_PACKAGE))
-
     # Use or_urdf to load ADA from URDF and SRDF.
     with env:
         or_urdf = openravepy.RaveCreateModule(env, 'urdf')
         ada_name = or_urdf.SendCommand(
-            'load {:s} {:s}'.format(urdf_path, srdf_path))
+            'load {:s} {:s}'.format(URDF_PATH, SRDF_PATH))
 
     robot = env.GetRobot(ada_name)
     if robot is None:
