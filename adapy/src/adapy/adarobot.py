@@ -58,9 +58,8 @@ class ADARobot(Robot):
         from prpy.planning import (
             BiRRTPlanner,
             CBiRRTPlanner,
-            CHOMPPlanner,
-            GreedyIKPlanner,
             IKPlanner,
+            GreedyIKPlanner,
             NamedPlanner,
             SBPLPlanner,
             SnapPlanner,
@@ -69,12 +68,14 @@ class ADARobot(Robot):
         )
 
         self.snap_planner = SnapPlanner()
+        self.greedyik_planner = GreedyIKPlanner()
         self.cbirrt_planner = CBiRRTPlanner()
         self.vectorfield_planner = VectorFieldPlanner()
-        self.greedyik_planner = GreedyIKPlanner()
 
         actual_planner = Sequence(
             self.snap_planner,
+            self.vectorfield_planner,
+            self.greedyik_planner,
             self.cbirrt_planner
         )
         self.planner = FirstSupported(
