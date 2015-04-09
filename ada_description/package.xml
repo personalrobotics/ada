@@ -1,6 +1,6 @@
 <package>
    <name>ada_description</name>
-   <version>0.1.0</version>
+   <version>0.1.1</version>
    <description>
       URDF model of ADA. ADA, the Assistive Dexterous Arm, was designed
       and built by the Personal Robotics Laboratory at Carnegie Mellon
