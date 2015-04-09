@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>adapy</name>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <description>
         Python library for interacting with ADA through OpenRAVE. ADA is an
         "Assistive Dextrous Arm" developed by the Personal Robotics Lab at
