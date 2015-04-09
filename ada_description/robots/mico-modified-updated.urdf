@@ -81,7 +81,7 @@
     </collision>
   </link>
   <joint
-    name="Shoulder_Joint"
+    name="j1"
     type="continuous">
     <origin
       xyz="0 0 0.09875"
@@ -105,7 +105,7 @@
   </joint>
   <transmission name="Shoulder_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Shoulder_Joint"/>
+    <joint name="j1"/>
     <actuator name="Shoulder_Motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>136</mechanicalReduction>
@@ -152,7 +152,7 @@
     </collision>
   </link>
   <joint
-    name="Arm_Joint"
+    name="j2"
     type="revolute">
     <origin
       xyz="0 -0.00175 0.11875"
@@ -178,7 +178,7 @@
   </joint>
   <transmission name="Arm_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Arm_Joint"/>
+    <joint name="j2"/>
     <actuator name="Arm_Motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>136</mechanicalReduction>
@@ -225,7 +225,7 @@
     </collision>
   </link>
   <joint
-    name="Forearm_Joint"
+    name="j3"
     type="revolute">
     <origin
       xyz="-0.29 0 0"
@@ -251,7 +251,7 @@
   </joint>
   <transmission name="Forearm_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Forearm_Joint"/>
+    <joint name="j3"/>
     <actuator name="Forearm_Motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>136</mechanicalReduction>
@@ -298,7 +298,7 @@
     </collision>
   </link>
   <joint
-    name="Wrist_1_Joint"
+    name="j4"
     type="continuous">
     <origin
       xyz="0 -0.12325 -0.00875"
@@ -322,7 +322,7 @@
   </joint>
   <transmission name="Wrist_1_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Wrist_1_Joint"/>
+    <joint name="j4"/>
     <actuator name="Wrist_1_Motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>110</mechanicalReduction>
@@ -369,7 +369,7 @@
     </collision>
   </link>
   <joint
-    name="Wrist_2_Joint"
+    name="j5"
     type="continuous">
     <origin
       xyz="0 -0.037029 -0.064136"
@@ -393,7 +393,7 @@
   </joint>
   <transmission name="Wrist_2_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Wrist_2_Joint"/>
+    <joint name="j5"/>
     <actuator name="Wrist_2_Motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>110</mechanicalReduction>
@@ -440,7 +440,7 @@
     </collision>
   </link>
   <joint
-    name="Hand_Joint"
+    name="j6"
     type="continuous">
     <origin
       xyz="0 0.037029 -0.064136"
@@ -464,7 +464,7 @@
   </joint>
   <transmission name="Hand_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Hand_Joint"/>
+    <joint name="j6"/>
     <actuator name="Hand_Motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>110</mechanicalReduction>
@@ -729,7 +729,7 @@
       effort="1.2"
       velocity="0.785398163" />
     <mimic 
-      joint="Finger_1_Proximal_Joint"
+      joint="Finger_2_Proximal_Joint"
       multiplier="0.5" />
   </joint>
   <transmission name="Finger_2_Distal_Joint_Transmission">

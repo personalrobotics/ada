@@ -1,4 +1,4 @@
-- robot: ada
+- robot: ADA
   kinbody: glass
   action: grasp
   sample_goal: True

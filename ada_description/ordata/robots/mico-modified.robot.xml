@@ -50,7 +50,7 @@
             <offsetfrom>base_link</offsetfrom>
             <anchor>0.000000 0.000000 0.098750</anchor>
             <axis>0.000000 0.000000 -1.000000</axis>
-	        <maxvel>0.872664625</maxvel>
+	        <maxvel>0.942</maxvel>
         <!--<maxvel>0.785398162</maxvel>-->
 	    <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
 	    <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
@@ -88,7 +88,7 @@
             <offsetfrom>j1</offsetfrom>
             <anchor>0.000000 -0.001750 0.118750</anchor>
             <axis>-0.000007 1.000000 -0.000004</axis>
-	    <maxvel>0.872664625</maxvel>
+	    <maxvel>0.942</maxvel>
 	    <!---<maxvel>0.785398162</maxvel>-->
 	    <!--<limitsrad>-3.920000 0.780000</limitsrad>-->
 	    <limitsrad>-3.84 0.70</limitsrad>
@@ -126,7 +126,7 @@
             <offsetfrom>j2</offsetfrom>
             <anchor>-0.290000 0.000000 0.000000</anchor>
             <axis>-0.000000 0.0 -1.000000</axis>
-	    <maxvel>0.872664625</maxvel>
+	    <maxvel>0.942</maxvel>
 	    <!--<maxvel>0.785398162</maxvel>-->
 	    <!--<limitsrad>-0.870000 4.010000</limitsrad>-->
 	    <limitsrad>-0.96 4.10</limitsrad>
@@ -164,7 +164,7 @@
             <offsetfrom>j3</offsetfrom>
             <anchor>0.000000 -0.123250 -0.008750</anchor>
             <axis>0.0 1.000000 0.0</axis>
-	    <maxvel>2.0</maxvel>
+	    <maxvel>1.884</maxvel>
 	    <!--<maxvel>0.785398162</maxvel>-->
 	    <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
 	    <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
@@ -202,7 +202,7 @@
             <offsetfrom>j4</offsetfrom>
             <anchor>0.000000 -0.037029 -0.064136</anchor>
             <axis>0.0 0.866027 0.499998</axis>
-	    <maxvel>2.0</maxvel>
+	    <maxvel>1.884</maxvel>
 	    <!--<maxvel>0.785398162</maxvel>-->
 	    <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
 	    <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
@@ -240,7 +240,7 @@
             <offsetfrom>j5</offsetfrom>
             <anchor>0.000000 0.037029 -0.064136</anchor>
             <axis>0.000000 -0.866027 0.499998</axis>
-	    <maxvel>2.0</maxvel>
+	    <maxvel>1.884</maxvel>
 	    <!--<maxvel>0.785398162</maxvel>-->
 	    <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
 	    <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
