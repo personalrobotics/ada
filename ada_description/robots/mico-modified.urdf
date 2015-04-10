@@ -96,15 +96,6 @@
       effort="9.5"
       velocity="0.9425" />
   </joint>
-  <transmission name="Shoulder_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="j1">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Shoulder_Motor">
-      <mechanicalReduction>136</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Arm_Link">
     <inertial>
@@ -163,15 +154,6 @@
       effort="9.5"
       velocity="0.9425" />
   </joint>
-  <transmission name="Arm_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="j2">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Arm_Motor">
-      <mechanicalReduction>136</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Forearm_Link">
     <inertial>
@@ -230,15 +212,6 @@
       effort="9.5"
       velocity="0.9425" />
   </joint>
-  <transmission name="Forearm_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="j3">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Forearm_Motor">
-      <mechanicalReduction>136</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Wrist_1_Link">
     <inertial>
@@ -295,15 +268,6 @@
       effort="3.8"
       velocity="1.885" />
   </joint>
-  <transmission name="Wrist_1_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="j4">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Wrist_1_Motor">
-      <mechanicalReduction>110</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Wrist_2_Link">
     <inertial>
@@ -360,15 +324,6 @@
       effort="3.8"
       velocity="1.885" />
   </joint>
-  <transmission name="Wrist_2_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="j5">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Wrist_2_Motor">
-      <mechanicalReduction>110</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Hand_Link">
     <inertial>
@@ -425,15 +380,6 @@
       effort="3.6"
       velocity="1.885" />
   </joint>
-  <transmission name="Hand_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="j6">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Hand_Motor">
-      <mechanicalReduction>110</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Finger_1_Proximal_Link">
     <inertial>
@@ -492,15 +438,6 @@
       effort="1.2"
       velocity="0.785398163" />
   </joint>
-  <transmission name="Finger_1_Proximal_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="f1">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Finger_1_Proximal_Motor">
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Finger_1_Distal_Link">
     <inertial>
@@ -562,15 +499,6 @@
       joint="f1"
       multiplier="0.5" />
   </joint>
-  <transmission name="Finger_1_Distal_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="f1_distal">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Finger_1_Distal_Motor">
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Finger_2_Proximal_Link">
     <inertial>
@@ -629,15 +557,6 @@
       effort="1.2"
       velocity="0.785398163" />
   </joint>
-  <transmission name="Finger_2_Proximal_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="f2">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Finger_2_Proximal_Motor">
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Finger_2_Distal_Link">
     <inertial>
@@ -699,15 +618,6 @@
       joint="f2"
       multiplier="0.5" />
   </joint>
-  <transmission name="Finger_2_Distal_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="f2_distal">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="Finger_2_Distal_Motor">
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Hand_Ring_Link">
     <inertial>
