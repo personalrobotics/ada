@@ -10,6 +10,7 @@ import argparse
 import logging
 import numpy
 import openravepy
+import rospy
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='utility script for loading AdaPy')
@@ -28,6 +29,9 @@ if __name__ == "__main__":
 
     if args.debug:
         openravepy.RaveSetDebugLevel(openravepy.DebugLevel.Debug)
+
+    if not args.sim:
+        rospy.init_node('adapy', anonymous=True)
 
     env, robot = adapy.initialize(
         sim=args.sim,

@@ -107,9 +107,9 @@ class ControllerManagerClient(object):
                                                  SwitchController)
         from rospy import ServiceProxy
 
-        self._list_controllers_srv = rospy.ServiceProxy(
+        self._list_controllers_srv = ServiceProxy(
             ns + list_controllers_topic, ListControllers, persistent=True)
-        self._switch_controllers_srv = rospy.ServiceProxy(
+        self._switch_controllers_srv = ServiceProxy(
             ns + switch_controller_topic, SwitchController, persistent=True)
 
     def request(self, *controller_names):
