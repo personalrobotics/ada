@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import logging, prpy, openravepy, adapy
 
-URDF_PATH = 'package://ada_description/robots/mico-modified.urdf'
-SRDF_PATH = 'package://ada_description/robots/mico-modified.srdf'
+URDF_PATH = 'package://ada_description/robots/mico.urdf'
+SRDF_PATH = 'package://ada_description/robots/mico.srdf'
 
 def initialize(env_path=None, attach_viewer=False, **kw_args):
     from adarobot import ADARobot
