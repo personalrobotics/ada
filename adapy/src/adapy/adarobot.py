@@ -18,6 +18,8 @@ class ADARobot(Robot):
         from prpy.base.micohand import MicoHand
         from util import AdaPyException, find_adapy_resource
 
+        self.simulated = sim
+
         # We need to hard-code the name. Otherwise, it defaults to
         # "mico-modified".
         Robot.__init__(self, robot_name='ada')
@@ -110,7 +112,7 @@ class ADARobot(Robot):
         self.planner = parent.planner
 
     def ExecuteTrajectory(self, traj, defer=False, timeout=None, switch=True,
-                          unswitch=None):
+                          unswitch=None, **kwargs):
         """ Executes a time trajectory on the robot.
 
         This function directly executes a timed OpenRAVE trajectory on the
@@ -154,6 +156,10 @@ class ADARobot(Robot):
         @rtype  openravepy.Trajectory or TrajectoryFuture
         """
         from .util import or_to_ros_trajectory
+
+        if self.simulated:
+            return Robot.ExecuteTrajectory(traj, defer=defer, timeout=timeout,
+                                           **kwargs)
 
         if unswitch is None:
             unswitch = switch
