@@ -121,3 +121,33 @@ class ControllerManagerClient(object):
         @rtype  ControllerSwitcher
         """
         return ControllerSwitcher(self, controller_names)
+
+
+class JointStateClient(object):
+    def __init__(self, robot, topic_name):
+        from rospy import Subscriber
+        from sensor_msgs.msg import JointState
+
+        self._robot = robot
+        self._subscriber = Subscriber(topic_name, JointState, self._callback)
+        self._dof_mapping = {
+            joint.GetName(): joint.GetDOFIndex() for joint in robot.GetJoints()
+        }
+
+    def _callback(self, joint_msg):
+        from openravepy import KinBody
+
+        # Map from joint names to DOF indices.
+        dof_indices = []
+        dof_values = []
+
+        for name, position in zip(joint_msg.name, joint_msg.position):
+            dof_index = self._dof_mapping.get(name)
+            if dof_index is not None:
+                dof_indices.append(dof_index)
+                dof_values.append(position)
+
+        # Update joint values.
+        with self._robot.GetEnv():
+            self._robot.SetDOFValues(dof_values, dof_indices,
+                                     KinBody.CheckLimitsAction.Nothing)

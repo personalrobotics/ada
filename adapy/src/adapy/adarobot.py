@@ -57,9 +57,13 @@ class ADARobot(Robot):
 
         # Create ros_control clients for execution on real hardware.
         if not sim:
-            from .controller_client import ControllerManagerClient
+            from .controller_client import (ControllerManagerClient,
+                                            JointStateClient)
             from .trajectory_client import FollowJointTrajectoryClient
 
+            self._jointstate_client = JointStateClient(
+                self, topic_name='/joint_states'
+            )
             self._controller_client = ControllerManagerClient(
                 ns='/controller_manager'
             )
