@@ -542,7 +542,7 @@
     </collision>
   </link>
   <joint
-    name="Finger_1_Distal_Joint"
+    name="f1_distal"
     type="revolute">
     <origin
       xyz="-0.003 -0.044 0"
@@ -559,12 +559,12 @@
       effort="1.2"
       velocity="0.785398163" />
     <mimic 
-      joint="Finger_1_Proximal_Joint"
+      joint="f1"
       multiplier="0.5" />
   </joint>
   <transmission name="Finger_1_Distal_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Finger_1_Distal_Joint">
+    <joint name="f1_distal">
       <hardwareInterface>VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="Finger_1_Distal_Motor">
@@ -679,7 +679,7 @@
     </collision>
   </link>
   <joint
-    name="Finger_2_Distal_Joint"
+    name="f2_distal"
     type="revolute">
     <origin
       xyz="-0.003 -0.044 0"
@@ -696,12 +696,12 @@
       effort="1.2"
       velocity="0.785398163" />
     <mimic 
-      joint="Finger_1_Proximal_Joint"
+      joint="f2"
       multiplier="0.5" />
   </joint>
   <transmission name="Finger_2_Distal_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Finger_2_Distal_Joint">
+    <joint name="f2_distal">
       <hardwareInterface>VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="Finger_2_Distal_Motor">
