@@ -12,37 +12,166 @@ class InternalError(ControlException):
 class TrajectoryExecutionFailed(ControlException):
     pass
 
+class TimeoutError(Exception):
+    pass
 
-def condition_wait(condition, timeout, test_fn):
-    """ Wait for a condition variable with a timeout.
+class CancelledError(Exception):
+    pass
 
-    The default Condition.wait() function has two major limitations:
-    
-    First, it subject to spurious wakeups. As a result, it must be called in a
-    "while" loop that checks whether the condition is satisfied. This makes it
-    difficult to use the "timeout" parameter without additional bookkeeping.
+class Future(object):
+    logger = logging.getLogger('future')
 
-    Second, there is no way to tell whether a timeout has occurred. We provide
-    a simple (and approximate) solution by returning True if test_fn() returned
-    True and False otherwise. Note that this test is approximate.
+    def __init__(self):
+        from Queue import Queue
+        from threading import Condition, Lock
 
-    @param condition condition variable to wait for
-    @param timeout maximum time to wait, in seconds
-    @param test_fn boolean termination condition
-    @return boolean indicating whether test_fn() returned True
-    """
-    import time
+        self._is_done = False
+        self._is_error = False
+        self._is_cancelled = False
 
-    time_now = time.time()
-    time_done = time_now + timeout
-    result = test_fn()
+        self._handle = None
+        self._result = None
 
-    while not result and time_now < time_done:
-        condition.wait(time_now - time_done)
-        result = test_fn()
-        time_now = time.time()
+        self._lock = Lock()
+        self._condition = Condition(self._lock)
+        self._callbacks = []
 
-    return result
+    def done(self):
+        """ Return True if the call was cancelled or finished running. """
+        with self._lock:
+            return self._is_done
+
+    def cancel(self):
+        """ Attempt to cancel the call. """
+        raise NotImplementedError('Cancelling is not supported.')
+
+    def cancelled(self):
+        """ Return True if the call was successfully cancelled. """
+        with self._lock:
+            return self._is_done and self._is_cancelled
+
+    def result(self, timeout=None):
+        """ Return the value returned by the call.
+
+        If the call hasn’t yet completed then this method will wait up to
+        timeout seconds. If the call hasn’t completed in timeout seconds, then
+        a TimeoutError will be raised. timeout can be an int or float. If
+        timeout is not specified or None, there is no limit to the wait time.
+
+        If the future is cancelled before completing then CancelledError will
+        be raised.
+
+        If the call raised, this method will raise the same exception.
+        """
+        with self._lock:
+            self._condition.wait(timeout)
+
+            if not self._is_done:
+                raise TimeoutError()
+            elif self._is_cancelled:
+                raise CancelledError()
+            elif self._exception is not None:
+                raise self._exception
+            else:
+                return self._result
+
+    def exception(self, timeout=None):
+        """ Return the exception raised by the call.
+
+        If the call hasn’t yet completed then this method will wait up to
+        timeout seconds. If the call hasn’t completed in timeout seconds, then
+        a TimeoutError will be raised. timeout can be an int or float. If
+        timeout is not specified or None, there is no limit to the wait time.
+
+        If the future is cancelled before completing then CancelledError will
+        be raised.
+
+        If the call completed without raising, None is returned.
+        """
+        with self._lock:
+            self._condition.wait(timeout)
+
+            if not self._is_done:
+                raise TimeoutError()
+            elif self._is_cancelled:
+                raise CancelledError()
+            elif self._exception is not None:
+                return self._exception
+            else:
+                return None
+
+    def add_done_callback(self, fn):
+        """ Attaches the callable fn to the future.
+
+        fn will be called, with the future as its only argument, when the
+        future is cancelled or finishes running. If fn was already added as a
+        callback, this will raise an InternalError.
+
+        Added callables are called in the order that they were added and are
+        always called in a thread belonging to the process that added them. If
+        the callable raises a Exception subclass, it will be logged and
+        ignored. If the callable raises a BaseException subclass, the behavior
+        is undefined.
+
+        If the future has already completed or been cancelled, fn will be
+        called immediately.
+        """
+        with self._lock:
+            if self._is_done:
+                if fn in self._callbacks:
+                    raise InternalError('Callback is already registered.')
+
+                self._callbacks.append(fn)
+                do_call = False
+            else:
+                do_call = True
+
+        if do_call:
+            fn(self)
+
+    def remove_done_callback(self, fn):
+        """ Removes the callable fn to the future.
+
+        If fn is not registered as a callback, this will raise an Exception.
+        """
+        with self._lock:
+            try:
+                self._callbacks.remove(fn)
+            except ValueError:
+                raise InternalError('Callback was not registered.')
+
+    def set_result(self, result):
+        """ Set the result of this Future. """
+        self._result = result
+        self._set_done()
+
+    def set_cancel(self):
+        """ Flag this Future as being cancelled. """
+        self._is_cancelled = True
+        self._set_done()
+
+    def set_exception(self, exception):
+        """ Indicates that an exception has occurred. """
+        self._exception = exception
+        self._set_done()
+
+    def _set_done(self):
+        """ Mark this future as done and return a callback function.
+        """
+        with self._lock:
+            if self._is_done:
+                raise InternalError('This future is already done.')
+
+            self._is_done = True
+            callbacks = list(self._callbacks)
+
+            self._condition.notify_all()
+
+        for callback_fn in callbacks:
+            try:
+                callback_fn(self)
+            except Exception as e:
+                self.logger.exception('Callback raised an exception.')
 
 
 class TrajectoryFuture(object):
@@ -260,3 +389,5 @@ class TrajectoryMode(ROSControlMode):
                 self._queue.remove(traj_future)
 
         traj_future.add_done_callback(remove_from_queue)
+
+        return traj_future
