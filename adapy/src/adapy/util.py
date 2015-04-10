@@ -1,4 +1,7 @@
+import logging
 from prpy.exceptions import PrPyException
+
+logger = logging.getLogger('adapy.util')
 
 
 class AdaPyException(PrPyException):
@@ -50,6 +53,11 @@ def or_to_ros_trajectory(robot, traj):
         q = cspec.ExtractJointValues(waypoint, robot, dof_indices, 0)
         qd = cspec.ExtractJointValues(waypoint, robot, dof_indices, 1)
         qdd = cspec.ExtractJointValues(waypoint, robot, dof_indices, 2)
+
+        if dt == 0. and iwaypoint != 0:
+            logger.warning('Skipped waypoint %d because deltatime = 0.',
+                           iwaypoint)
+            continue
 
         if dt is None:
             raise ValueError('Trajectory is not timed.')

@@ -469,7 +469,7 @@
     </collision>
   </link>
   <joint
-    name="Finger_1_Proximal_Joint"
+    name="f1"
     type="revolute">
     <origin
       xyz="0.0024957 -0.030948 -0.11482"
@@ -488,7 +488,7 @@
   </joint>
   <transmission name="Finger_1_Proximal_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Finger_1_Proximal_Joint"/>
+    <joint name="f1"/>
     <actuator name="Finger_1_Proximal_Motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
@@ -552,7 +552,7 @@
       effort="1.2"
       velocity="0.785398163" />
     <mimic 
-      joint="Finger_1_Proximal_Joint"
+      joint="f1"
       multiplier="0.5" />
   </joint>
   <transmission name="Finger_1_Distal_Joint_Transmission">
@@ -604,7 +604,7 @@
     </collision>
   </link>
   <joint
-    name="Finger_2_Proximal_Joint"
+    name="f2"
     type="revolute">
     <origin
       xyz="0.0024957 0.030948 -0.11482"
@@ -623,7 +623,7 @@
   </joint>
   <transmission name="Finger_2_Proximal_Joint_Transmission">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Finger_2_Proximal_Joint"/>
+    <joint name="f2"/>
     <actuator name="Finger_2_Proximal_Motor">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
@@ -687,7 +687,7 @@
       effort="1.2"
       velocity="0.785398163" />
     <mimic 
-      joint="Finger_2_Proximal_Joint"
+      joint="f2"
       multiplier="0.5" />
   </joint>
   <transmission name="Finger_2_Distal_Joint_Transmission">

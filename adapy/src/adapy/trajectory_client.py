@@ -28,6 +28,9 @@ class TrajectoryFuture(Future):
             joint_names=traj_requested.joint_names
         )
 
+    def cancel(self):
+        self._handle.cancel()
+
     def requested(self):
         """ Returns the trajectory requested to be executed.
 
@@ -94,40 +97,30 @@ class TrajectoryFuture(Future):
         from copy import deepcopy
         from control_msgs.msg import FollowJointTrajectoryResult
 
+        exception = TrajectoryExecutionFailed(
+            'Trajectory execution failed ({:s}): {:s}'.format(
+                get_name_of_constant(TerminalState, terminal_state),
+                get_name_of_constant(FollowJointTrajectoryResult,
+                                     result.error_code)
+            ),
+            executed=self.partial_result(),
+            requested=deepcopy(self._traj_requested)
+
+        )
+
         if terminal_state == TerminalState.SUCCEEDED:
             # Trajectory execution succeeded. Return the trajectory.
             if result.error_code == FollowJointTrajectoryResult.SUCCESSFUL:
                 self.set_result(self._traj_executed)
             # Trajectory execution failed. Raise an exception.
             else:
-                self.set_exception(
-                    TrajectoryExecutionFailed(
-                        'Trajectory execution failed ({:s}): {:s}'.format(
-                            get_name_of_constant(FollowJointTrajectoryResult,
-                                                 result.error_code),
-                            result.error_string
-                        ),
-                        executed=partial_result(),
-                        requested=deepcopy(self._traj_requested)
-
-                    )
-                )
+                self.set_exception(exception)
         # Goal was cancelled. Note that this could have been one by another
         # thread or process, so _cancelled may be False.
-        elif terminal_state not in [TerminalState.PREEMPTED,
-                                    TerminalState.RECALLED]:
+        elif terminal_state in [TerminalState.PREEMPTED, TerminalState.RECALLED]:
             self.set_cancelled()
         else:
-            self.set_exception(
-                TrajectoryExecutionFailed(
-                    'Trajectory execution failed ({:s}): {:s}'.format(
-                        get_name_of_constant(TerminalState, terminal_state),
-                        self._handle.get_goal_status_text()
-                    ),
-                    executed=partial_result(),
-                    requested=deepcopy(self._traj_requested)
-                )
-            )
+            self.set_exception(exception)
 
 
 class FollowJointTrajectoryClient(object):

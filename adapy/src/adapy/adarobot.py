@@ -156,6 +156,7 @@ class ADARobot(Robot):
         @rtype  openravepy.Trajectory or TrajectoryFuture
         """
         from .util import or_to_ros_trajectory
+        from rospy import Time
 
         if self.simulated:
             return Robot.ExecuteTrajectory(traj, defer=defer, timeout=timeout,
