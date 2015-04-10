@@ -8,6 +8,8 @@ class ControlException(RuntimeError):
 class InternalError(ControlException):
     pass
 
+class ControlModeException(ControlException):
+    pass
 
 class TrajectoryExecutionFailed(ControlException):
     def __init__(self, message, requested, executed):
@@ -329,49 +331,85 @@ class FollowJointTrajectoryClient(object):
         return traj_future
 
 
-class TrajectoryMode(ROSControlMode):
+class ModeContextManager(object):
+    def __init__(self, mode_switcher, controller_names):
+        self._mode_switcher = mode_switcher
+        self._requested_controllers = set(controller_names)
+        self._started_controllers = None
+        self._stopped_controllers = None
+
+    def __enter__(self):
+        self._started_controllers, self._stopped_controllers = self()
+
+    def __exit__(self, type, value, tb):
+        if (self._started_controllers is None
+                or self._stopped_controllers is None):
+            raise InternalError('Unknown state. Did you call __enter__?')
+
+        ok = self._mode_switcher._switch_controllers_srv(
+            start_controllers=self._stopped_controllers,
+            stop_controllers=self._started_controllers,
+            strictness=SwitchControllerRequest.STRICT
+        )
+        if not ok:
+            raise ControlModeException('Reverting controllers failed.')
+
+    def __call__(self):
+        from controller_manager_msgs.srv import SwitchControllerRequest
+
+        controller_infos = self._mode_switcher._list_controllers_srv()
+
+        # Figure out what resources the requested controllers need.
+        required_resources = set(sum([
+            controller_info.resources
+            for controller_info in controller_infos
+            if controller_info.name in self._requested_controllers
+        ], []))
+
+        # Start any of the requested controllers that are not already running.
+        start_controllers = [
+            controller_info.name
+            for controller_info in controller_infos
+            if controller_info.name in self._requested_controllers
+            if controller_info.state != 'running'
+        ]
+
+        # Stop any non-requested controllers that conflict with our resources.
+        stop_controllers = [
+            controller_info.name
+            for controller_info in controller_infos
+            if controller_info.name not in self._requested_controllers
+            if controller_info.state == 'running'
+            if not required_resources.isdisjoint(controller_info.resources)
+        ]
+
+        ok = self._mode_switcher._switch_controllers_srv(
+            start_controllers=start_controllers,
+            stop_controllers=stop_controllers,
+            strictness=SwitchControllerRequest.STRICT
+        )
+        if ok:
+            return start_controllers, stop_controllers
+        else:
+            raise ControlModeException('Switching controllers failed.')
+
+"""
+    name: joint_state_controller
+    state: running
+    type: joint_state_controller/JointStateController
+    hardware_interface: hardware_interface::JointStateInterface
+    resources: []
+    name: joint_state_controller
+"""
+
+
+class ModeSwitcher(object):
     def __init__(self, ns):
-        from actionlib import ActionClient
-        from control_msgs.msg import JointTrajectoryAction
-        from threading import Lock
+        from controller_manager_msgs.srv import (ListControllers,
+                                                 SwitchController)
+        from rospy import ServiceProxy
 
-        self._lock = Lock()
-        self._queue = []
-
-        self._client = ActionClient(ns, JointTrajectoryAction)
-        self._client.wait_for_server()
-
-    def running(self):
-        with self._lock:
-            return bool(self._queue)
-
-    def execute_ros_trajectory(self, traj_msg):
-        from control_msgs.msg import JointTrajectoryActionGoal
-
-        goal_msg = JointTrajectoryActionGoal(
-            trajectory=traj_msg,
-            path_tolerance=[], # use default values
-            goal_tolerance=[], # use default values
-            goal_time_tolerance=0. # use default value
-        )
-
-        # Return a TrajectoryFuture to track execution state.
-        traj_future = TrajectoryFuture()
-        traj_future._handle = self._client.send_goal(
-            goal_msg,
-            transition_cb=traj_future._transition_callback,
-            feedback_cb=traj_future._feedback_callback
-        )
-
-        # Add this trajectory to the queue of running trajectories. Remove it
-        # when it finishes executing.
-        with self._lock:
-            self._queue.append(traj_future)
-
-        def remove_from_queue(_):
-            with self._lock:
-                self._queue.remove(traj_future)
-
-        traj_future.add_done_callback(remove_from_queue)
-
-        return traj_future
+        self._list_controllers_srv = rospy.ServiceProxy(
+            ns + '/list_controllers', ListControllers, persistent=True)
+        self._switch_controllers_srv = rospy.ServiceProxy(
+            ns + '/switch_controller', SwitchController, persistent=True)
