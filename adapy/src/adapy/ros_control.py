@@ -331,15 +331,22 @@ class FollowJointTrajectoryClient(object):
         return traj_future
 
 
-class ModeContextManager(object):
+class ControllerSwitcher(object):
     def __init__(self, mode_switcher, controller_names):
+        """ Construct a context manager for switching controllers.
+
+        @param mode_switcher: mode switcher object
+        @type  mode_switcher: ModeSwitcher
+        @param controller_names: requested controller names
+        @type  controller_names: [str]
+        """
         self._mode_switcher = mode_switcher
         self._requested_controllers = set(controller_names)
         self._started_controllers = None
         self._stopped_controllers = None
 
     def __enter__(self):
-        self._started_controllers, self._stopped_controllers = self()
+        self._started_controllers, self._stopped_controllers = self.switch()
 
     def __exit__(self, type, value, tb):
         if (self._started_controllers is None
@@ -354,9 +361,15 @@ class ModeContextManager(object):
         if not ok:
             raise ControlModeException('Reverting controllers failed.')
 
-    def __call__(self):
-        from controller_manager_msgs.srv import SwitchControllerRequest
+    def switch(self):
+        """ Switch to the requested controllers.
 
+        Any controllers that conflict with the resources used by the requested
+        controllers are unloaded. This operation is performed atomically.
+
+        @return tuple containing the loaded and unloaded controllers
+        @rtype  [str], [str]
+        """
         controller_infos = self._mode_switcher._list_controllers_srv()
 
         # Figure out what resources the requested controllers need.
@@ -393,23 +406,45 @@ class ModeContextManager(object):
         else:
             raise ControlModeException('Switching controllers failed.')
 
-"""
-    name: joint_state_controller
-    state: running
-    type: joint_state_controller/JointStateController
-    hardware_interface: hardware_interface::JointStateInterface
-    resources: []
-    name: joint_state_controller
-"""
 
+class ControllerManagerClient(object):
+    def __init__(self, ns='', list_controllers_topic='/list_controllers',
+                              switch_controller_topic='/switch_controller'):
+        """ Constructs a client to a ros_control ControllerManager.
 
-class ModeSwitcher(object):
-    def __init__(self, ns):
+        @param ns: ROS namespace containing the ControllerManager
+        @type  ns: str
+        @param list_controllers_topic: name of ListControllers topic
+        @type  list_controllers_topic: str
+        @param switch_controller_topic: name of SwitchController topic
+        @type  switch_controller_topic: str
+        """
         from controller_manager_msgs.srv import (ListControllers,
                                                  SwitchController)
         from rospy import ServiceProxy
 
         self._list_controllers_srv = rospy.ServiceProxy(
-            ns + '/list_controllers', ListControllers, persistent=True)
+            ns + list_controllers_topic, ListControllers, persistent=True)
         self._switch_controllers_srv = rospy.ServiceProxy(
-            ns + '/switch_controller', SwitchController, persistent=True)
+            ns + switch_controller_topic, SwitchController, persistent=True)
+
+    def request(self, controller_names):
+        """ Returns a ControllerSwitcher for the requested controllers.
+
+        @param controller_names: list of controller names to request
+        @type  controller_names: [str]
+        @return controller switcher for the requested controllers
+        @rtype  ControllerSwitcher
+        """
+        return ControllerSwitcher(self, controller_names)
+
+
+def ExecuteTrajectory(traj):
+    dof_indices = traj.GetDOFIndices()
+    joint_names = get_joint_names(dof_indices)
+    controller_names = get_trajectory_controllers(joint_names)
+
+    with mode_switcher.request(controller_names):
+        client.execute(traj)
+
+
