@@ -16,6 +16,8 @@ class TrajectoryFuture(Future):
         @param traj_requested: requested trajectory
         @type  traj_requested: trajectory_msgs.msg.JointTrajectory
         """
+        super(TrajectoryFuture, self).__init__()
+
         from actionlib import CommState
         from copy import deepcopy
         from trajectory_msgs.msg import JointTrajectory
@@ -61,7 +63,7 @@ class TrajectoryFuture(Future):
         """
         from actionlib import CommState
 
-        state = handle.get_state()
+        state = handle.get_comm_state()
 
         # Transition to the "done" state. This occurs when the trajectory
         # finishes for any reason (including an error).
@@ -72,16 +74,18 @@ class TrajectoryFuture(Future):
 
         self._prev_state = state
 
-    def on_feedback(self, msg):
+    def on_feedback(self, feedback_msg):
         """ Feedback callback for the FollowJointTrajectoryAction client.
 
         @param msg: feedback message
-        @type msg: control_msgs.msg.FollowJointTrajectoryActionFeedback
+        @type msg: control_msgs.msg.FollowJointTrajectoryFeedback
         """
+        msg = feedback_msg.feedback
+
         with self.lock:
             if not self._traj_executed.header.stamp:
                 self._traj_executed.header.stamp = (msg.header.stamp
-                                                  - msg.actual.time_from_start)
+                                                  - actual.time_from_start)
 
             self._traj_executed.points.append(msg.actual)
 
@@ -147,12 +151,15 @@ class FollowJointTrajectoryClient(object):
         @return future representing the execution of the trajectory
         @rtype  TrajectoryFuture
         """
-        from control_msgs.msg import FollowJointTrajectoryActionGoal 
-        import control_msgs.msg
+        import rospy
+        from control_msgs.msg import FollowJointTrajectoryGoal
+
+        goal_msg = FollowJointTrajectoryGoal()
+        goal_msg.trajectory = traj_msg
 
         traj_future = TrajectoryFuture(traj_msg)
         traj_future._handle = self._client.send_goal(
-            FollowJointTrajectoryActionGoal(trajectory=traj_msg),
+            goal_msg,
             transition_cb=traj_future.on_transition,
             feedback_cb=traj_future.on_feedback
         )

@@ -35,7 +35,10 @@ class ControllerSwitcher(object):
         @return tuple containing the loaded and unloaded controllers
         @rtype  [str], [str]
         """
-        controller_infos = self._mode_switcher._list_controllers_srv()
+        from controller_manager_msgs.srv import SwitchControllerRequest
+
+        controller_infos_msg = self._mode_switcher._list_controllers_srv()
+        controller_infos = controller_infos_msg.controller
 
         # Figure out what resources the requested controllers need.
         required_resources = set(sum([

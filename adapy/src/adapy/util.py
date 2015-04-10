@@ -26,6 +26,8 @@ def or_to_ros_trajectory(robot, traj):
     @param traj: input trajectory
     @type  traj: openravepy.Trajectory
     """
+    import numpy
+    from rospy import Duration
     from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
     if traj.GetEnv() != robot.GetEnv():
@@ -33,7 +35,7 @@ def or_to_ros_trajectory(robot, traj):
             'Robot and trajectory are not in the same environment.')
 
     cspec = traj.GetConfigurationSpecification()
-    dof_indices = cspec.ExtractUsedIndices(robot)
+    dof_indices, _ = cspec.ExtractUsedIndices(robot)
     time_from_start = 0.
 
     traj_msg = JointTrajectory(
@@ -58,12 +60,12 @@ def or_to_ros_trajectory(robot, traj):
                              ' but not velocities.')
 
         time_from_start += dt
-        traj_msgs.points.append(
+        traj_msg.points.append(
             JointTrajectoryPoint(
                 positions=q,
-                velocities=qd or [],
-                accelerations=qdd or [],
-                time_from_start=time_from_start
+                velocities=qd if qd is not None else [],
+                accelerations=qdd if qdd is not None else [],
+                time_from_start=Duration.from_sec(time_from_start)
             )
         )
 

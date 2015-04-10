@@ -151,8 +151,7 @@ class Future(object):
         self._set_done()
 
     def _set_done(self):
-        """ Mark this future as done and return a callback function.
-        """
+        """ Mark this future as done and return a callback function. """
         with self.lock:
             if self._is_done:
                 raise InternalError('This future is already done.')
