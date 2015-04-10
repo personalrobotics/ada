@@ -181,6 +181,11 @@ class Future(object):
 
 class TrajectoryFuture(Future):
     def __init__(self, traj_requested):
+        """ Construct a future that represents the execution of a trajectory.
+
+        @param traj_requested: requested trajectory
+        @type  traj_requested: trajectory_msgs.msg.JointTrajectory
+        """
         from actionlib import CommState
         from copy import deepcopy
         from trajectory_msgs.msg import JointTrajectory
@@ -192,15 +197,63 @@ class TrajectoryFuture(Future):
         )
 
     def requested(self):
+        """ Returns the trajectory requested to be executed.
+
+        @return requested trajectory
+        @type   trajectory_msgs.msg.JointTrajectory
+        """
         from copy import deepcopy
 
         return deepcopy(self._traj_requested)
 
     def partial_result(self):
+        """ Returns the trajectory as executed so far.
+
+        This trajectory reports the controller's actual state over time, which
+        may deviate from the requested trajectory. The header.stamp field will
+        be zero until execution begins, then will change to indicate the time
+        at which the trajectory began execution. All time_from_start values are
+        relative to this timestamp.
+
+        @return requested trajectory
+        @type   trajectory_msgs.msg.JointTrajectory
+        """
         from copy import deepcopy
 
         with self.lock:
             return deepcopy(self._traj_executed)
+
+    def on_transition(self, handle):
+        """ Transition callback for the FollowJointTrajectoryAction client.
+
+        @param handle: actionlib goal handle
+        @type  handle: actionlib.ClientGoalHandle
+        """
+        from actionlib import CommState
+
+        state = handle.get_state()
+
+        # Transition to the "done" state. This occurs when the trajectory
+        # finishes for any reason (including an error).
+        if state == self._prev_state:
+            pass
+        elif state == CommState.DONE:
+            self._on_done(handle.get_terminal_state(), handle.get_result())
+
+        self._prev_state = state
+
+    def on_feedback(self, msg):
+        """ Feedback callback for the FollowJointTrajectoryAction client.
+
+        @param msg: feedback message
+        @type msg: control_msgs.msg.FollowJointTrajectoryActionFeedback
+        """
+        with self.lock:
+            if not self._traj_executed.header.stamp:
+                self._traj_executed.header.stamp = (msg.header.stamp
+                                                  - msg.actual.time_from_start)
+
+            self._traj_executed.points.append(msg.actual)
 
     def _on_done(self, terminal_state, result):
         from actionlib import TerminalState, get_name_of_constant
@@ -242,31 +295,14 @@ class TrajectoryFuture(Future):
                 )
             )
 
-    def on_transition(self, handle):
-        from actionlib import CommState
-
-        state = handle.get_state()
-
-        # Transition to the "done" state. This occurs when the trajectory
-        # finishes for any reason (including an error).
-        if state == self._prev_state:
-            pass
-        elif state == CommState.DONE:
-            self._on_done(handle.get_terminal_state(), handle.get_result())
-
-        self._prev_state = state
-
-    def on_feedback(self, msg):
-        with self.lock:
-            if not self._traj_executed.header.stamp:
-                self._traj_executed.header.stamp = (msg.header.stamp
-                                                  - msg.actual.time_from_start)
-
-            self._traj_executed.points.append(msg.actual)
-
 
 class FollowJointTrajectoryClient(object):
     def __init__(self, ns):
+        """ Constructs a client that executes JointTrajectory messages.
+
+        @param ns: namespace for the FollowJointTrajectoryAction server
+        @type  ns: str
+        """
         from actionlib import ActionClient
         from control_msgs.msg import FollowJointTrajectoryAction
 
@@ -274,6 +310,13 @@ class FollowJointTrajectoryClient(object):
         self._client.wait_for_server()
 
     def execute(self, traj_msg):
+        """ Execute a JointTrajectory message and return a TrajectoryFuture.
+
+        @param  traj_msg: requested trajectory
+        @type   traj_msg: trajectory_msgs.msg.JointTrajectory
+        @return future representing the execution of the trajectory
+        @rtype  TrajectoryFuture
+        """
         from control_msgs.msg import FollowJointTrajectoryActionGoal 
         import control_msgs.msg
 
