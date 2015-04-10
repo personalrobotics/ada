@@ -182,14 +182,19 @@ class Future(object):
 class TrajectoryFuture(Future):
     def __init__(self, traj_requested):
         from actionlib import CommState
-        from threading import Condition, Lock
+        from copy import deepcopy
         from trajectory_msgs.msg import JointTrajectory
 
         self._prev_state = CommState.PENDING
-        self._traj_requested = traj_requested
+        self._traj_requested = deepcopy(traj_requested)
         self._traj_executed = JointTrajectory(
             joint_names=traj_requested.joint_names
         )
+
+    def requested(self):
+        from copy import deepcopy
+
+        return deepcopy(self._traj_requested)
 
     def partial_result(self):
         from copy import deepcopy
@@ -237,7 +242,7 @@ class TrajectoryFuture(Future):
                 )
             )
 
-    def _on_transition(self, handle):
+    def on_transition(self, handle):
         from actionlib import CommState
 
         state = handle.get_state()
@@ -251,13 +256,34 @@ class TrajectoryFuture(Future):
 
         self._prev_state = state
 
-    def _on_feedback(self, msg):
+    def on_feedback(self, msg):
         with self.lock:
             if not self._traj_executed.header.stamp:
                 self._traj_executed.header.stamp = (msg.header.stamp
                                                   - msg.actual.time_from_start)
 
             self._traj_executed.points.append(msg.actual)
+
+
+class FollowJointTrajectoryClient(object):
+    def __init__(self, ns):
+        from actionlib import ActionClient
+        from control_msgs.msg import FollowJointTrajectoryAction
+
+        self._client = ActionClient(ns, FollowJointTrajectoryAction)
+        self._client.wait_for_server()
+
+    def execute(self, traj_msg):
+        from control_msgs.msg import FollowJointTrajectoryActionGoal 
+        import control_msgs.msg
+
+        traj_future = TrajectoryFuture(traj_msg)
+        traj_future._handle = self._client.send_goal(
+            FollowJointTrajectoryActionGoal(trajectory=traj_msg),
+            transition_cb=traj_future.on_transition,
+            feedback_cb=traj_future.on_feedback
+        )
+        return traj_future
 
 
 class TrajectoryMode(ROSControlMode):
