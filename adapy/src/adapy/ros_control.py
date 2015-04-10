@@ -10,7 +10,11 @@ class InternalError(ControlException):
 
 
 class TrajectoryExecutionFailed(ControlException):
-    pass
+    def __init__(self, message, requested, executed):
+        super(TrajectoryExecutionFailed, self).__init__(message)
+
+        self.requested = requested
+        self.executed = executed
 
 class TimeoutError(Exception):
     pass
@@ -23,7 +27,9 @@ class Future(object):
 
     def __init__(self):
         from Queue import Queue
-        from threading import Condition, Lock
+        from threading import Condition, RLock
+
+        self.lock = RLock()
 
         self._is_done = False
         self._is_error = False
@@ -32,13 +38,12 @@ class Future(object):
         self._handle = None
         self._result = None
 
-        self._lock = Lock()
-        self._condition = Condition(self._lock)
+        self._condition = Condition(self.lock)
         self._callbacks = []
 
     def done(self):
         """ Return True if the call was cancelled or finished running. """
-        with self._lock:
+        with self.lock:
             return self._is_done
 
     def cancel(self):
@@ -47,7 +52,7 @@ class Future(object):
 
     def cancelled(self):
         """ Return True if the call was successfully cancelled. """
-        with self._lock:
+        with self.lock:
             return self._is_done and self._is_cancelled
 
     def result(self, timeout=None):
@@ -63,7 +68,7 @@ class Future(object):
 
         If the call raised, this method will raise the same exception.
         """
-        with self._lock:
+        with self.lock:
             self._condition.wait(timeout)
 
             if not self._is_done:
@@ -88,7 +93,7 @@ class Future(object):
 
         If the call completed without raising, None is returned.
         """
-        with self._lock:
+        with self.lock:
             self._condition.wait(timeout)
 
             if not self._is_done:
@@ -116,7 +121,7 @@ class Future(object):
         If the future has already completed or been cancelled, fn will be
         called immediately.
         """
-        with self._lock:
+        with self.lock:
             if self._is_done:
                 if fn in self._callbacks:
                     raise InternalError('Callback is already registered.')
@@ -134,7 +139,7 @@ class Future(object):
 
         If fn is not registered as a callback, this will raise an Exception.
         """
-        with self._lock:
+        with self.lock:
             try:
                 self._callbacks.remove(fn)
             except ValueError:
@@ -145,7 +150,7 @@ class Future(object):
         self._result = result
         self._set_done()
 
-    def set_cancel(self):
+    def set_cancelled(self):
         """ Flag this Future as being cancelled. """
         self._is_cancelled = True
         self._set_done()
@@ -158,7 +163,7 @@ class Future(object):
     def _set_done(self):
         """ Mark this future as done and return a callback function.
         """
-        with self._lock:
+        with self.lock:
             if self._is_done:
                 raise InternalError('This future is already done.')
 
@@ -174,175 +179,85 @@ class Future(object):
                 self.logger.exception('Callback raised an exception.')
 
 
-class TrajectoryFuture(object):
-    logger = logging.getLogger('TrajectoryFuture')
-
-    def __init__(self):
-        from trajectory_msgs.msg import JointTrajectory
+class TrajectoryFuture(Future):
+    def __init__(self, traj_requested):
+        from actionlib import CommState
         from threading import Condition, Lock
+        from trajectory_msgs.msg import JointTrajectory
 
-        self._lock = Lock()
-        self._handle = None
-
-        # Flags:
-        # - _cancelled: set if execution is cancelled (even if not by us)
-        # - _done: set when execution terminates, regardless of the cause
-        #
-        # When _done is set to True, the _done_condition variable is notified
-        # and the functions in _done_callbacks are called sequentially.
-        self._cancelled = False
-        self._done = False
-        self._done_condition = Condition(self._lock)
-        self._done_callbacks = []
-
-        # Result variables:
-        # - _result: set if execution succeeds
-        # - _exception: set if an error occurrs.
-        # 
-        # Both of values remain None if execution is cancelled.
-        self._result = None
-        self._exception = None
-
-        self._traj_actual = JointTrajectory()
-
-    def cancel(self):
-        with self._lock:
-            if self._handle is None:
-                raise InternalError('This TrajectoryFuture is not initialized.')
-            elif self._cancelled:
-                return True
-            elif self._done:
-                return False
-
-            self._handle.cancel()
-            return True
-
-    def cancelled(self):
-        with self._lock:
-            return self._done and self._cancelled
-
-    def running(self):
-        with self._lock:
-            return not self._done
-
-    def done(self):
-        with self._lock:
-            return self._done
-
-    def result(self, timeout=None):
-        from concurrent.futures import CancelledError, TimeoutError
-
-        with self._done_condition:
-            condition_wait(self._done_condition, timeout, lambda: self._done)
-
-            if not self._done:
-                raise TimeoutError()
-            elif self._cancelled:
-                raise CancelledError()
-            elif self._exception is not None:
-                raise self._exception
-            else:
-                return self._result
+        self._prev_state = CommState.PENDING
+        self._traj_requested = traj_requested
+        self._traj_executed = JointTrajectory(
+            joint_names=traj_requested.joint_names
+        )
 
     def partial_result(self):
         from copy import deepcopy
 
-        with self._lock:
-            return deepcopy(self._traj_actual)
+        with self.lock:
+            return deepcopy(self._traj_executed)
 
-    def exception(self, timeout=None):
-        from concurrent.futures import CancelledError
-
-        with self._done_condition:
-            condition_wait(self._done_condition, timeout, lambda: self._done)
-
-            if not self._done:
-                raise TimeoutError()
-            elif self._cancelled:
-                raise CancelledError()
-            elif self._exception is not None:
-                return self._exception
-            else:
-                return None
-
-    def add_done_callback(self, fn):
-        with self._lock:
-            if self._done:
-                self._call_callback(fn)
-            else:
-                self._done_callbacks.append(fn)
-
-    def _set_done(self, terminal_state, result):
-        # NOTE: This function MUST be called with the lock acquired.
-
+    def _on_done(self, terminal_state, result):
         from actionlib import TerminalState, get_name_of_constant
+        from copy import deepcopy
         from control_msgs.msg import FollowJointTrajectoryResult
 
-        # The actionlib call succeeded, so "result" is valid.
         if terminal_state == TerminalState.SUCCEEDED:
-            Result = FollowJointTrajectoryResult
-
             # Trajectory execution succeeded. Return the trajectory.
-            if result.error_code == Result.SUCCESSFUL:
-                self._result = self._traj_actual
+            if result.error_code == FollowJointTrajectoryResult.SUCCESSFUL:
+                self.set_result(self._traj_executed)
             # Trajectory execution failed. Raise an exception.
             else:
-                self._exception = TrajectoryExecutionFailed(
-                    'Trajectory execution failed ({:s}): {:s}'.format(
-                        get_name_of_constant(Result, result.error_code),
-                        result.error_string))
+                self.set_exception(
+                    TrajectoryExecutionFailed(
+                        'Trajectory execution failed ({:s}): {:s}'.format(
+                            get_name_of_constant(FollowJointTrajectoryResult,
+                                                 result.error_code),
+                            result.error_string
+                        ),
+                        executed=partial_result(),
+                        requested=deepcopy(self._traj_requested)
+
+                    )
+                )
         # Goal was cancelled. Note that this could have been one by another
         # thread or process, so _cancelled may be False.
         elif terminal_state not in [TerminalState.PREEMPTED,
                                     TerminalState.RECALLED]:
-            self._cancelled = True
+            self.set_cancelled()
         else:
-            self._exception = TrajectoryExecutionFailed(
-                'Trajectory execution failed ({:s}): {:s}'.format(
-                    get_name_of_constant(TerminalState, terminal_state),
-                    self._handle.get_goal_status_text()))
+            self.set_exception(
+                TrajectoryExecutionFailed(
+                    'Trajectory execution failed ({:s}): {:s}'.format(
+                        get_name_of_constant(TerminalState, terminal_state),
+                        self._handle.get_goal_status_text()
+                    ),
+                    executed=partial_result(),
+                    requested=deepcopy(self._traj_requested)
+                )
+            )
 
-        # Flag this future as "done".
-        self._done = True
-        self._done_condition.notify_all()
-
-    def _call_callback(self, fn):
-        try:
-            fn(self._result)
-        except Exception as e:
-            self.logger.exception('Callback raised an exception.')
-
-    def _transition_callback(self, handle):
+    def _on_transition(self, handle):
         from actionlib import CommState
 
         state = handle.get_state()
-        do_callbacks = False
 
         # Transition to the "done" state. This occurs when the trajectory
         # finishes for any reason (including an error).
-        with self._lock:
-            if not self._done and state == CommState.DONE:
-                self._set_done(handle.get_terminal_state(),
-                               handle.get_result())
-                do_callbacks = True
+        if state == self._prev_state:
+            pass
+        elif state == CommState.DONE:
+            self._on_done(handle.get_terminal_state(), handle.get_result())
 
-        # Call any registered "done" callbacks. We intentionally do this
-        # outside of _set_done so we can release the lock.
-        if do_callbacks:
-            for fn in self._done_callbacks:
-                self._call_callback(fn)
+        self._prev_state = state
 
-    def _feedback_callback(self, feedback_msg):
-        with self._lock:
-            # Initialize the trajectory's start time with the timestamp of the
-            # first observed feedback message.
-            if not self._traj_actual.header.stamp:
-                self._traj_actual.header.stamp = feedback_msg.header.stamp
+    def _on_feedback(self, msg):
+        with self.lock:
+            if not self._traj_executed.header.stamp:
+                self._traj_executed.header.stamp = (msg.header.stamp
+                                                  - msg.actual.time_from_start)
 
-            actual_waypoint = feedback_msg.actual
-            actual_waypoint.time_from_start = feedback_msg.header.stamp \
-                                            - self._traj_actual.header.stamp
-            self._traj_actual.points.append(actual_waypoint)
+            self._traj_executed.points.append(msg.actual)
 
 
 class TrajectoryMode(ROSControlMode):
