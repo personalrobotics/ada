@@ -1,4 +1,4 @@
-from .futures import FutureError
+from .futures import Future, FutureError
 
 
 class TrajectoryExecutionFailed(FutureError):

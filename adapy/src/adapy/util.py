@@ -44,17 +44,20 @@ def or_to_ros_trajectory(robot, traj):
     for iwaypoint in xrange(traj.GetNumWaypoints()):
         waypoint = traj.GetWaypoint(iwaypoint)
 
-        time_from_start += cspec.ExtractDeltaTime(waypoint)
+        dt = cspec.ExtractDeltaTime(waypoint)
         q = cspec.ExtractJointValues(waypoint, robot, dof_indices, 0)
         qd = cspec.ExtractJointValues(waypoint, robot, dof_indices, 1)
         qdd = cspec.ExtractJointValues(waypoint, robot, dof_indices, 2)
 
-        if q is None:
+        if dt is None:
+            raise ValueError('Trajectory is not timed.')
+        elif q is None:
             raise ValueError('Trajectory does not contain joint values')
         elif qdd is not None and qd is None:
             raise ValueError('Trajectory contains accelerations,'
                              ' but not velocities.')
 
+        time_from_start += dt
         traj_msgs.points.append(
             JointTrajectoryPoint(
                 positions=q,

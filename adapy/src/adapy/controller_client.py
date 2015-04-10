@@ -24,17 +24,7 @@ class ControllerSwitcher(object):
         self._started_controllers, self._stopped_controllers = self.switch()
 
     def __exit__(self, type, value, tb):
-        if (self._started_controllers is None
-                or self._stopped_controllers is None):
-            raise ROSControlError('Unknown state. Did you call __enter__?')
-
-        ok = self._mode_switcher._switch_controllers_srv(
-            start_controllers=self._stopped_controllers,
-            stop_controllers=self._started_controllers,
-            strictness=SwitchControllerRequest.STRICT
-        )
-        if not ok:
-            raise SwitchError('Reverting controllers failed.')
+        self.unswitch()
 
     def switch(self):
         """ Switch to the requested controllers.
@@ -81,6 +71,25 @@ class ControllerSwitcher(object):
         else:
             raise SwitchError('Switching controllers failed.')
 
+    def unswitch(self):
+        """ Reverts to the controllers loaded before switch() was called. """
+
+        if (self._started_controllers is None
+                or self._stopped_controllers is None):
+            raise ROSControlError('Unknown state. Did you call __enter__?')
+
+        ok = self._mode_switcher._switch_controllers_srv(
+            start_controllers=self._stopped_controllers,
+            stop_controllers=self._started_controllers,
+            strictness=SwitchControllerRequest.STRICT
+        )
+
+        self._started_controllers = None
+        self._stopped_controllers = None
+
+        if not ok:
+            raise SwitchError('Reverting controllers failed.')
+
 
 class ControllerManagerClient(object):
     def __init__(self, ns='', list_controllers_topic='/list_controllers',
@@ -103,7 +112,7 @@ class ControllerManagerClient(object):
         self._switch_controllers_srv = rospy.ServiceProxy(
             ns + switch_controller_topic, SwitchController, persistent=True)
 
-    def request(self, controller_names):
+    def request(self, *controller_names):
         """ Returns a ControllerSwitcher for the requested controllers.
 
         @param controller_names: list of controller names to request

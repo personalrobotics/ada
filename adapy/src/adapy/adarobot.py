@@ -53,6 +53,21 @@ class ADARobot(Robot):
                     'Failed loading TSRs from "{:s}": {:s}'.format(
                         tsr_path, e.message))
 
+        # Create ros_control clients for execution on real hardware.
+        if not sim:
+            from .controller_client import ControllerManagerClient
+            from .trajectory_client import FollowJointTrajectoryClient
+
+            self._controller_client = ControllerManagerClient(
+                ns='/controller_manager'
+            )
+            self._trajectory_switcher = self._controller_client.request(
+                'traj_controller'
+            )
+            self._trajectory_client = FollowJointTrajectoryClient(
+                ns='/traj_controller/follow_joint_trajectory'
+            )
+
         # Initialize the default planning pipeline.
         from prpy.planning import Sequence, Ranked, FirstSupported
         from prpy.planning import (
@@ -93,3 +108,70 @@ class ADARobot(Robot):
         self.arm = Cloned(parent.arm)
         self.manipulators = [ self.arm ]
         self.planner = parent.planner
+
+    def ExecuteTrajectory(self, traj, defer=False, timeout=None, switch=True,
+                          unswitch=None):
+        """ Executes a time trajectory on the robot.
+
+        This function directly executes a timed OpenRAVE trajectory on the
+        robot. If you have a geometric path, such as those returned by a
+        geometric motion planner, you should first time the path using
+        PostProcessPath. Alternatively, you could use the ExecutePath helper
+        function to time and execute the path in one function call.
+
+        If timeout = None (the default), this function does not return until
+        execution has finished. Termination occurs if the trajectory is
+        successfully executed or if a fault occurs (in this case, an exception
+        will be raised). If timeout is a float (including timeout = 0), this
+        function will return None once the timeout has ellapsed, even if the
+        trajectory is still being executed.
+        
+        NOTE: We suggest that you either use timeout=None or defer=True. If
+        trajectory execution times out, there is no way to tell whether
+        execution was successful or not. Other values of timeout are only
+        supported for legacy reasons.
+
+        This function returns the trajectory that was actually executed on the
+        robot, including controller error. If this is not available, the input
+        trajectory will be returned instead.
+
+        If switch = True, this function switches to the ros_control controllers
+        necessary to execute traj. If unswitch = True, it also undoes this
+        switch after the trajectory has finished executing. If unswitch is
+        unspecified, it defaults to the same value as switch.
+
+        @param traj: timed trajectory to execute
+        @type  traj: openravepy.Trajectory
+        @param defer: execute asynchronously and return a trajectory Future
+        @type  defer: bool
+        @param timeout: maximum time to wait for execution to finish
+        @type  timeout: float or None
+        @param switch: switch to the controllers necessary to execute traj
+        @type  switch: bool
+        @param unswitch: revert the controllers after executing traj
+        @type  unswitch: bool or None
+        @return trajectory executed on the robot
+        @rtype  openravepy.Trajectory or TrajectoryFuture
+        """
+        from .util import or_to_ros_trajectory
+
+        if unswitch is None:
+            unswitch = switch
+
+        traj_msg = or_to_ros_trajectory(self, traj)
+        traj_msg.header.stamp = rospy.Time(0)
+
+        if switch:
+            self._trajectory_switcher.switch()
+
+        traj_future = self._trajectory_client.execute(traj_msg)
+
+        if unswitch:
+            traj_future.add_done_callback(
+                lambda _: self._trajectory_switcher.unswitch
+            )
+
+        if defer:
+            return traj_future
+        else:
+            return traj_future.result(timeout)
