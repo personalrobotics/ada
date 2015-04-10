@@ -160,6 +160,7 @@ class ADARobot(Robot):
         @rtype  openravepy.Trajectory or TrajectoryFuture
         """
         from .util import or_to_ros_trajectory
+        from rospy import Time
 
         if self.simulated:
             return Robot.ExecuteTrajectory(traj, defer=defer, timeout=timeout,
@@ -169,7 +170,6 @@ class ADARobot(Robot):
             unswitch = switch
 
         traj_msg = or_to_ros_trajectory(self, traj)
-        traj_msg.header.stamp = rospy.Time(0)
 
         if switch:
             self._trajectory_switcher.switch()

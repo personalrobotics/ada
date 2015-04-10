@@ -1,4 +1,7 @@
+import logging
 from prpy.exceptions import PrPyException
+
+logger = logging.getLogger('adapy.util')
 
 
 class AdaPyException(PrPyException):
@@ -26,6 +29,8 @@ def or_to_ros_trajectory(robot, traj):
     @param traj: input trajectory
     @type  traj: openravepy.Trajectory
     """
+    import numpy
+    from rospy import Duration
     from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
     if traj.GetEnv() != robot.GetEnv():
@@ -33,7 +38,7 @@ def or_to_ros_trajectory(robot, traj):
             'Robot and trajectory are not in the same environment.')
 
     cspec = traj.GetConfigurationSpecification()
-    dof_indices = cspec.ExtractUsedIndices(robot)
+    dof_indices, _ = cspec.ExtractUsedIndices(robot)
     time_from_start = 0.
 
     traj_msg = JointTrajectory(
@@ -49,6 +54,11 @@ def or_to_ros_trajectory(robot, traj):
         qd = cspec.ExtractJointValues(waypoint, robot, dof_indices, 1)
         qdd = cspec.ExtractJointValues(waypoint, robot, dof_indices, 2)
 
+        if dt == 0. and iwaypoint != 0:
+            logger.warning('Skipped waypoint %d because deltatime = 0.',
+                           iwaypoint)
+            continue
+
         if dt is None:
             raise ValueError('Trajectory is not timed.')
         elif q is None:
@@ -58,12 +68,12 @@ def or_to_ros_trajectory(robot, traj):
                              ' but not velocities.')
 
         time_from_start += dt
-        traj_msgs.points.append(
+        traj_msg.points.append(
             JointTrajectoryPoint(
                 positions=q,
-                velocities=qd or [],
-                accelerations=qdd or [],
-                time_from_start=time_from_start
+                velocities=qd if qd is not None else [],
+                accelerations=qdd if qdd is not None else [],
+                time_from_start=Duration.from_sec(time_from_start)
             )
         )
 

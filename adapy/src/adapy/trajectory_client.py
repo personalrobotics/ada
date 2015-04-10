@@ -16,6 +16,8 @@ class TrajectoryFuture(Future):
         @param traj_requested: requested trajectory
         @type  traj_requested: trajectory_msgs.msg.JointTrajectory
         """
+        super(TrajectoryFuture, self).__init__()
+
         from actionlib import CommState
         from copy import deepcopy
         from trajectory_msgs.msg import JointTrajectory
@@ -25,6 +27,9 @@ class TrajectoryFuture(Future):
         self._traj_executed = JointTrajectory(
             joint_names=traj_requested.joint_names
         )
+
+    def cancel(self):
+        self._handle.cancel()
 
     def requested(self):
         """ Returns the trajectory requested to be executed.
@@ -61,7 +66,7 @@ class TrajectoryFuture(Future):
         """
         from actionlib import CommState
 
-        state = handle.get_state()
+        state = handle.get_comm_state()
 
         # Transition to the "done" state. This occurs when the trajectory
         # finishes for any reason (including an error).
@@ -72,16 +77,18 @@ class TrajectoryFuture(Future):
 
         self._prev_state = state
 
-    def on_feedback(self, msg):
+    def on_feedback(self, feedback_msg):
         """ Feedback callback for the FollowJointTrajectoryAction client.
 
         @param msg: feedback message
-        @type msg: control_msgs.msg.FollowJointTrajectoryActionFeedback
+        @type msg: control_msgs.msg.FollowJointTrajectoryFeedback
         """
+        msg = feedback_msg.feedback
+
         with self.lock:
             if not self._traj_executed.header.stamp:
                 self._traj_executed.header.stamp = (msg.header.stamp
-                                                  - msg.actual.time_from_start)
+                                                  - actual.time_from_start)
 
             self._traj_executed.points.append(msg.actual)
 
@@ -90,40 +97,30 @@ class TrajectoryFuture(Future):
         from copy import deepcopy
         from control_msgs.msg import FollowJointTrajectoryResult
 
+        exception = TrajectoryExecutionFailed(
+            'Trajectory execution failed ({:s}): {:s}'.format(
+                get_name_of_constant(TerminalState, terminal_state),
+                get_name_of_constant(FollowJointTrajectoryResult,
+                                     result.error_code)
+            ),
+            executed=self.partial_result(),
+            requested=deepcopy(self._traj_requested)
+
+        )
+
         if terminal_state == TerminalState.SUCCEEDED:
             # Trajectory execution succeeded. Return the trajectory.
             if result.error_code == FollowJointTrajectoryResult.SUCCESSFUL:
                 self.set_result(self._traj_executed)
             # Trajectory execution failed. Raise an exception.
             else:
-                self.set_exception(
-                    TrajectoryExecutionFailed(
-                        'Trajectory execution failed ({:s}): {:s}'.format(
-                            get_name_of_constant(FollowJointTrajectoryResult,
-                                                 result.error_code),
-                            result.error_string
-                        ),
-                        executed=partial_result(),
-                        requested=deepcopy(self._traj_requested)
-
-                    )
-                )
+                self.set_exception(exception)
         # Goal was cancelled. Note that this could have been one by another
         # thread or process, so _cancelled may be False.
-        elif terminal_state not in [TerminalState.PREEMPTED,
-                                    TerminalState.RECALLED]:
+        elif terminal_state in [TerminalState.PREEMPTED, TerminalState.RECALLED]:
             self.set_cancelled()
         else:
-            self.set_exception(
-                TrajectoryExecutionFailed(
-                    'Trajectory execution failed ({:s}): {:s}'.format(
-                        get_name_of_constant(TerminalState, terminal_state),
-                        self._handle.get_goal_status_text()
-                    ),
-                    executed=partial_result(),
-                    requested=deepcopy(self._traj_requested)
-                )
-            )
+            self.set_exception(exception)
 
 
 class FollowJointTrajectoryClient(object):
@@ -147,12 +144,15 @@ class FollowJointTrajectoryClient(object):
         @return future representing the execution of the trajectory
         @rtype  TrajectoryFuture
         """
-        from control_msgs.msg import FollowJointTrajectoryActionGoal 
-        import control_msgs.msg
+        import rospy
+        from control_msgs.msg import FollowJointTrajectoryGoal
+
+        goal_msg = FollowJointTrajectoryGoal()
+        goal_msg.trajectory = traj_msg
 
         traj_future = TrajectoryFuture(traj_msg)
         traj_future._handle = self._client.send_goal(
-            FollowJointTrajectoryActionGoal(trajectory=traj_msg),
+            goal_msg,
             transition_cb=traj_future.on_transition,
             feedback_cb=traj_future.on_feedback
         )
