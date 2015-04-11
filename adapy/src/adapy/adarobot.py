@@ -67,6 +67,11 @@ class ADARobot(Robot):
             self._controller_client = ControllerManagerClient(
                 ns='/controller_manager'
             )
+            self._velocity_joint_mode_controller = self._controller_client.request(
+                'velocity_joint_mode_controller'
+            )
+            self._velocity_joint_mode_controller.switch()
+
             self._trajectory_switcher = self._controller_client.request(
                 'traj_controller'
             )
@@ -185,3 +190,4 @@ class ADARobot(Robot):
             return traj_future
         else:
             return traj_future.result(timeout)
+        #return traj_future
