@@ -163,7 +163,7 @@ class ADARobot(Robot):
         from rospy import Time
 
         if self.simulated:
-            return Robot.ExecuteTrajectory(traj, defer=defer, timeout=timeout,
+            return Robot.ExecuteTrajectory(self, traj, defer=defer, timeout=timeout,
                                            **kwargs)
 
         if unswitch is None:
