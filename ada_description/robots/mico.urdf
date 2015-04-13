@@ -433,7 +433,7 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="0"
+      lower="-0.01"
       upper="1.33555556"
       effort="1.2"
       velocity="0.785398163" />
@@ -552,7 +552,7 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="0"
+      lower="-0.01"
       upper="1.33555556"
       effort="1.2"
       velocity="0.785398163" />
