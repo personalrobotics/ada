@@ -61,6 +61,11 @@ class ADARobot(Robot):
                                             JointStateClient)
             from .trajectory_client import FollowJointTrajectoryClient
 
+            self._trajectory_joint_names = [
+                self.GetJointFromDOFIndex(i).GetName()
+                for i in xrange(self.GetDOF())
+            ]
+
             self._jointstate_client = JointStateClient(
                 self, topic_name='/joint_states'
             )
@@ -164,7 +169,7 @@ class ADARobot(Robot):
         @return trajectory executed on the robot
         @rtype  openravepy.Trajectory or TrajectoryFuture
         """
-        from .util import or_to_ros_trajectory
+        from .util import or_to_ros_trajectory, pad_ros_trajectory
         from rospy import Time
 
         if self.simulated:
@@ -175,6 +180,12 @@ class ADARobot(Robot):
             unswitch = switch
 
         traj_msg = or_to_ros_trajectory(self, traj)
+
+        # The trajectory_controller expects the full set of DOFs to be
+        # specified in every trajectory. We pad the trajectory by adding
+        # constant values for any missing joints.
+        with self.GetEnv():
+            pad_ros_trajectory(self, traj_msg, self._trajectory_joint_names)
 
         if switch:
             self._trajectory_switcher.switch()
