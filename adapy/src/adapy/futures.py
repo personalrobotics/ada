@@ -27,6 +27,7 @@ class Future(object):
 
         self._handle = None
         self._result = None
+        self._exception = None
 
         self._condition = Condition(self.lock)
         self._callbacks = []
