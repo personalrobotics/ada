@@ -12,4 +12,9 @@
 
     <end_effector name="Mico" group="hand" parent_link="Hand_Link"
                   parent_group="Mico"/>
+
+    <disable_collisions link1="Finger_1_Proximal_Link" link2="Finger_2_Proximal_Link"/>
+    <disable_collisions link1="Finger_1_Proximal_Link" link2="Finger_2_Distal_Link"/>
+    <disable_collisions link1="Finger_1_Distal_Link" link2="Finger_2_Proximal_Link"/>
+    <disable_collisions link1="Finger_1_Distal_Link" link2="Finger_2_Distal_Link"/>
 </robot>
