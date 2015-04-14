@@ -104,9 +104,9 @@ class ADARobot(Robot):
         self.vectorfield_planner = VectorFieldPlanner()
 
         actual_planner = Sequence(
-            self.snap_planner,
-            self.vectorfield_planner,
-            self.greedyik_planner,
+            #self.snap_planner,
+            #self.vectorfield_planner,
+            #self.greedyik_planner,
             self.cbirrt_planner
         )
         self.planner = FirstSupported(
@@ -114,16 +114,54 @@ class ADARobot(Robot):
             NamedPlanner(delegate_planner=actual_planner)
         )
 
-        # Disable path simplification since OMPLSimplifier does not support
-        # continuous joints. 
-        self.simplifier = None
-
     def CloneBindings(self, parent):
         super(ADARobot, self).CloneBindings(parent)
 
         self.arm = Cloned(parent.arm)
         self.manipulators = [ self.arm ]
         self.planner = parent.planner
+
+    def PostProcessPath(self, path, defer=False):
+        """ Post-process a geometric path to prepare it for execution.
+
+        This function uses OpenRAVE's ParabolicSmoother to simultaneously time
+        and smooth trajectories for execution. The implementatino for ADA
+        currently has two major limitations:
+
+        1. it ignores the return code from SmoothTrajectory
+        2. defer=True is not supported
+
+        This implementation should be replaced once we have another trajectory
+        smoother that works on ADA.
+
+        @param path: input OpenRAVE trajectory, possibly un-timed
+        @type  path: openravepy.Trajectory
+        @param defer: not implemented
+        @type  defer: bool
+        """
+        import openravepy
+        from openravepy import PlannerStatus
+        from prpy.util import CopyTrajectory, Timer
+
+        if defer:
+            logger.warning('PostProcessPath does not support "defer" on ADA.')
+
+        with self.GetEnv():
+            traj = CopyTrajectory(path, env=self.GetEnv())
+
+            with self:
+                status = openravepy.planningutils.SmoothTrajectory(
+                    traj, 1, 1, 'ParabolicSmoother', '')
+
+        # FIXME: This is a giant hack, but Stefanos reports that the trajectory
+        # is fine even if the smoother fails with the dreaded "initial ramp in
+        # collision" error.
+        if status not in [ PlannerStatus.HasSolution,
+                           PlannerStatus.InterruptedWithSolution ]:
+            logger.warning('Smoothing failed with error %s. Pressing on!',
+                str(status))
+
+        return traj
 
     def ExecuteTrajectory(self, traj, defer=False, timeout=None, switch=True,
                           unswitch=None, **kwargs):
