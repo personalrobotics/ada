@@ -197,8 +197,11 @@ class ADARobot(Robot):
                 lambda _: self._trajectory_switcher.unswitch
             )
 
+        from trajectory_client import TrajectoryExecutionFailed
         if defer:
             return traj_future
         else:
-            return traj_future.result(timeout)
-        #return traj_future
+            try:
+                return traj_future.result(timeout)
+            except TrajectoryExecutionFailed as e:
+                logger.exception('Trajectory execution failed.')

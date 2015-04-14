@@ -380,6 +380,44 @@
       effort="3.6"
       velocity="1.885" />
   </joint>
+   <!--link
+    name="Camera_RGB_Frame">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.05" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+         <mesh  filename="package://ada_description/meshes/Hand_Link_camera.STL" />
+      </geometry>   
+       <material name="Cyan">
+       <color rgba="1 0.5 1.0 1.0"/>
+     </material>
+    </visual>
+  </link>
+   <joint
+    name="Camera_Joint" type = "fixed">
+    <origin
+      xyz="0.0473 0.0741 -0.09"
+      rpy="-2.8538 -0.1071 -1.5982" />
+    <parent
+      link="Hand_Link" />
+    <child
+      link="Camera_RGB_Frame" />
+  </joint-->
   <link
     name="Finger_1_Proximal_Link">
     <inertial>
