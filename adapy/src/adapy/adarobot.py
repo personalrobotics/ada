@@ -104,9 +104,9 @@ class ADARobot(Robot):
         self.vectorfield_planner = VectorFieldPlanner()
 
         actual_planner = Sequence(
-            #self.snap_planner,
-            #self.vectorfield_planner,
-            #self.greedyik_planner,
+            self.snap_planner,
+            self.vectorfield_planner,
+            self.greedyik_planner,
             self.cbirrt_planner
         )
         self.planner = FirstSupported(
@@ -197,8 +197,11 @@ class ADARobot(Robot):
                 lambda _: self._trajectory_switcher.unswitch
             )
 
+        from trajectory_client import TrajectoryExecutionFailed
         if defer:
             return traj_future
         else:
-            return traj_future.result(timeout)
-        #return traj_future
+            try:
+                return traj_future.result(timeout)
+            except TrajectoryExecutionFailed as e:
+                logger.exception('Trajectory execution failed.')
