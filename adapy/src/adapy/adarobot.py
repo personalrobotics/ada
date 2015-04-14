@@ -104,9 +104,9 @@ class ADARobot(Robot):
         self.vectorfield_planner = VectorFieldPlanner()
 
         actual_planner = Sequence(
-            #self.snap_planner,
-            #self.vectorfield_planner,
-            #self.greedyik_planner,
+            self.snap_planner,
+            self.vectorfield_planner,
+            self.greedyik_planner,
             self.cbirrt_planner
         )
         self.planner = FirstSupported(
