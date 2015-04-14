@@ -21,17 +21,21 @@ def find_adapy_resource(relative_path, package='adapy'):
                       relative_path))
 
 
-def or_to_ros_trajectory(robot, traj):
+def or_to_ros_trajectory(robot, traj, time_tolerance=0.01):
     """ Convert an OpenRAVE trajectory to a ROS trajectory.
 
     @param robot: OpenRAVE robot
     @type  robot: openravepy.Robot
     @param traj: input trajectory
     @type  traj: openravepy.Trajectory
+    @param time_tolerance: minimum time between two waypoints
+    @type  time_tolerance: float
     """
     import numpy
     from rospy import Duration
     from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+
+    assert time_tolerance >= 0.
 
     if traj.GetEnv() != robot.GetEnv():
         raise ValueError(
@@ -39,12 +43,14 @@ def or_to_ros_trajectory(robot, traj):
 
     cspec = traj.GetConfigurationSpecification()
     dof_indices, _ = cspec.ExtractUsedIndices(robot)
-    time_from_start = 0.
 
     traj_msg = JointTrajectory(
         joint_names=[ robot.GetJointFromDOFIndex(dof_index).GetName()
                       for dof_index in dof_indices ]
     )
+
+    time_from_start = 0.
+    prev_time_from_start = 0.
     
     for iwaypoint in xrange(traj.GetNumWaypoints()):
         waypoint = traj.GetWaypoint(iwaypoint)
@@ -54,11 +60,6 @@ def or_to_ros_trajectory(robot, traj):
         qd = cspec.ExtractJointValues(waypoint, robot, dof_indices, 1)
         qdd = cspec.ExtractJointValues(waypoint, robot, dof_indices, 2)
 
-        if dt == 0. and iwaypoint != 0:
-            logger.warning('Skipped waypoint %d because deltatime = 0.',
-                           iwaypoint)
-            continue
-
         if dt is None:
             raise ValueError('Trajectory is not timed.')
         elif q is None:
@@ -67,7 +68,21 @@ def or_to_ros_trajectory(robot, traj):
             raise ValueError('Trajectory contains accelerations,'
                              ' but not velocities.')
 
+        # Duplicate waypoints break trajectory execution, so we explicitly
+        # filter them out. Note that we check the difference in time between
+        # the current and the previous waypoint, not the raw "dt" value. This
+        # is necessary to support very densely sampled trajectories.
         time_from_start += dt
+        deltatime = time_from_start - prev_time_from_start
+
+        if iwaypoint > 0 and deltatime < time_tolerance:
+            logger.warning('Skipped waypoint %d because deltatime is %.3f < %.3f.',
+                deltatime, time_tolerance)
+            continue
+
+        prev_time_from_start = time_from_start
+
+        # Create the waypoint.
         traj_msg.points.append(
             JointTrajectoryPoint(
                 positions=list(q),
@@ -77,8 +92,7 @@ def or_to_ros_trajectory(robot, traj):
             )
         )
 
-    assert numpy.isclose(time_from_start, traj.GetDuration())
-
+    assert abs(time_from_start - traj.GetDuration()) < time_tolerance
     return traj_msg
 
 
