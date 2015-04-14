@@ -184,6 +184,12 @@ class ADARobot(Robot):
         # The trajectory_controller expects the full set of DOFs to be
         # specified in every trajectory. We pad the trajectory by adding
         # constant values for any missing joints.
+        print traj_msg
+        print "\n\n\n\n\n\n"
+        print traj.serialize()
+        
+        #from IPython import embed
+        #embed()
         with self.GetEnv():
             pad_ros_trajectory(self, traj_msg, self._trajectory_joint_names)
 
