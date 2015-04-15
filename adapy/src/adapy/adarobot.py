@@ -114,9 +114,12 @@ class ADARobot(Robot):
             NamedPlanner(delegate_planner=actual_planner)
         )
 
-        from prpy.planning.retimer import ParabolicSmoother
+        from prpy.planning.retimer import ParabolicSmoother, HauserParabolicSmoother
         self.simplifier = None
-        self.smoother = ParabolicSmoother()
+        self.smoother = Sequence(
+            ParabolicSmoother(),
+            HauserParabolicSmoother()
+        )
 
     def CloneBindings(self, parent):
         super(ADARobot, self).CloneBindings(parent)
