@@ -400,8 +400,8 @@
    <joint
     name="Camera_Joint" type = "fixed">
     <origin
-      xyz="0.048 0.014 -0.089 "
-      rpy="-2.969 0.001 -1.572" />
+      xyz="0.047 0.05 -0.090 "
+      rpy="-2.92 0.000 -1.571" />
     <parent
       link="Hand_Link" />
     <child
