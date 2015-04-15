@@ -2,8 +2,8 @@
 Changelog for package ada_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2015-04-15)
+------------------
 * added configurations and changed mico.urdf file
 * changes in the mico.urdf
 * added camera model in the mico.urdf, changed constraints in controllers, modifications in exceptions returned by adarobot
