@@ -206,9 +206,9 @@ class ADARobot(Robot):
                 lambda _: self._trajectory_switcher.unswitch
             )
 
-        for i in range(0,len(traj_msg.points)):
-            print traj_msg.points[i].positions
-            print '\n'
+        #for i in range(0,len(traj_msg.points)):
+        #    print traj_msg.points[i].positions
+        #    print '\n'
 
 
         from trajectory_client import TrajectoryExecutionFailed
