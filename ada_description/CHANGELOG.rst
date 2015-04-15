@@ -2,8 +2,8 @@
 Changelog for package ada_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2015-04-15)
+------------------
 * added slight rotation to j2 to bring it in line with reality
 * added configurations and changed mico.urdf file
 * changes in the mico.urdf

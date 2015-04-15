@@ -2,8 +2,8 @@
 Changelog for package adapy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2015-04-15)
+------------------
 * commented out spammy trajectory printing
 * Merge branch 'bugfix/AdaRobotCleanup' of https://github.com/personalrobotics/ada into bugfix/AdaRobotCleanup
 * added configurations and changed mico.urdf file
