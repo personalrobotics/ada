@@ -123,11 +123,11 @@ traj_controller:
   constraints:
     stopped_velocity_tolerance: 1.0
   gains: # Required because we're controlling a velocity interface
-    j1: {p: 5,  d: 0, i: 0, i_clamp: 1}
-    j2: {p: 5,  d: 0, i: 0, i_clamp: 1}
-    j3: {p: 5,  d: 0, i: 0, i_clamp: 1}
-    j4: {p: 5,  d: 0, i: 0, i_clamp: 1}
-    j5: {p: 5,  d: 0, i: 0, i_clamp: 1}
-    j6: {p: 5,  d: 0, i: 0, i_clamp: 1}
+    j1: {p: 12,  d: 0, i: 0, i_clamp: 1}
+    j2: {p: 12,  d: 0, i: 0, i_clamp: 1}
+    j3: {p: 12,  d: 0, i: 0, i_clamp: 1}
+    j4: {p: 12,  d: 0, i: 0, i_clamp: 1}
+    j5: {p: 12,  d: 0, i: 0, i_clamp: 1}
+    j6: {p: 12,  d: 0, i: 0, i_clamp: 1}
     f1: {p: 1,  d: 0, i: 0, i_clamp: 1}
-    f2: {p: 1,  d: 0, i: 0, i_clamp: 1}     
+    f2: {p: 1,  d: 0, i: 0, i_clamp: 1}
