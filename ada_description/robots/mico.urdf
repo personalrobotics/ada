@@ -94,7 +94,7 @@
       xyz="0 0 -1" />
     <limit
       effort="9.5"
-      velocity="0.9425" />
+      velocity="0.75" />
   </joint>
   <link
     name="Arm_Link">
@@ -152,7 +152,7 @@
       lower="-3.84517851"
       upper="0.62658588"
       effort="9.5"
-      velocity="0.9425" />
+      velocity="0.75" />
   </joint>
   <link
     name="Forearm_Link">
@@ -210,7 +210,7 @@
       lower="-0.95864778"
       upper="4.1040905"
       effort="9.5"
-      velocity="0.9425" />
+      velocity="0.75" />
   </joint>
   <link
     name="Wrist_1_Link">
@@ -266,7 +266,7 @@
       xyz="0 0 1" />
     <limit
       effort="3.8"
-      velocity="1.885" />
+      velocity="0.75" />
   </joint>
   <link
     name="Wrist_2_Link">
@@ -322,7 +322,7 @@
       xyz="0 0 1" />
     <limit
       effort="3.8"
-      velocity="1.885" />
+      velocity="0.75" />
   </joint>
   <link
     name="Hand_Link">
@@ -378,7 +378,7 @@
       xyz="0 0 1" />
     <limit
       effort="3.6"
-      velocity="1.885" />
+      velocity="0.75" />
   </joint>
    <link
     name="Camera_RGB_Frame">
