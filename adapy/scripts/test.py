@@ -22,5 +22,4 @@ env, robot = adapy.initialize(attach_viewer='rviz', sim=False)
 manip = robot.arm
 manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
 robot.SetActiveDOFs([0,1,2,3,4,5])
-embed()
 

@@ -187,9 +187,9 @@ class ADARobot(Robot):
         # The trajectory_controller expects the full set of DOFs to be
         # specified in every trajectory. We pad the trajectory by adding
         # constant values for any missing joints.
-        print traj_msg
-        print "\n\n\n\n\n\n"
-        print traj.serialize()
+        #print traj_msg
+        #print "\n\n\n\n\n\n"
+        #print traj.serialize()
         
         #from IPython import embed
         #embed()
@@ -205,6 +205,11 @@ class ADARobot(Robot):
             traj_future.add_done_callback(
                 lambda _: self._trajectory_switcher.unswitch
             )
+
+        #for i in range(0,len(traj_msg.points)):
+        #    print traj_msg.points[i].positions
+        #    print '\n'
+
 
         from trajectory_client import TrajectoryExecutionFailed
         if defer:
