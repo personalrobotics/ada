@@ -11,8 +11,8 @@
         modeling.
     </description>
 
-    <author email="tekin@cmu.edu">Tekin Mericli</author>
-    <maintainer email="tekin@cmu.edu">Tekin Mericli</maintainer>
+    <author email="snikolai@andrew.cmu.edu">Stefanos Nikolaidis</author>
+    <maintainer email="snikolai@andrew.cmu.edu">Stefanos Nikolaidis</maintainer>
     <license>BSD</license>
 
     <buildtool_depend>catkin</buildtool_depend>
