@@ -81,7 +81,7 @@
     </collision>
   </link>
   <joint
-    name="Shoulder_Joint"
+    name="j1"
     type="continuous">
     <origin
       xyz="0 0 0.09875"
@@ -92,25 +92,10 @@
       link="Shoulder_Link" />
     <axis
       xyz="0 0 -1" />
-    <!--
     <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      effort="18"
-      velocity="0.785398163" />
+      effort="9.5"
+      velocity="0.9425" />
   </joint>
-  <transmission name="Shoulder_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Shoulder_Joint"/>
-    <actuator name="Shoulder_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>136</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Arm_Link">
     <inertial>
@@ -152,38 +137,23 @@
     </collision>
   </link>
   <joint
-    name="Arm_Joint"
+    name="j2"
     type="revolute">
     <origin
       xyz="0 -0.00175 0.11875"
-      rpy="1.5708 0 3.1416" />
+      rpy="1.5708 -0.22 3.1416" />
     <parent
       link="Shoulder_Link" />
     <child
       link="Arm_Link" />
     <axis
       xyz="0 0 1" />
-    <!--
     <limit
-      lower="-3.92"
-      upper="0.78"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      lower="0.785"
-      upper="5.4981853"
-      effort="18"
-      velocity="0.785398163" />
+      lower="-3.84517851"
+      upper="0.62658588"
+      effort="9.5"
+      velocity="0.9425" />
   </joint>
-  <transmission name="Arm_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Arm_Joint"/>
-    <actuator name="Arm_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>136</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Forearm_Link">
     <inertial>
@@ -225,7 +195,7 @@
     </collision>
   </link>
   <joint
-    name="Forearm_Joint"
+    name="j3"
     type="revolute">
     <origin
       xyz="-0.29 0 0"
@@ -236,27 +206,12 @@
       link="Forearm_Link" />
     <axis
       xyz="0 0 1" />
-    <!--  
     <limit
-      lower="-0.87"
-      upper="4.01"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      lower="0.65"
-      upper="5.6331853"
-      effort="18"
-      velocity="0.785398163" />
+      lower="-0.95864778"
+      upper="4.1040905"
+      effort="9.5"
+      velocity="0.9425" />
   </joint>
-  <transmission name="Forearm_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Forearm_Joint"/>
-    <actuator name="Forearm_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>136</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Wrist_1_Link">
     <inertial>
@@ -298,7 +253,7 @@
     </collision>
   </link>
   <joint
-    name="Wrist_1_Joint"
+    name="j4"
     type="continuous">
     <origin
       xyz="0 -0.12325 -0.00875"
@@ -309,25 +264,10 @@
       link="Wrist_1_Link" />
     <axis
       xyz="0 0 1" />
-    <!--
     <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="8"
-      velocity="0.785398163" />
-    -->
-    <limit
-      effort="0"
-      velocity="0.785398163" />
+      effort="3.8"
+      velocity="1.885" />
   </joint>
-  <transmission name="Wrist_1_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Wrist_1_Joint"/>
-    <actuator name="Wrist_1_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>110</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Wrist_2_Link">
     <inertial>
@@ -369,7 +309,7 @@
     </collision>
   </link>
   <joint
-    name="Wrist_2_Joint"
+    name="j5"
     type="continuous">
     <origin
       xyz="0 -0.037029 -0.064136"
@@ -380,25 +320,10 @@
       link="Wrist_2_Link" />
     <axis
       xyz="0 0 1" />
-    <!--
     <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      effort="8"
-      velocity="0.785398163" />
+      effort="3.8"
+      velocity="1.885" />
   </joint>
-  <transmission name="Wrist_2_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Wrist_2_Joint"/>
-    <actuator name="Wrist_2_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>110</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Hand_Link">
     <inertial>
@@ -418,10 +343,10 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 3.14" />
       <geometry>
         <mesh
-          filename="package://ada_description/meshes/Hand_Link.STL" />
+          filename="package://ada_description/meshes/Hand_Link_camera.STL" />
       </geometry>
       <material
         name="">
@@ -432,15 +357,15 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 3.14" />
       <geometry>
         <mesh
-          filename="package://ada_description/meshes/Hand_Link.STL" />
+          filename="package://ada_description/meshes/Hand_Link_camera.STL" />
       </geometry>
     </collision>
   </link>
   <joint
-    name="Hand_Joint"
+    name="j6"
     type="continuous">
     <origin
       xyz="0 0.037029 -0.064136"
@@ -451,25 +376,37 @@
       link="Hand_Link" />
     <axis
       xyz="0 0 1" />
-    <!--
     <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0.785398163" />
-    -->
-    <limit
-      effort="8"
-      velocity="0.785398163" />
+      effort="3.6"
+      velocity="1.885" />
   </joint>
-  <transmission name="Hand_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Hand_Joint"/>
-    <actuator name="Hand_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>110</mechanicalReduction>
-    </actuator>
-  </transmission>
+   <link
+    name="Camera_RGB_Frame">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.05" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+  </link>
+   <joint
+    name="Camera_Joint" type = "fixed">
+    <origin
+      xyz="0.047 0.05 -0.090 "
+      rpy="-2.92 0.000 -1.571" />
+    <parent
+      link="Hand_Link" />
+    <child
+      link="Camera_RGB_Frame" />
+  </joint>
   <link
     name="Finger_1_Proximal_Link">
     <inertial>
@@ -511,7 +448,7 @@
     </collision>
   </link>
   <joint
-    name="Finger_1_Proximal_Joint"
+    name="f1"
     type="revolute">
     <origin
       xyz="0.0024957 -0.030948 -0.11482"
@@ -523,19 +460,11 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="0"
-      upper="1.05"
+      lower="-0.01"
+      upper="1.35"
       effort="1.2"
       velocity="0.785398163" />
   </joint>
-  <transmission name="Finger_1_Proximal_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Finger_1_Proximal_Joint"/>
-    <actuator name="Finger_1_Proximal_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Finger_1_Distal_Link">
     <inertial>
@@ -577,7 +506,7 @@
     </collision>
   </link>
   <joint
-    name="Finger_1_Distal_Joint"
+    name="f1_distal"
     type="revolute">
     <origin
       xyz="-0.003 -0.044 0"
@@ -594,17 +523,9 @@
       effort="1.2"
       velocity="0.785398163" />
     <mimic 
-      joint="Finger_1_Proximal_Joint"
+      joint="f1"
       multiplier="0.5" />
   </joint>
-  <transmission name="Finger_1_Distal_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Finger_1_Distal_Joint"/>
-    <actuator name="Finger_1_Distal_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Finger_2_Proximal_Link">
     <inertial>
@@ -646,7 +567,7 @@
     </collision>
   </link>
   <joint
-    name="Finger_2_Proximal_Joint"
+    name="f2"
     type="revolute">
     <origin
       xyz="0.0024957 0.030948 -0.11482"
@@ -658,19 +579,11 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="0"
-      upper="1.05"
+      lower="-0.01"
+      upper="1.35"
       effort="1.2"
       velocity="0.785398163" />
   </joint>
-  <transmission name="Finger_2_Proximal_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Finger_2_Proximal_Joint"/>
-    <actuator name="Finger_2_Proximal_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Finger_2_Distal_Link">
     <inertial>
@@ -712,7 +625,7 @@
     </collision>
   </link>
   <joint
-    name="Finger_2_Distal_Joint"
+    name="f2_distal"
     type="revolute">
     <origin
       xyz="-0.003 -0.044 0"
@@ -729,17 +642,9 @@
       effort="1.2"
       velocity="0.785398163" />
     <mimic 
-      joint="Finger_1_Proximal_Joint"
+      joint="f2"
       multiplier="0.5" />
   </joint>
-  <transmission name="Finger_2_Distal_Joint_Transmission">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="Finger_2_Distal_Joint"/>
-    <actuator name="Finger_2_Distal_Motor">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
   <link
     name="Hand_Ring_Link">
     <inertial>
@@ -1059,3 +964,4 @@
       xyz="0 0 0" />
   </joint>
 </robot>
+
