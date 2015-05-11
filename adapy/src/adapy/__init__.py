@@ -1,65 +1,53 @@
 #!/usr/bin/env python
-PACKAGE = 'adapy'
 import logging, prpy, openravepy, adapy
 
-logger = logging.getLogger('adapy')
+URDF_PATH = 'package://ada_description/robots/mico.urdf'
+SRDF_PATH = 'package://ada_description/robots/mico.srdf'
 
-# Add dependencies to our OpenRAVE plugin and data search paths.
+def initialize(env_path=None, attach_viewer=False, **kw_args):
+    from adarobot import ADARobot
+    from util import AdaPyException, find_adapy_resource
 
-
-def initialize(robot_xml=None, env_path=None, attach_viewer=False, **kw_args):
     prpy.logger.initialize_logging()
 
     # Create the environment.
     env = openravepy.Environment()
     if env_path is not None:
-      if not env.Load(env_path):
-        raise Exception('Unable to load environment frompath %s' % env_path)
+        if not env.Load(env_path):
+            raise IOError(
+                'Unable to load environment "{:s}".'.format(env_path))
 
-  
-    if robot_xml is None:
-       import os, rospkg
-       rospack = rospkg.RosPack()
-       base_path = rospack.get_path('ada_description')
+    # Use or_urdf to load ADA from URDF and SRDF.
+    with env:
+        or_urdf = openravepy.RaveCreateModule(env, 'urdf')
+        ada_name = or_urdf.SendCommand(
+            'load {:s} {:s}'.format(URDF_PATH, SRDF_PATH))
 
-       robot_xml = os.path.join(base_path, 'ordata', 'robots', 'mico-modified.robot.xml')
+    robot = env.GetRobot(ada_name)
+    if robot is None:
+        raise AdaPyException('Failed loading ADA with or_urdf.')
 
-    robot = env.ReadRobotXMLFile(robot_xml)
-    env.Add(robot)
-
-
-    
-
-    # Default arguments.
-    #keys = [ 'sim']
-    #for key in keys:
-     #   if key not in kw_args:
-     #      kw_args[key] = sim
-
-    from adarobot import ADARobot
+    # Bind AdaPy-specific functionality on the robot.
     prpy.bind_subclass(robot, ADARobot, **kw_args)
 
-#     from r2robot import R2Robot
-#     prpy.bind_subclass(robot, R2Robot, **kw_args)
-
-#     # Start by attempting to load or_rviz.
+    # Start by attempting to load or_rviz.
     if attach_viewer == True:
-        attach_viewer = 'or_rviz'
+        attach_viewer = 'rviz'
         env.SetViewer(attach_viewer)
 
-#         # Fall back on qtcoin if loading or_rviz failed
+        # Fall back on qtcoin if loading or_rviz failed
         if env.GetViewer() is None:
-           logger.warning('Loading or_rviz failed. Falling back on qt_coin.')
+           logger.warning('Loading rviz failed. Falling back on qt_coin.')
            attach_viewer = 'qtcoin'
 
     if attach_viewer and env.GetViewer() is None:
         env.SetViewer(attach_viewer)
         if env.GetViewer() is None:
-            raise Exception('Failed creating viewer of type "{0:s}".'.format(attach_viewer))
+            raise AdaPyException(
+                'Failed creating viewer of type "{:s}".'.format(attach_viewer))
      
-#     # Remove the ROS logging handler again. It might have been added when we loaded or_rviz.
+    # Remove the ROS logging handler again. It might have been added when we
+    # loaded or_rviz.
     prpy.logger.remove_ros_logger()
-    #print "hello!!!!!************************"
 
     return env, robot
-

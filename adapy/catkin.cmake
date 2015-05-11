@@ -8,7 +8,7 @@
 find_package(catkin REQUIRED COMPONENTS
                     rospy
                     prpy
-                    or_cdchomp
+#                   or_cdchomp
                     cbirrt2
             )
  

@@ -1,132 +1,133 @@
 # the finger efforts are likely current.
 # for the other joints it's torque in Nm
 soft_limits:
-   eff: [16,16,16,10,10,10,1.3,1.3]
+  eff: [16,16,16,10,10,10,1.3,1.3]
 
 # whole-arm joint_state publisher
 joint_state_controller:
-   type: joint_state_controller/JointStateController
-   publish_rate: 500
+  type: joint_state_controller/JointStateController
+  publish_rate: 500
 
 # mode-switching controllers
 position_joint_mode_controller:
-   type: pr_ros_controllers/JointModeController
-   joint_mode: 1 # position
+  type: pr_ros_controllers/JointModeController
+  joint_mode: 1 # position
 velocity_joint_mode_controller:
-   type: pr_ros_controllers/JointModeController
-   joint_mode: 2 # velocity
+  type: pr_ros_controllers/JointModeController
+  joint_mode: 2 # velocity
 
 # per-joint position controllers
 pos_j1_controller:
-   type: pr_ros_controllers/PrJointPositionController
-   joint: j1
+  type: pr_ros_controllers/PrJointPositionController
+  joint: j1
 pos_j2_controller:
-   type: pr_ros_controllers/PrJointPositionController
-   joint: j2
+  type: pr_ros_controllers/PrJointPositionController
+  joint: j2
 pos_j3_controller:
-   type: pr_ros_controllers/PrJointPositionController
-   joint: j3
+  type: pr_ros_controllers/PrJointPositionController
+  joint: j3
 pos_j4_controller:
-   type: pr_ros_controllers/PrJointPositionController
-   joint: j4
+  type: pr_ros_controllers/PrJointPositionController
+  joint: j4
 pos_j5_controller:
-   type: pr_ros_controllers/PrJointPositionController
-   joint: j5
+  type: pr_ros_controllers/PrJointPositionController
+  joint: j5
 pos_j6_controller:
-   type: pr_ros_controllers/PrJointPositionController
-   joint: j6
+  type: pr_ros_controllers/PrJointPositionController
+  joint: j6
 pos_f1_controller:
-   type: pr_ros_controllers/PrJointPositionController
-   joint: f1
+  type: pr_ros_controllers/PrJointPositionController
+  joint: f1
 pos_f2_controller:
-   type: pr_ros_controllers/PrJointPositionController
-   joint: f2
+  type: pr_ros_controllers/PrJointPositionController
+  joint: f2
 
 # per-joint velocity controllers
 vel_j1_controller:
-    type: velocity_controllers/JointVelocityController
-    joint: j1
+  type: velocity_controllers/JointVelocityController
+  joint: j1
 vel_j2_controller:
-    type: velocity_controllers/JointVelocityController
-    joint: j2
+  type: velocity_controllers/JointVelocityController
+  joint: j2
 vel_j3_controller:
-    type: velocity_controllers/JointVelocityController
-    joint: j3
+  type: velocity_controllers/JointVelocityController
+  joint: j3
 vel_j4_controller:
-    type: velocity_controllers/JointVelocityController
-    joint: j4
+  type: velocity_controllers/JointVelocityController
+  joint: j4
 vel_j5_controller:
-    type: velocity_controllers/JointVelocityController
-    joint: j5
+  type: velocity_controllers/JointVelocityController
+  joint: j5
 vel_j6_controller:
-    type: velocity_controllers/JointVelocityController
-    joint: j6
+  type: velocity_controllers/JointVelocityController
+  joint: j6
 vel_f1_controller:
-    type: velocity_controllers/JointVelocityController
-    joint: f1
+  type: velocity_controllers/JointVelocityController
+  joint: f1
 vel_f2_controller:
-    type: velocity_controllers/JointVelocityController
-    joint: f2
+  type: velocity_controllers/JointVelocityController
+  joint: f2
 
 pid_j1_controller:
-    type: pr_ros_controllers/PrJointVelocityController
-    joint: j1
-    p: 3
-    i: 0
-    d: 0
+  type: pr_ros_controllers/PrJointVelocityController
+  joint: j1
+  p: 3
+  i: 0
+  d: 0
 pid_j2_controller:
-    type: pr_ros_controllers/PrJointVelocityController
-    joint: j2
-    p: 3
-    i: 0
-    d: 0
+  type: pr_ros_controllers/PrJointVelocityController
+  joint: j2
+  p: 3
+  i: 0
+  d: 0
 pid_j3_controller:
-    type: pr_ros_controllers/PrJointVelocityController
-    joint: j3
-    p: 3
-    i: 0
-    d: 0
+  type: pr_ros_controllers/PrJointVelocityController
+  joint: j3
+  p: 3
+  i: 0
+  d: 0
 pid_j4_controller:
-    type: pr_ros_controllers/PrJointVelocityController
-    joint: j4
-    p: 3
-    i: 0
-    d: 0
+  type: pr_ros_controllers/PrJointVelocityController
+  joint: j4
+  p: 3
+  i: 0
+  d: 0
 pid_j5_controller:
-    type: pr_ros_controllers/PrJointVelocityController
-    joint: j5
-    p: 3
-    i: 0
-    d: 0
+  type: pr_ros_controllers/PrJointVelocityController
+  joint: j5
+  p: 3
+  i: 0
+  d: 0
 pid_j6_controller:
-    type: pr_ros_controllers/PrJointVelocityController
-    joint: j6
-    p: 3
-    i: 0
-    d: 0
-pid_f1_controller:
-    type: pr_ros_controllers/PrJointVelocityController
-    joint: f1
-    p: 1
-    i: 0
-    d: 0
+  type: pr_ros_controllers/PrJointVelocityController
+  joint: j6
+  p: 3
+  i: 0
+  d: 0
+d_f1_controller:
+  type: pr_ros_controllers/PrJointVelocityController
+  joint: f1
+  p: 1
+  i: 0
+  d: 0
 pid_f2_controller:
-    type: pr_ros_controllers/PrJointVelocityController
-    joint: f2
-    p: 1
-    i: 0
-    d: 0
-
+  type: pr_ros_controllers/PrJointVelocityController
+  joint: f2
+  p: 1
+  i: 0
+  d: 0
 # trajectory controller
 traj_controller:
-   type: velocity_controllers/JointTrajectoryController
-   joints: [j1,j2,j3,j4,j5,j6,f1,f2]
-   gains: # Required because we're controlling a velocity interface
-     j1: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j2: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j3: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j4: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j5: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     j6: {p: 5,  d: 0, i: 0, i_clamp: 1}
-     f1: {p: 1,  d: 0, i: 0, i_clamp: 1}
-     f2: {p: 1,  d: 0, i: 0, i_clamp: 1}     
+  type: velocity_controllers/JointTrajectoryController
+  joints: [j1, j2, j3, j4, j5, j6, f1, f2]
+  constraints:
+    stopped_velocity_tolerance: 1.0
+  gains: # Required because we're controlling a velocity interface
+    j1: {p: 5,  d: 0, i: 0, i_clamp: 1}
+    j2: {p: 5,  d: 0, i: 0, i_clamp: 1}
+    j3: {p: 5,  d: 0, i: 0, i_clamp: 1}
+    j4: {p: 5,  d: 0, i: 0, i_clamp: 1}
+    j5: {p: 5,  d: 0, i: 0, i_clamp: 1}
+    j6: {p: 5,  d: 0, i: 0, i_clamp: 1}
+    f1: {p: 1,  d: 0, i: 0, i_clamp: 1}
+    f2: {p: 1,  d: 0, i: 0, i_clamp: 1}     
