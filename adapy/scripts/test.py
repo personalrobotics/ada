@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import adapy, openravepy, numpy, prpy
+import adapy, openravepy, numpy, prpy, rospy
 from IPython import embed
 
 def PlanToTransform(env, robot, transform):
@@ -16,10 +16,12 @@ def PlanToOffset(env, robot, offset):
     traj = PlanToTransform(env, robot, transform);
     return traj
 
+rospy.init_node('test_scenario', anonymous = True)
 openravepy.RaveInitialize(True, level=openravepy.DebugLevel.Debug)
 openravepy.misc.InitOpenRAVELogging();
 env, robot = adapy.initialize(attach_viewer='rviz', sim=False)
 manip = robot.arm
-manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
+#manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
 robot.SetActiveDOFs([0,1,2,3,4,5])
-
+from IPython import embed
+embed()
