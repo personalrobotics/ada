@@ -50,4 +50,8 @@ def initialize(env_path=None, attach_viewer=False, **kw_args):
     # loaded or_rviz.
     prpy.logger.remove_ros_logger()
 
+    import adapy.action # register actions
+    import adapy.tsr # register TSR libraries
+    robot.actions = prpy.action.ActionLibrary()    
+
     return env, robot
