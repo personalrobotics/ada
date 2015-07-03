@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from prpy.util import FindCatkinResource
 import numpy, cPickle, time, os.path
 
-logger = logging.getLogger('herbpy')
+logger = logging.getLogger('adapy')
 
 @ActionMethod
 def Point(robot, focus, manip=None, render=False):
@@ -176,14 +176,4 @@ def Exhibit(robot, obj, manip=None, distance=0.1, wait=2, render=True):
     with prpy.viz.RenderTSRList(unlift_tsr, robot.GetEnv(), render=render):
         robot.PlanToTSR(unlift_tsr, execute=True)
 
-
-@ActionMethod
-def Multipoint(robot, focus_list, manip=None):
-    """
-    @param robot The robot performing the various points
-    @param focus_list The unordered list of 3-D coordinates in space 
-                      or objects to be pointed to 
-    @param manip The manipulator being used to point
-    """
-    raise NotImplementedError
 
