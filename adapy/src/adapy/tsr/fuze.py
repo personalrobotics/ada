@@ -2,14 +2,14 @@ import numpy
 from prpy.tsr.tsrlibrary import TSRFactory
 from prpy.tsr.tsr import *
 
-@TSRFactory('ada', 'glass', 'lift')
-def glass_lift(robot, glass, manip=None, distance=0.1):
+@TSRFactory('ada', 'fuze_bottle', 'lift')
+def glass_lift(robot, bottle, manip=None, distance=0.1):
     '''
     This creates a TSR for lifting the glass a specified distance.  
-    It assumed that when called, the robot is grasping the glass.
+    It assumed that when called, the robot is grasping the bottle.
 
     @param robot The robot performing the lift
-    @param glass The glass to lift
+    @param glass The bottle to lift
     @param manip The manipulator to perform the grasp, if None
        the active manipulator on the robot is used
     @param distance The distance to lift the glass
@@ -47,9 +47,9 @@ def glass_lift(robot, glass, manip=None, distance=0.1):
     Bw_constrain[:, 0] = -epsilon
     Bw_constrain[:, 1] = epsilon
     if distance < 0:
-        Bw_constrain[0,:] = [-epsilon+distance, epsilon]
+        Bw_constrain[1,:] = [-epsilon+distance, epsilon]
     else:
-        Bw_constrain[0,:] = [-epsilon, epsilon+distance]
+        Bw_constrain[1,:] = [-epsilon, epsilon+distance]
 
     tsr_constraint = TSR(T0_w = start_position, Tw_e = numpy.eye(4),
             Bw = Bw_constrain, manip = manip_idx)
@@ -59,11 +59,11 @@ def glass_lift(robot, glass, manip=None, distance=0.1):
 
     return [goal_tsr_chain, movement_chain]
 
-@TSRFactory('ada', 'glass', 'grasp')
-def glass_grasp(robot, glass, manip=None):
+@TSRFactory('ada', 'fuze_bottle', 'grasp')
+def fuze_grasp(robot, fuze, manip=None):
     '''
     @param robot The robot performing the grasp
-    @param glass The glass to grasp
+    @param glass The bottle to grasp
     @param manip The manipulator to perform the grasp, if None
        the active manipulator on the robot is used
     '''
@@ -75,13 +75,13 @@ def glass_grasp(robot, glass, manip=None):
             manip.SetActive()
             manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
 
-    T0_w = glass.GetTransform()
+    T0_w = fuze.GetTransform()
 
     ee_to_palm = 0.15
-    palm_to_glass_center = 0.045
-    total_offset = ee_to_palm + palm_to_glass_center
-    Tw_e = numpy.array([[ 0., 0., -1., -total_offset], 
-                        [ 0., 1.,  0., 0.], 
+    palm_to_bottle_center = 0.045
+    total_offset = ee_to_palm + palm_to_bottle_center
+    Tw_e = numpy.array([[ 0., 0., -1., -total_offset],
+                        [ 0., 1.,  0., 0.],
                         [ 1., 0.,  0., 0.08], #glass_height
                         [ 0., 0.,  0., 1.]])
 
@@ -91,8 +91,7 @@ def glass_grasp(robot, glass, manip=None):
     Bw[5,:] = [-numpy.pi/2, numpy.pi/2]  # Allow any orientation
 
     grasp_tsr = TSR(T0_w = T0_w, Tw_e = Tw_e, Bw = Bw, manip = manip_idx)
-    grasp_chain = TSRChain(sample_start=False, sample_goal = True, 
+    grasp_chain = TSRChain(sample_start=False, sample_goal = True,
                            constrain=False, TSR = grasp_tsr)
 
     return [grasp_chain]
-
