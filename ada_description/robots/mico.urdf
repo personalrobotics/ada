@@ -52,6 +52,8 @@
   <transmission name="mico_joint_1_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="mico_joint_1">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="mico_joint_1_motor">
@@ -90,6 +92,8 @@
   <transmission name="mico_joint_2_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="mico_joint_2">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="mico_joint_2_motor">
@@ -127,6 +131,8 @@
   <transmission name="mico_joint_3_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="mico_joint_3">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="mico_joint_3_motor">
@@ -164,6 +170,8 @@
   <transmission name="mico_joint_4_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="mico_joint_4">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="mico_joint_4_motor">
@@ -201,6 +209,8 @@
   <transmission name="mico_joint_5_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="mico_joint_5">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="mico_joint_5_motor">
@@ -238,6 +248,8 @@
   <transmission name="mico_joint_6_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="mico_joint_6">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="mico_joint_6_motor">
@@ -295,6 +307,8 @@
   <transmission name="mico_joint_finger_1_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="mico_joint_finger_1">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="mico_joint_finger_1_motor">
@@ -377,6 +391,8 @@
   <transmission name="mico_joint_finger_2_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="mico_joint_finger_2">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="mico_joint_finger_2_motor">
