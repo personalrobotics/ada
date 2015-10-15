@@ -3,16 +3,16 @@ from prpy.tsr.tsrlibrary import TSRFactory
 from prpy.tsr.tsr import *
 
 @TSRFactory('ada', 'fuze_bottle', 'lift')
-def glass_lift(robot, bottle, manip=None, distance=0.1):
+def fuze_lift(robot, fuze, manip=None, distance=0.1):
     '''
-    This creates a TSR for lifting the glass a specified distance.  
+    This creates a TSR for lifting the bottle a specified distance.  
     It assumed that when called, the robot is grasping the bottle.
 
     @param robot The robot performing the lift
-    @param glass The bottle to lift
+    @param fuze The bottle to lift
     @param manip The manipulator to perform the grasp, if None
        the active manipulator on the robot is used
-    @param distance The distance to lift the glass
+    @param distance The distance to lift the fuze
     '''
 
     print 'distance = %0.2f' % distance
@@ -63,7 +63,7 @@ def glass_lift(robot, bottle, manip=None, distance=0.1):
 def fuze_grasp(robot, fuze, manip=None):
     '''
     @param robot The robot performing the grasp
-    @param glass The bottle to grasp
+    @param fuze The bottle to grasp
     @param manip The manipulator to perform the grasp, if None
        the active manipulator on the robot is used
     '''
@@ -82,7 +82,7 @@ def fuze_grasp(robot, fuze, manip=None):
     total_offset = ee_to_palm + palm_to_bottle_center
     Tw_e = numpy.array([[ 0., 0., -1., -total_offset],
                         [ 0., 1.,  0., 0.],
-                        [ 1., 0.,  0., 0.08], #glass_height
+                        [ 1., 0.,  0., 0.08], #bottle height
                         [ 0., 0.,  0., 1.]])
 
 

@@ -1,5 +1,4 @@
 import numpy
-
 from prpy.tsr.tsrlibrary import TSRFactory
 from prpy.tsr.tsr import *
 

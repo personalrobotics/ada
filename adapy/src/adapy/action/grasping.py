@@ -16,8 +16,6 @@ def Grasp(robot, obj, manip=None, tsrlist=None, render=True, **kw_args):
        (if None, the 'grasp' tsr from tsrlibrary is used)
     @param render Render tsr samples
     """
-    #TODO: can ada do pushgrasping?
-    #TODO: add preshape as a parameter?
     if manip is None:
         manip = robot.GetActiveManipulator()
 
@@ -29,7 +27,7 @@ def Grasp(robot, obj, manip=None, tsrlist=None, render=True, **kw_args):
     with prpy.viz.RenderTSRList(tsrlist, robot.GetEnv(), render=render):
         manip.PlanToTSR(tsrlist)
 
-    #should be close hand but that doesnt work so for now
+    #Using MoveHand since CloseHand doesnt work in simulation
     manip.hand.MoveHand(f1=0.5, f2=0.5)
  
     # Manipulator must be active for grab to work properly

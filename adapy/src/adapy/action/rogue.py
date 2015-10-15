@@ -17,7 +17,7 @@ def Point(robot, focus, manip=None, render=False):
                  This must be the right arm
     @param render Render tsr samples during planning
     """
-    import offscreen_render
+
     #Pointing at an object
     if type(focus) == openravepy.openravepy_int.KinBody:
         focus_trans = focus.GetTransform()
