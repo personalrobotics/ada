@@ -5,8 +5,5 @@
   <description>The ada_launch package</description>
   <maintainer email="snikolai@andrew.cmu.edu">Stefanos Nikolaidis</maintainer>
   <license>None</license>
-  <buildtool_depend>catkin</buildtool_depend>
-  <run_depend>mico_hardware</run_depend>
-  <run_depend>pr_ros_controllers</run_depend>
-  <run_depend>ada_description</run_depend>
+ <buildtool_depend>catkin</buildtool_depend>
 </package>
