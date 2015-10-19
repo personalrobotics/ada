@@ -20,16 +20,16 @@
   <depend>python</depend>
 
  
-  <exec_depend>cbirrt2</exec_depend>
-  <exec_depend>prpy</exec_depend>
-  <exec_depend>actionlib</exec_depend>
-  <exec_depend>ipython</exec_depend>
-  <exec_depend>python-argparse</exec_depend>
-  <exec_depend>python-numpy</exec_depend>
-  <exec_depend>python-yaml</exec_depend>
-  <exec_depend>or_urdf</exec_depend>
-  <exec_depend>or_ompl</exec_depend>
-  <exec_depend>openrave</exec_depend>
+  <depend>cbirrt2</depend>
+  <depend>prpy</depend>
+  <depend>actionlib</depend>
+  <depend>ipython</depend>
+  <depend>python-argparse</depend>
+  <depend>python-numpy</depend>
+  <depend>python-yaml</depend>
+  <depend>or_urdf</depend>
+  <depend>or_ompl</depend>
+  <depend>openrave</depend>
 </package>
 
 
