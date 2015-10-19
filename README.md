@@ -23,6 +23,13 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor} =="22cd", MODE="066
 
 > A note on USB 3.0: the mico arm does not work with USB 3.0 ports. If your computer has no USB 2.0 ports, you will need to disable xHCI in your BIOS.
 
+### Running Ada ###
+You use ada in your script by simply calling the ``initialize`` function:
+
+```python
+env, robot = adapy.initialize()
+```
+
 ### Connect to the robot ###
 
 To connect to the robot, run the launch script:
@@ -35,13 +42,6 @@ You may have to re-launch several times before the robot will connect. This will
   
 ### Run a test script ###
 
-After connecting to the robot, open up a new terminal and set it up:
-```bash
-. ./devel/setup.bash
-```
-
-You will need to do this every time you open up a new terminal. `devel/setup.bash` will have to be run any time the catkin workspace is rebuilt.
-   
 Now, run the test script:
    
 ```bash
