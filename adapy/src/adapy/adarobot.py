@@ -120,6 +120,9 @@ class ADARobot(Robot):
             ParabolicSmoother(),
             HauserParabolicSmoother()
         )
+        
+        from prpy.action import ActionLibrary
+        self.actions = ActionLibrary()
 
     def CloneBindings(self, parent):
         super(ADARobot, self).CloneBindings(parent)
