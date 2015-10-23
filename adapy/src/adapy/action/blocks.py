@@ -26,7 +26,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     """
     from prpy.rave import AllDisabled, Disabled
     from prpy.viz import RenderTSRList, RenderVector
-    # print 'grabblock'
+    #print 'grabblock'
     env = robot.GetEnv()
     block = None
 
@@ -72,7 +72,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                   if tsr_chain.contains(ee_pose) ]
     if len(block_idxs) == 0:
         raise NoTSRException("Failed to find the TSR PlanToTSR planned to")
-    
+
     block = blocks[block_idxs[0]]
 
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
@@ -119,6 +119,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             '''
             min_distance = 0.10# current_finger_height - table_height
             down_direction = [0., 0., -1.]
+
             with RenderVector(start_point, down_direction, min_distance, env):
                 manip.MoveUntilTouch(direction=down_direction, timelimit=5,
                     distance=min_distance, max_distance=min_distance + 0.05,
@@ -129,7 +130,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             #   the direction where the hand should move is to move forward
             #   so the direction = [x-hand,y-hand,0]
 
-            with env:
+            with env:   
                 start_point = manip.GetEndEffectorTransform()[0:3, 3]
                 '''
                 manip.GetEndEffectorTransform()
@@ -154,7 +155,6 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                     manip.PlanToEndEffectorOffset(direction=funnel_direction,
                         distance=0.08, max_distance=0.12,
                         timelimit=5., execute=True)
-                    
 
         # Close the finger to grab the block
         manip.hand.MoveHand(f1=1.,f2=1.)
@@ -231,7 +231,6 @@ def PlaceBlock(robot, block, on_obj, manip=None, **kw_args):
     If none, the active manipulator is used.
     """
     env = robot.GetEnv()
-
     # Get a tsr for this position
     # Here, adapy/tsr/block.py will be called. Because it is decorated by a TSRFactory class
     # The TSR calculation will be done in block.py
@@ -239,8 +238,8 @@ def PlaceBlock(robot, block, on_obj, manip=None, **kw_args):
     # I need to copy that file to adapy
     # take the block to the top of the bin
     '''
-    (1) calculate the target TSR above the bin's BASE. 
-        if we just plan to object_place_list and get rid of place_tsr_list, 
+    (1) calculate the target TSR above the bin's BASE.
+        if we just plan to object_place_list and get rid of place_tsr_list,
         then the hand will go to the deep inside the bin near the bottom
         why???????????????????????????????/
     '''
@@ -252,12 +251,16 @@ def PlaceBlock(robot, block, on_obj, manip=None, **kw_args):
           So this TSR is a stable posture
           and it is equal to the posture where the hand is about to release the block.
           So we connect object_place_list with place_tsr_list into one TSR list,
-          so that the hand will move toward the bottom inside the bin and after it got to 
+          so that the hand will move toward the bottom inside the bin and after it got to
           the goal TSR position, it will open the finger and release the block.
           It will also not move to the deep inside in the bin
     '''
     # 'herb', 'block_bin', 'place_on' TSR is in  herbpy/src/herbpy/tsr/block.py
-    place_tsr_list = robot.tsrlibrary(block, 'place_on', 
+    from adapy.tsr.block import block_grasp
+    from adapy.tsr.block import block_at_pose
+    from adapy.tsr.block import block_on_surface
+
+    place_tsr_list = robot.tsrlibrary(block, 'place_on',
         pose_tsr_chain=object_place_list[0], manip=manip)
 
     # Plan there
