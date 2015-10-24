@@ -64,7 +64,10 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     # prpy/src/prpy/planning/tsr.py
     with RenderTSRList(block_tsr_list, robot.GetEnv()):
         with Disabled(table, padding_only=True):
-            manip.PlanToTSR(block_tsr_list, execute=True)
+            # manip.PlanToTSR(block_tsr_list, execute=True)
+            traj = manip.PlanToTSR(block_tsr_list, execute=False)
+            robot.ExecutePath(traj)
+
     with manip.GetRobot().GetEnv():
         ee_pose = manip.GetEndEffectorTransform()
 
@@ -79,25 +82,23 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
 
     try:
         with AllDisabled(env, [table] + blocks, padding_only=True):
-            # Move down until touching the table
             with env:
+                # First we should close the finger to a certain degree
+                # that it will not collide with other blocks on the table
+                preshape_finger = 0.5
+                robot.arm.hand.MoveHand(preshape_finger,preshape_finger)
+
+                # Then we move the hand down to the table
                 # this is just a translation, so we just need the 4th column in GetEndEffectorTransform
                 #   as the start_point
-                start_point = manip.GetEndEffectorTransform()[0:3, 3]
                 table_aabb = ComputeEnabledAABB(table)
                 table_height = table_aabb.pos()[2] + table_aabb.extents()[2]
                 # 0.14 is the distance from finger tip to end-effector frame
                 # [2,3] is the z of finger
                 current_finger_height = manip.GetEndEffectorTransform()[2,3] - 0.14
 
-            '''
-            manip.GetEndEffectorTransform()
-            [[ -1.26761961e-02   4.75773380e-01  -8.79476552e-01   4.53303877e-02]
-             [  6.81338158e-03   8.79567899e-01   4.75724593e-01   8.97872675e-02]
-             [  9.99896441e-01   3.81689084e-05  -1.43912008e-02   3.14018485e-01]
-             [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
-            '''
-            # h = openravepy.misc.DrawAxes(env,tran)
+                start_point = manip.GetEndEffectorTransform()[0:3, 3]
+                to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
 
             '''
             RenderVector - prpy/src/prpy/viz.py
@@ -105,55 +106,13 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             @param start_pt The start point of the vector
             @param direction The direction of the vector to render
             @param length The length of the rendered vector
-
-            This MoveUntilTouch is from prpy.base import wam
             '''
-            '''
-            # (from blocksort in herbpy)
-            # MoveUntilTouch is in wam, which is herb robot. There is no mico robot version of MoveUntilTouch
-            # We need to write a new function in prpy/src/prpy/base/mico.py
-            with RenderVector(start_point, down_direction, min_distance, env):
-                manip.MoveUntilTouch(direction=down_direction, timelimit=5,
-                    distance=min_distance, max_distance=min_distance + 0.05,
-                    ignore_collisions=blocks + [table])
-            '''
-            min_distance = 0.10# current_finger_height - table_height
-            down_direction = [0., 0., -1.]
+            min_distance = current_finger_height - table_height
 
-            with RenderVector(start_point, down_direction, min_distance, env):
-                manip.MoveUntilTouch(direction=down_direction, timelimit=5,
-                    distance=min_distance, max_distance=min_distance + 0.05,
-                    ignore_collisions=blocks + [table])
-
-            # Move parallel to the table to funnel the block into the fingers
-            # by projecting the -x direction of end-effector onto the xy-plane.
-            #   the direction where the hand should move is to move forward
-            #   so the direction = [x-hand,y-hand,0]
-
-            with env:   
-                start_point = manip.GetEndEffectorTransform()[0:3, 3]
-                '''
-                manip.GetEndEffectorTransform()
-                [[ -1.12592811e-02  -6.41083415e-01  -7.67388613e-01   1.75977270e-01]
-                 [ -9.14263800e-03   7.67471181e-01  -6.41018251e-01  -2.00668205e-01]
-                 [  9.99894815e-01  -2.01448366e-04  -1.45023673e-02   9.44411969e-02]
-                 [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
-                '''
-                # start_point = [ 0.17597727 -0.20066821  0.0944412 ] - x y z of hand
-                funnel_direction = -1. * manip.GetEndEffectorTransform()[:3,0]
-                # funnel_direction = [ 0.01125928  0.00914264 -0.99989481] -
-                funnel_direction[2] = 0.
-                # funnel_direction = [ 0.01125928  0.00914264  0.        ]
-
-            # TODO: We should only have to disable the block for this. Why does
-            # this fail if we do not disable the table?
-            # from openravepy import CollisionReport
-            with AllDisabled(env, blocks + [table]):
-                with RenderVector(start_point, funnel_direction, 0.1, env):
-                    from prpy.planning.retimer import HauserParabolicSmoother
-                    robot.retimer=HauserParabolicSmoother()
-                    manip.PlanToEndEffectorOffset(direction=funnel_direction,
-                        distance=0.08, max_distance=0.12,
+            with RenderVector(start_point, to_block_direction, min_distance, env):
+                to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
+                manip.PlanToEndEffectorOffset(direction=to_block_direction,
+                        distance=min_distance, max_distance=min_distance+0.05,
                         timelimit=5., execute=True)
 
         # Close the finger to grab the block
