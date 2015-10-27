@@ -92,7 +92,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 # this is just a translation, so we just need the 4th column in GetEndEffectorTransform
                 #   as the start_point
                 table_aabb = ComputeEnabledAABB(table)
-                table_height = table_aabb.pos()[2] + table_aabb.extents()[2]
+                table_height = abs(table_aabb.pos()[2] + table_aabb.extents()[2])
                 # 0.14 is the distance from finger tip to end-effector frame
                 # [2,3] is the z of finger
                 current_finger_height = manip.GetEndEffectorTransform()[2,3] - 0.14
@@ -108,6 +108,8 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             @param length The length of the rendered vector
             '''
             min_distance = current_finger_height - table_height
+            # for testing
+            min_distance = 0.14
 
             with RenderVector(start_point, to_block_direction, min_distance, env):
                 to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
