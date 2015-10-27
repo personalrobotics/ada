@@ -7,6 +7,7 @@ from prpy.tsr.tsrlibrary import TSRFactory
 from prpy.tsr.tsr import *
 from adapy.tsr import block
 from adapy.tsr import block_bin
+from ada_block_sorting.settings import Settings
 
 logger = logging.getLogger('ada_block_sorting')
 
@@ -39,7 +40,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     # [1.0,1.0] - gripper is completely closed and overlapped between 2 fingers
     # if the fingers is not correctly set up, it will generate an error, but that should be ok
     if preshape is None:
-        manip.hand.MoveHand(f1=0.5,f2=0.5)
+        manip.hand.MoveHand(f1=Settings.HAND_OPENING, f2=Settings.HAND_OPENING)
     else:
         # * is transposing the matrix
         manip.hand.MoveHand(*preshape)
@@ -66,6 +67,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     # this will sample all the TSRlists for all the blocks, and choose the best one.
     # So this place is how the target block is selected.
     # prpy/src/prpy/planning/tsr.py
+
     with RenderTSRList(block_tsr_list, robot.GetEnv()):
         with Disabled(table, padding_only=True):
             # seems like they are same - manip.Plan or robot.Plan
@@ -103,13 +105,13 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
 
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
 
+
     try:
         with AllDisabled(env, [table] + blocks, padding_only=True):
             with env:
                 # First we should close the finger to a certain degree
                 # that it will not collide with other blocks on the table
-                preshape_finger = 0.5
-                robot.arm.hand.MoveHand(preshape_finger,preshape_finger)
+                robot.arm.hand.MoveHand(f1=Settings.HAND_OPENING,f2=Settings.HAND_OPENING)
 
                 # Then we move the hand down to the table
                 # this is just a translation, so we just need the 4th column in GetEndEffectorTransform
@@ -118,7 +120,8 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 table_height = abs(table_aabb.pos()[2] + table_aabb.extents()[2])
                 # 0.14 is the distance from finger tip to end-effector frame
                 # [2,3] is the z of finger
-                current_finger_height = manip.GetEndEffectorTransform()[2,3] - 0.14
+                # finger height is not equal to ee height!!! ee is located at the wrist
+                current_finger_height = manip.GetEndEffectorTransform()[2,3] - 0.28
 
                 start_point = manip.GetEndEffectorTransform()[0:3, 3]
                 to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
@@ -129,21 +132,32 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             @param start_pt The start point of the vector
             @param direction The direction of the vector to render
             @param length The length of the rendered vector
-            '''
+            '''            
+            # min_distance = 0.32
             min_distance = current_finger_height - table_height
-            # for testing
-            min_distance = 0.14
+            # print 'current_finger_height = '+str(current_finger_height)
+            # print 'table_height = '+str(table_height)
+            # print 'min_distance = '+str(min_distance)
+            # import openravepy
+            # handle1 = openravepy.misc.DrawAxes(env, robot.arm.GetEndEffectorTransform());
+            # handle2 = openravepy.misc.DrawAxes(env, block.GetTransform());
+
+
+            # import IPython; IPython.embed() 
             with RenderVector(start_point, to_block_direction, min_distance, env):
                 # goal_point = start_point + to_block_direction * min_distance
                 # goal_transform = manip.GetEndEffectorTransform()
                 # goal_transform[0:3,3] = goal_point
                 # manip.PlanToEndEffectorPose(goal_transform,execute=True);
+                # import IPython; IPython.embed() 
+
                 manip.PlanToEndEffectorOffset(direction=to_block_direction,
                         distance=min_distance, max_distance=min_distance+0.05,
                         timelimit=5., execute=True)
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         # Close the finger to grab the block
-        manip.hand.MoveHand(f1=1.,f2=1.)
+        manip.hand.MoveHand(f1=Settings.HAND_CLOSING,f2=Settings.HAND_CLOSING)
         # Compute the pose of the block in the hand frame
         with env:
             # local_p = [0.01, 0, 0.24, 1.0]
@@ -254,7 +268,7 @@ def PlaceBlock(robot, block, on_obj, manip=None, **kw_args):
         manip.PlanToTSR(place_tsr_list, execute=True)
 
     # Open the hand and drop the block
-    manip.hand.MoveHand(f1=0.2,f2=0.2)
+    manip.hand.MoveHand(f1=Settings.HAND_OPENING,f2=Settings.HAND_OPENING)
 
     with env:
         # if we don't do this, then the block will stick to the hand.
