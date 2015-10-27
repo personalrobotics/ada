@@ -219,6 +219,10 @@ class ADARobot(Robot):
             return traj_future
         else:
             try:
-                return traj_future.result(timeout)
+                traj_future.result(timeout)
+		return traj
+		# Returning OpenRAVE traj we were passed to circumvent problem with returning a ROS trajectory message when OpenRAVE 'Trajectory' is expected
+		# Ideally, we will convert the traj_future.result(timeout) ROS 'JointTrajectory" message to the equivalent OpenRAVE 'Trajectory', restore
+		# the tags, and return this here.
             except TrajectoryExecutionFailed as e:
                 logger.exception('Trajectory execution failed.')
