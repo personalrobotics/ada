@@ -38,7 +38,7 @@ def block_grasp(robot, block, manip=None):
     '''
     # we will transform the axie, we want to rotate along the block y axis for an angle alpha
     # then translate for a distance offset
-    offset = 0.4 # the distance translated along z axis
+    offset = 0.6 # the distance translated along z axis
     alpha = 10./180.*numpy.pi
     x_translate = offset * numpy.tan(alpha)
     y_translate = x_translate
