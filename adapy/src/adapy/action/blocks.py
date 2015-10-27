@@ -37,9 +37,12 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     # 1. We first set up the pre shape of the hand
     # [0.0,0.0] - gripper is completely open to the maximum
     # [1.0,1.0] - gripper is completely closed and overlapped between 2 fingers
+    # if the fingers is not correctly set up, it will generate an error, but that should be ok
     if preshape is None:
-        preshape=[0.5,0.5]
-    manip.hand.MoveHand(*preshape)
+        manip.hand.MoveHand(f1=0.5,f2=0.5)
+    else:
+        # * is transposing the matrix
+        manip.hand.MoveHand(*preshape)
 
     # 2. Now let's grab block
     # prpy/src/prpy/tsr/tsrlibrary.py
@@ -55,32 +58,48 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         # The TSR calculation will be done in block.py
         tsr_list = robot.tsrlibrary(b, 'grasp', manip=manip)
         block_tsr_list += tsr_list
-
-    print '33333333333333333333333333-----------------\n'
     # we should draw the axes of manipulator in the specific pose first before the planning
     # so that we can see clearly if we can plan the hand there or not
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
 
     # Plan to a pose above the block
+    # this will sample all the TSRlists for all the blocks, and choose the best one.
+    # So this place is how the target block is selected.
     # prpy/src/prpy/planning/tsr.py
-    # something wrong with plan to tsr!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     with RenderTSRList(block_tsr_list, robot.GetEnv()):
         with Disabled(table, padding_only=True):
             # seems like they are same - manip.Plan or robot.Plan
             # traj = manip.PlanToTSR(block_tsr_list, execute=False)
             traj = robot.PlanToTSR(block_tsr_list, execute=False)
+            # plan TSR is not timed, we have to use ExecutePath
+            # robot.ExecuteTrajectory(traj) 
             robot.ExecutePath(traj)
-
-    print '444444444444444444444444-----------------\n'
+    
     with manip.GetRobot().GetEnv():
         ee_pose = manip.GetEndEffectorTransform()
 
-    block_idxs = [ idx for idx, tsr_chain in enumerate(block_tsr_list)
-                  if tsr_chain.contains(ee_pose) ]
-    if len(block_idxs) == 0:
+    block_ee_distance = [(tsr_chain.distance(ee_pose))[0] for tsr_chain in block_tsr_list]
+    if len(block_ee_distance) == 0:
         raise NoTSRException("Failed to find the TSR PlanToTSR planned to")
+    min_index = numpy.argmax(block_ee_distance)
 
-    block = blocks[block_idxs[0]]
+    # in real robot, if any error, then the robot may not in the tsr, so we cannot use the 'contain'
+    # block_idxs = [ idx for idx, tsr_chain in enumerate(block_tsr_list)
+    #               if tsr_chain.contains(ee_pose) ]
+    # if len(block_idxs) == 0:
+    #     raise NoTSRException("Failed to find the TSR PlanToTSR planned to")
+    # block = blocks[block_idxs[0]]
+
+    '''
+
+[[  5.01101931e-01   8.65388157e-01  -4.39701454e-04   6.68751162e-01]
+ [ -8.65388258e-01   5.01101937e-01  -1.02481789e-04   6.72092399e-01]
+ [  1.31648724e-04   4.31866298e-04   9.99999898e-01   1.09949273e+00]
+ [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
+
+    '''
+    
+    block = blocks[min_index]
 
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
 
@@ -104,7 +123,6 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 start_point = manip.GetEndEffectorTransform()[0:3, 3]
                 to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
 
-                print '555555555555555555555555555555555-----------------\n'
             '''
             RenderVector - prpy/src/prpy/viz.py
             Render a vector in an openrave environment
@@ -115,7 +133,6 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             min_distance = current_finger_height - table_height
             # for testing
             min_distance = 0.14
-            print '66666666666666666666666666666666666-----------------\n'
             with RenderVector(start_point, to_block_direction, min_distance, env):
                 # goal_point = start_point + to_block_direction * min_distance
                 # goal_transform = manip.GetEndEffectorTransform()
