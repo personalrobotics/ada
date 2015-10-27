@@ -56,18 +56,22 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         tsr_list = robot.tsrlibrary(b, 'grasp', manip=manip)
         block_tsr_list += tsr_list
 
+    print '33333333333333333333333333-----------------\n'
     # we should draw the axes of manipulator in the specific pose first before the planning
     # so that we can see clearly if we can plan the hand there or not
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
 
     # Plan to a pose above the block
     # prpy/src/prpy/planning/tsr.py
+    # something wrong with plan to tsr!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     with RenderTSRList(block_tsr_list, robot.GetEnv()):
         with Disabled(table, padding_only=True):
-            # manip.PlanToTSR(block_tsr_list, execute=True)
-            traj = manip.PlanToTSR(block_tsr_list, execute=False)
+            # seems like they are same - manip.Plan or robot.Plan
+            # traj = manip.PlanToTSR(block_tsr_list, execute=False)
+            traj = robot.PlanToTSR(block_tsr_list, execute=False)
             robot.ExecutePath(traj)
 
+    print '444444444444444444444444-----------------\n'
     with manip.GetRobot().GetEnv():
         ee_pose = manip.GetEndEffectorTransform()
 
@@ -100,6 +104,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 start_point = manip.GetEndEffectorTransform()[0:3, 3]
                 to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
 
+                print '555555555555555555555555555555555-----------------\n'
             '''
             RenderVector - prpy/src/prpy/viz.py
             Render a vector in an openrave environment
@@ -110,9 +115,12 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             min_distance = current_finger_height - table_height
             # for testing
             min_distance = 0.14
-
+            print '66666666666666666666666666666666666-----------------\n'
             with RenderVector(start_point, to_block_direction, min_distance, env):
-                to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
+                # goal_point = start_point + to_block_direction * min_distance
+                # goal_transform = manip.GetEndEffectorTransform()
+                # goal_transform[0:3,3] = goal_point
+                # manip.PlanToEndEffectorPose(goal_transform,execute=True);
                 manip.PlanToEndEffectorOffset(direction=to_block_direction,
                         distance=min_distance, max_distance=min_distance+0.05,
                         timelimit=5., execute=True)
