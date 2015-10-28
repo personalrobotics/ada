@@ -1,6 +1,7 @@
 import numpy
 import prpy.tsr
 from prpy.tsr.tsrlibrary import TSRFactory
+from ada_block_sorting.settings import Settings
 
 @TSRFactory('ada', 'block', 'grasp')
 def block_grasp(robot, block, manip=None):
@@ -38,8 +39,8 @@ def block_grasp(robot, block, manip=None):
     '''
     # we will transform the axie, we want to rotate along the block y axis for an angle alpha
     # then translate for a distance offset
-    offset = 0.6 # the distance translated along z axis
-    alpha = 5./180.*numpy.pi
+    offset = Settings.BLOCK_GRASP_TSR_HEIGHT # the distance translated along z axis
+    alpha = Settings.BLOCK_GRASP_TSR_ALPHA/180.*numpy.pi
     x_translate = offset * numpy.tan(alpha)
     y_translate = x_translate
     ee_in_block = numpy.array(
@@ -68,11 +69,10 @@ def block_grasp(robot, block, manip=None):
     # x, y, z, roll, pitch, yaw
     Bw = numpy.zeros((6,2))
     Bw[5,:] = [-numpy.pi+.000, numpy.pi-.0001]
-    Bw[0,0] = -x_translate
-    Bw[0,1] = x_translate
-    Bw[1,0] = -y_translate
-    Bw[1,1] = y_translate
-    print Bw
+    # Bw[0,0] = -x_translate
+    # Bw[0,1] = x_translate
+    # Bw[1,0] = -y_translate
+    # Bw[1,1] = y_translate
 
     '''
     [[ 0.          0.        ]

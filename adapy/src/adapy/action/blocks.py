@@ -121,7 +121,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 # 0.14 is the distance from finger tip to end-effector frame
                 # [2,3] is the z of finger
                 # finger height is not equal to ee height!!! ee is located at the wrist
-                current_finger_height = manip.GetEndEffectorTransform()[2,3] - 0.28
+                current_finger_height = manip.GetEndEffectorTransform()[2,3] - Settings.FINGER_EE_DIFF_HEIGHT
 
                 start_point = manip.GetEndEffectorTransform()[0:3, 3]
                 to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
@@ -135,9 +135,12 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             '''            
             # min_distance = 0.32
             min_distance = current_finger_height - table_height
-            # print 'current_finger_height = '+str(current_finger_height)
-            # print 'table_height = '+str(table_height)
-            # print 'min_distance = '+str(min_distance)
+            print 'current_finger_height = '+str(current_finger_height)
+            print 'table_height = '+str(table_height)
+            print 'eetr = '+str(manip.GetEndEffectorTransform()[2,3])
+            print 'min_distance = '+str(min_distance)
+            # import IPython; IPython.embed()
+
             # import openravepy
             # handle1 = openravepy.misc.DrawAxes(env, robot.arm.GetEndEffectorTransform());
             # handle2 = openravepy.misc.DrawAxes(env, block.GetTransform());
@@ -155,6 +158,24 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                         distance=min_distance, max_distance=min_distance+0.05,
                         timelimit=5., execute=True)
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        # we let it rotate 180 around z axis
+        # This doesn't work because it will clock to get the config
+        # config = robot.arm.GetArmDOFValues()
+        # ori_config = config
+        # config[5] = config[5]-numpy.pi if config[5]<=0 else config[5]+numpy.pi
+        # robot.arm.PlanToConfiguration(config)
+
+        # cur_pose = robot.arm.GetEndEffectorTransform()
+        # rotate_z = numpy.array([[-1., 0., 0., 0.],
+        #                         [0., 1., 0., 0.],
+        #                         [0., 0., 1., 0.],
+        #                         [0., 0., 0., 1.]])
+        # cur_pose = numpy.dot(cur_pose, rotate_z)
+
+        # import openravepy
+        # handle1 = openravepy.misc.DrawAxes(env, robot.arm.GetEndEffectorTransform());
+        # import IPython; IPython.embed()
 
         # Close the finger to grab the block
         manip.hand.MoveHand(f1=Settings.HAND_CLOSING,f2=Settings.HAND_CLOSING)
@@ -275,7 +296,7 @@ def PlaceBlock(robot, block, on_obj, manip=None, **kw_args):
         # even we try to drop the block, it cannot move!!!
         # we have to switch their status to release!
         # where is this function???????????????????/
-        manip.GetRobot().Release(block)
+        #manip.GetRobot().Release(block)
 
         # Move the block down until it hits something
         block_pose = block.GetTransform()
