@@ -3,7 +3,7 @@ Ada (or Assistive Dextrous Arm) is a package for controlling the Mico robot arm 
 
 ## Installation ##
 The following rosinstall can be used to get the minimum dependencies required
-to use HerbPy in simulation:
+to use AdaPy in simulation:
 ```shell
 $ wstool merge https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/ada-sim.rosinstall
 ```
