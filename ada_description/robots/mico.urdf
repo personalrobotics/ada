@@ -141,7 +141,7 @@
     type="revolute">
     <origin
       xyz="0 -0.00175 0.11875"
-      rpy="1.5708 -0.22 3.1416" />
+      rpy="1.5708 0.0 3.1416" />
     <parent
       link="Shoulder_Link" />
     <child
