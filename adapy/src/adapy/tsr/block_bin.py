@@ -25,7 +25,7 @@ def point_on(robot, block_bin, manip=None, padding=0.04):
         with manip.GetRobot():
             manip.SetActive()
             manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
-    
+
     '''
     T0_w = block location in world frame
     Tw_e = ee location in block frame
@@ -37,23 +37,35 @@ def point_on(robot, block_bin, manip=None, padding=0.04):
     Tw_e = numpy.eye(4)
     # set the object on top of the bin - bin is 13cm high
     # change the translation on z, no rotation
-    Tw_e[2,3] = 0.17 
+    Tw_e[2,3] = 0.17
 
+    # all the Bw's are relative to the goal ee frame, ie dot(Tw_e,T0_w)
     Bw = numpy.zeros((6,2))
-    # These values should be changed!!!!!!!!!!???????????????
-    # from herb
-    # xdim = max(0.085 - padding, 0.0)
-    # ydim = max(0.135 - padding, 0.0)
-    xdim = max(0.055 - padding, 0.0)
-    ydim = max(0.105 - padding, 0.0)
-    Bw[0,:] = [-xdim, xdim ] # move along x and y directions to get any point on tray
-    Bw[1,:] = [-ydim, ydim]
-    Bw[2,:] = [-0.02, 0.04] # verticle movement
-    Bw[5,:] = [-numpy.pi, numpy.pi] # allow any rotation around z - which is the axis normal to the tray top
+    xdim = max(0.11-padding,0.0)
+    ydim = max(0.16-padding,0.0)
+    Bw[0,:] = [-xdim, xdim ]
+    Bw[1,:] = [-ydim, ydim ]
+    Bw[2,:] = [-0.02, 0.04]
+    Bw[5,:] = [-numpy.pi, numpy.pi]
 
-    
+    #import openravepy
+    #b = numpy.dot(T0_w,Tw_e)
+    #handle = openravepy.misc.DrawAxes(robot.GetEnv(), b)
+    #a = numpy.copy(Tw_e)
+    #a[0,3] = Bw[0,0]
+    #a[1,3] = Bw[1,1]
+    #handle2 = openravepy.misc.DrawAxes(robot.GetEnv(), numpy.dot(T0_w,a))
+    #a[0,3] = Bw[0,1]
+    #a[1,3] = Bw[1,0]
+    #handle3= openravepy.misc.DrawAxes(robot.GetEnv(), numpy.dot(T0_w,a))
+
+
+
+    #import IPython
+    #IPython.embed()
+
     manip_tsr = prpy.tsr.TSR(T0_w = T0_w, Tw_e = Tw_e, Bw = Bw, manip = manip_idx)
-    tsr_chain = prpy.tsr.TSRChain(sample_start = False, sample_goal = True, constrain=False, 
+    tsr_chain = prpy.tsr.TSRChain(sample_start = False, sample_goal = True, constrain=False,
                                TSR = manip_tsr)
     return [tsr_chain]
 

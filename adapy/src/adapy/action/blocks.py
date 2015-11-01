@@ -59,9 +59,6 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         # The TSR calculation will be done in block.py
         tsr_list = robot.tsrlibrary(b, 'grasp', manip=manip)
         block_tsr_list += tsr_list
-    # we should draw the axes of manipulator in the specific pose first before the planning
-    # so that we can see clearly if we can plan the hand there or not
-    # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
 
     # Plan to a pose above the block
     # this will sample all the TSRlists for all the blocks, and choose the best one.
@@ -72,7 +69,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         with Disabled(table, padding_only=True):
             # seems like they are same - manip.Plan or robot.Plan
             # traj = manip.PlanToTSR(block_tsr_list, execute=False)
-            traj = robot.PlanToTSR(block_tsr_list, execute=False)
+            traj = manip.PlanToTSR(block_tsr_list, execute=False)
             # plan TSR is not timed, we have to use ExecutePath
             # robot.ExecuteTrajectory(traj)
             robot.ExecutePath(traj)
@@ -83,9 +80,9 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     block_ee_distance = [(tsr_chain.distance(ee_pose))[0] for tsr_chain in block_tsr_list]
     if len(block_ee_distance) == 0:
         raise NoTSRException("Failed to find the TSR PlanToTSR planned to")
-    min_index = numpy.argmax(block_ee_distance)
+    min_index = numpy.argmin(block_ee_distance)
 
-    # in real robot, if any error, then the robot may not in the tsr, so we cannot use the 'contain'
+    # in real robot, if any error, then the robot may not be in the tsr, so we cannot use the 'contain'
     # block_idxs = [ idx for idx, tsr_chain in enumerate(block_tsr_list)
     #               if tsr_chain.contains(ee_pose) ]
     # if len(block_idxs) == 0:
