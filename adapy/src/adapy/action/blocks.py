@@ -74,9 +74,9 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             # traj = manip.PlanToTSR(block_tsr_list, execute=False)
             traj = robot.PlanToTSR(block_tsr_list, execute=False)
             # plan TSR is not timed, we have to use ExecutePath
-            # robot.ExecuteTrajectory(traj) 
+            # robot.ExecuteTrajectory(traj)
             robot.ExecutePath(traj)
-    
+
     with manip.GetRobot().GetEnv():
         ee_pose = manip.GetEndEffectorTransform()
 
@@ -100,7 +100,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
  [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
 
     '''
-    
+
     block = blocks[min_index]
 
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
@@ -126,59 +126,50 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 start_point = manip.GetEndEffectorTransform()[0:3, 3]
                 to_block_direction = block.GetTransform()[:3,3] - manip.GetEndEffectorTransform()[:3,3]
 
-            '''
-            RenderVector - prpy/src/prpy/viz.py
-            Render a vector in an openrave environment
-            @param start_pt The start point of the vector
-            @param direction The direction of the vector to render
-            @param length The length of the rendered vector
-            '''            
-            # min_distance = 0.32
-            min_distance = current_finger_height - table_height
-            print 'current_finger_height = '+str(current_finger_height)
-            print 'table_height = '+str(table_height)
-            print 'eetr = '+str(manip.GetEndEffectorTransform()[2,3])
-            print 'min_distance = '+str(min_distance)
+                '''
+                RenderVector - prpy/src/prpy/viz.py
+                Render a vector in an openrave environment
+                @param start_pt The start point of the vector
+                @param direction The direction of the vector to render
+                @param length The length of the rendered vector
+                '''
+                # min_distance = 0.32
+                min_distance = current_finger_height - table_height
+                print 'current_finger_height = '+str(current_finger_height)
+                print 'table_height = '+str(table_height)
+                print 'eetr = '+str(manip.GetEndEffectorTransform()[2,3])
+                print 'min_distance = '+str(min_distance)
+                # import IPython; IPython.embed()
+
+                # import openravepy
+                # handle1 = openravepy.misc.DrawAxes(env, robot.arm.GetEndEffectorTransform());
+                # handle2 = openravepy.misc.DrawAxes(env, block.GetTransform());
+
+
             # import IPython; IPython.embed()
-
-            # import openravepy
-            # handle1 = openravepy.misc.DrawAxes(env, robot.arm.GetEndEffectorTransform());
-            # handle2 = openravepy.misc.DrawAxes(env, block.GetTransform());
-
-
-            # import IPython; IPython.embed() 
             with RenderVector(start_point, to_block_direction, min_distance, env):
                 # goal_point = start_point + to_block_direction * min_distance
                 # goal_transform = manip.GetEndEffectorTransform()
                 # goal_transform[0:3,3] = goal_point
                 # manip.PlanToEndEffectorPose(goal_transform,execute=True);
-                # import IPython; IPython.embed() 
+                # import IPython; IPython.embed()
 
                 manip.PlanToEndEffectorOffset(direction=to_block_direction,
                         distance=min_distance, max_distance=min_distance+0.05,
                         timelimit=5., execute=True)
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         # we let it rotate 180 around z axis
-        # This doesn't work because it will clock to get the config
-        # config = robot.arm.GetArmDOFValues()
-        # ori_config = config
-        # config[5] = config[5]-numpy.pi if config[5]<=0 else config[5]+numpy.pi
-        # robot.arm.PlanToConfiguration(config)
-
-        # cur_pose = robot.arm.GetEndEffectorTransform()
-        # rotate_z = numpy.array([[-1., 0., 0., 0.],
-        #                         [0., 1., 0., 0.],
-        #                         [0., 0., 1., 0.],
-        #                         [0., 0., 0., 1.]])
-        # cur_pose = numpy.dot(cur_pose, rotate_z)
-
-        # import openravepy
-        # handle1 = openravepy.misc.DrawAxes(env, robot.arm.GetEndEffectorTransform());
-        # import IPython; IPython.embed()
-
+        traj_rot = robot.arm.PlanToConfiguration(robot.arm.GetDOFValues(),execute=False)
+        config_after_rot = robot.arm.GetDOFValues()
+        config_before_rot = numpy.array(config_after_rot, copy=True)
+        config_after_rot[5] = config_after_rot[5]+numpy.pi
+        traj_rot.Insert(1,config_after_rot)
+        robot.ExecutePath(traj_rot)
+        #assert(config_before_rot[5]!=config_after_rot[5])
+        robot.SetActiveDOFValues(config_before_rot)
         # Close the finger to grab the block
         manip.hand.MoveHand(f1=Settings.HAND_CLOSING,f2=Settings.HAND_CLOSING)
+
         # Compute the pose of the block in the hand frame
         with env:
             # local_p = [0.01, 0, 0.24, 1.0]
