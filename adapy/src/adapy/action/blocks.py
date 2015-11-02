@@ -39,6 +39,9 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     # [0.0,0.0] - gripper is completely open to the maximum
     # [1.0,1.0] - gripper is completely closed and overlapped between 2 fingers
     # if the fingers is not correctly set up, it will generate an error, but that should be ok
+
+    # print Settings.HAND_OPENING
+    # import IPython; IPython.embed()
     if preshape is None:
         manip.hand.MoveHand(f1=Settings.HAND_OPENING, f2=Settings.HAND_OPENING)
     else:
@@ -91,10 +94,10 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
 
     '''
 
-[[  5.01101931e-01   8.65388157e-01  -4.39701454e-04   6.68751162e-01]
- [ -8.65388258e-01   5.01101937e-01  -1.02481789e-04   6.72092399e-01]
- [  1.31648724e-04   4.31866298e-04   9.99999898e-01   1.09949273e+00]
- [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
+    [[  5.01101931e-01   8.65388157e-01  -4.39701454e-04   6.68751162e-01]
+     [ -8.65388258e-01   5.01101937e-01  -1.02481789e-04   6.72092399e-01]
+     [  1.31648724e-04   4.31866298e-04   9.99999898e-01   1.09949273e+00]
+     [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
 
     '''
 
@@ -106,9 +109,9 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     try:
         with AllDisabled(env, [table] + blocks, padding_only=True):
             with env:
-                # First we should close the finger to a certain degree
-                # that it will not collide with other blocks on the table
-                robot.arm.hand.MoveHand(f1=Settings.HAND_OPENING,f2=Settings.HAND_OPENING)
+                # # First we should close the finger to a certain degree
+                # # that it will not collide with other blocks on the table
+                # robot.arm.hand.MoveHand(f1=Settings.HAND_OPENING,f2=Settings.HAND_OPENING)
 
                 # Then we move the hand down to the table
                 # this is just a translation, so we just need the 4th column in GetEndEffectorTransform
@@ -154,19 +157,55 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 manip.PlanToEndEffectorOffset(direction=to_block_direction,
                         distance=min_distance, max_distance=min_distance+0.05,
                         timelimit=5., execute=True)
+        # import IPython; IPython.embed()
 
-        # we let it rotate 180 around z axis
-        traj_rot = robot.arm.PlanToConfiguration(robot.arm.GetDOFValues(),execute=False)
-        config_after_rot = robot.arm.GetDOFValues()
-        config_before_rot = numpy.array(config_after_rot, copy=True)
-        config_after_rot[5] = config_after_rot[5]+numpy.pi
-        traj_rot.Insert(1,config_after_rot)
-        robot.ExecutePath(traj_rot)
-        #assert(config_before_rot[5]!=config_after_rot[5])
-        robot.SetActiveDOFValues(config_before_rot)
-        # Close the finger to grab the block
+
+        # cspec = robot.GetActiveConfigurationSpecification('linear')
+        # traj = openravepy.RaveCreateTrajectory(robot.GetEnv(), '')
+        # traj.Init(cspec)
+        # config_after_rot = robot.arm.GetDOFValues()
+        # traj.Insert(0, config_after_rot)
+        # config_after_rot[5] = config_after_rot[5]+numpy.pi
+        # traj.Insert(1, config_after_rot)
+        
+        # # Time the trajectory so we can execute it.
+        # from openravepy import PlannerStatus
+        # result = openravepy.planningutils.RetimeTrajectory(
+        #     traj, False, 1., 1., 'LinearTrajectoryRetimer')
+
+        # if result not in [ PlannerStatus.HasSolution,
+        #                    PlannerStatus.InterruptedWithSolution ]:
+        #     raise PrPyException('Failed timing finger trajectory.')
+        # robot.ExecuteTrajectory(traj)
+
+        # grab it
+        # print Settings.HAND_CLOSING
+        # import IPython; IPython.embed()
         manip.hand.MoveHand(f1=Settings.HAND_CLOSING,f2=Settings.HAND_CLOSING)
+        robot.WaitForController(0)
 
+        # let's first verify if the grasp is successful
+        # from block sorting in herb - block_sorting/src/block_sorting/block_utils.py
+        # copy this file to ada_block_sorting
+        i=0;
+        import ada_block_sorting.block_utils as block_utils
+        verify_result = block_utils.VerifyGrasp(block, manip)
+        while verify_result == False and i < Settings.MAX_REGRASP_TIME:
+            print 'regrasp %d, open hand' % i
+            # if it fails, we have to rotate again, then grasp
+            manip.hand.MoveHand(f1=Settings.HAND_REGRASP, f2=Settings.HAND_REGRASP) 
+            robot.WaitForController(0) 
+            print 'regrasp %d, rotate' % i
+            # we let it rotate 180 around z axis to roll the block between the fingers
+            # (from micohand.py)
+            roll_in_block(robot)
+            manip.hand.MoveHand(f1=Settings.HAND_CLOSING,f2=Settings.HAND_CLOSING)
+            robot.WaitForController(0)
+            print 'regrasp %d, close hand' % i
+            i+=1
+            verify_result = block_utils.VerifyGrasp(block, manip)
+        if verify_result == False:
+            raise Exception('Unable to re-grasp the block')
         # Compute the pose of the block in the hand frame
         with env:
             # local_p = [0.01, 0, 0.24, 1.0]
@@ -194,6 +233,29 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     finally:
         return block
 
+def roll_in_block(robot):
+    # rotate the last joint, or rotate the hand, around the block
+    cspec = robot.GetActiveConfigurationSpecification('linear')
+    traj = openravepy.RaveCreateTrajectory(robot.GetEnv(), '')
+    traj.Init(cspec)
+    config_after_rot = robot.arm.GetDOFValues()
+    traj.Insert(0, config_after_rot)
+    if config_after_rot[5]<0:
+        config_after_rot[5] = config_after_rot[5]+numpy.pi
+    else:
+        config_after_rot[5] = config_after_rot[5]-numpy.pi
+    traj.Insert(1, config_after_rot)
+    
+    # Time the trajectory so we can execute it.
+    from openravepy import PlannerStatus
+    result = openravepy.planningutils.RetimeTrajectory(
+        traj, False, 1., 1., 'LinearTrajectoryRetimer')
+
+    if result not in [ PlannerStatus.HasSolution,
+                       PlannerStatus.InterruptedWithSolution ]:
+        raise PrPyException('Failed timing finger trajectory.')
+    robot.ExecuteTrajectory(traj)
+    robot.WaitForController(0)
 
 '''
 function decorator
@@ -202,7 +264,6 @@ Here, GrabBlocks is wrapped by the wrapper ActionMethod
 (which is in prpy/src/prpy/action/actionlibrary.py)
 In actionlibrary.py which is inherited from 'object'
 def __init__(self, func) - the func argument <= GrabBlocks function
-
 
 '''
 @ActionMethod
@@ -277,6 +338,8 @@ def PlaceBlock(robot, block, on_obj, manip=None, **kw_args):
         manip.PlanToTSR(place_tsr_list, execute=True)
 
     # Open the hand and drop the block
+    # print Settings.HAND_OPENING
+    # import IPython; IPython.embed()
     manip.hand.MoveHand(f1=Settings.HAND_OPENING,f2=Settings.HAND_OPENING)
 
     with env:
