@@ -42,11 +42,9 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
 
     # print Settings.HAND_OPENING
     # import IPython; IPython.embed()
-    if preshape is None:
-        manip.hand.MoveHand(f1=Settings.HAND_OPENING, f2=Settings.HAND_OPENING)
-    else:
+    #if preshape is not None:
         # * is transposing the matrix
-        manip.hand.MoveHand(*preshape)
+        #manip.hand.MoveHand(*preshape)
 
     # 2. Now let's grab block
     # prpy/src/prpy/tsr/tsrlibrary.py
