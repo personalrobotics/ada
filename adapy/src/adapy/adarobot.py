@@ -95,13 +95,31 @@ class ADARobot(Robot):
             SBPLPlanner,
             SnapPlanner,
             TSRPlanner,
-            VectorFieldPlanner
+            VectorFieldPlanner,
+
+            # by shen
+            MKPlanner,
+            CHOMPPlanner,
+            OMPLPlanner
         )
+        # from prpy.planning.openrave import BiRRTPlanner,OpenRAVEPlanner
+        # from prpy.planning.ompl import OMPLPlanner,RRTConnect
 
         self.snap_planner = SnapPlanner()
         self.greedyik_planner = GreedyIKPlanner()
         self.cbirrt_planner = CBiRRTPlanner()
         self.vectorfield_planner = VectorFieldPlanner()
+
+        # by Shen
+        self.OMPL_planner= OMPLPlanner()
+        # self.rrtconnect_planner = RRTConnect()
+        self.sbpl_planner = SBPLPlanner()
+        self.ik_planner = IKPlanner()
+        self.mk_planner = MKPlanner()
+        self.chomp_planner = CHOMPPlanner()
+        # self.openrave_planner = OpenRAVEPlanner()
+        self.birrt_planner = BiRRTPlanner()
+
 
         actual_planner = Sequence(
             self.snap_planner,
@@ -120,7 +138,7 @@ class ADARobot(Robot):
             ParabolicSmoother(),
             HauserParabolicSmoother()
         )
-        
+
         from prpy.action import ActionLibrary
         self.actions = ActionLibrary()
 
@@ -147,7 +165,7 @@ class ADARobot(Robot):
         will be raised). If timeout is a float (including timeout = 0), this
         function will return None once the timeout has ellapsed, even if the
         trajectory is still being executed.
-        
+
         NOTE: We suggest that you either use timeout=None or defer=True. If
         trajectory execution times out, there is no way to tell whether
         execution was successful or not. Other values of timeout are only
@@ -193,7 +211,7 @@ class ADARobot(Robot):
         #print traj_msg
         #print "\n\n\n\n\n\n"
         #print traj.serialize()
-        
+
         #from IPython import embed
         #embed()
         with self.GetEnv():
@@ -221,8 +239,8 @@ class ADARobot(Robot):
             try:
                 traj_future.result(timeout)
                 return traj
-        # Returning OpenRAVE traj we were passed to circumvent problem with returning a ROS trajectory message when OpenRAVE 'Trajectory' is expected
-        # Ideally, we will convert the traj_future.result(timeout) ROS 'JointTrajectory" message to the equivalent OpenRAVE 'Trajectory', restore
-        # the tags, and return this here.
+		# Returning OpenRAVE traj we were passed to circumvent problem with returning a ROS trajectory message when OpenRAVE 'Trajectory' is expected
+		# Ideally, we will convert the traj_future.result(timeout) ROS 'JointTrajectory" message to the equivalent OpenRAVE 'Trajectory', restore
+		# the tags, and return this here.
             except TrajectoryExecutionFailed as e:
                 logger.exception('Trajectory execution failed.')
