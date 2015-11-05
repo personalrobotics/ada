@@ -21,7 +21,7 @@ openravepy.RaveInitialize(True, level=openravepy.DebugLevel.Debug)
 openravepy.misc.InitOpenRAVELogging();
 rospy.init_node('test_scenario', anonymous = True)
 
-env, robot = adapy.initialize(attach_viewer='qtcoin', sim=False)
+env, robot = adapy.initialize(attach_viewer='qtcoin', sim=True)
 manip = robot.arm
 
 

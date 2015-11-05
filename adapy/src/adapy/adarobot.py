@@ -120,6 +120,8 @@ class ADARobot(Robot):
         # self.openrave_planner = OpenRAVEPlanner()
         self.birrt_planner = BiRRTPlanner()
 
+        from or_trajopt import TrajoptPlanner
+        self.trajopt_planner = TrajoptPlanner()
 
         actual_planner = Sequence(
             self.snap_planner,
