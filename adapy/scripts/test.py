@@ -30,8 +30,8 @@ manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
 #robot.SetActiveDOFs([2,3,4,5,6,7])
 robot.arm.SetActive()
 values = robot.GetActiveDOFValues()
-values[1] = -1
-robot.PlanToConfiguration(values)
+values[1] = values[1] - 0.3
+robot.PlanToConfiguration(values, execute=False)
 
 
 from IPython import embed
