@@ -2,7 +2,7 @@ import logging, numpy, openravepy, prpy
 from prpy.action import ActionMethod
 from prpy.planning.base import PlanningError
 from prpy.util import ComputeEnabledAABB
-
+import time
 from prpy.tsr.tsrlibrary import TSRFactory
 from prpy.tsr.tsr import *
 from adapy.tsr import block
@@ -155,7 +155,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 manip.PlanToEndEffectorOffset(direction=to_block_direction,
                         distance=min_distance, max_distance=min_distance+0.05,
                         timelimit=5., execute=True)
-        # import IPython; IPython.embed()
+        import IPython; IPython.embed()
 
 
         # cspec = robot.GetActiveConfigurationSpecification('linear')
@@ -181,7 +181,9 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         # import IPython; IPython.embed()
         manip.hand.MoveHand(f1=Settings.HAND_CLOSING,f2=Settings.HAND_CLOSING)
         robot.WaitForController(0)
-
+        time.sleep(2)
+        print '----------------------------------------------------------------------'
+        print 'sleep 2'
         # let's first verify if the grasp is successful
         # from block sorting in herb - block_sorting/src/block_sorting/block_utils.py
         # copy this file to ada_block_sorting
@@ -193,15 +195,21 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             # if it fails, we have to rotate again, then grasp
             manip.hand.MoveHand(f1=Settings.HAND_REGRASP, f2=Settings.HAND_REGRASP) 
             robot.WaitForController(0) 
+            time.sleep(2)
+            print 'sleep 2'
             print 'regrasp %d, rotate' % i
             # we let it rotate 180 around z axis to roll the block between the fingers
             # (from micohand.py)
             roll_in_block(robot)
             manip.hand.MoveHand(f1=Settings.HAND_CLOSING,f2=Settings.HAND_CLOSING)
             robot.WaitForController(0)
+            time.sleep(2)
+            print 'sleep 2'
             print 'regrasp %d, close hand' % i
             i+=1
             verify_result = block_utils.VerifyGrasp(block, manip)
+
+        print '----------------------------------------------------------------------'
         if verify_result == False:
             raise Exception('Unable to re-grasp the block')
         # Compute the pose of the block in the hand frame
