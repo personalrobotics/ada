@@ -81,63 +81,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     block_ee_distance = [(tsr_chain.distance(ee_pose))[0] for tsr_chain in block_tsr_list]
     if len(block_ee_distance) == 0:
         raise NoTSRException("Failed to find the TSR PlanToTSR planned to")
-    # here we choose the closest block to the TSR to pick up.
-
-    color = kw_args.get('color')
-    import math
-    block_objects = []
-    for block in blocks:
-        from block_object import block_object
-        color_tmp = ''
-        distance_tmp = 0.0
-        name_tmp = block.GetName()
-        for l in block.GetLinks():
-            for g in l.GetGeometries():
-                diff_color = g.GetDiffuseColor();
-                if diff_color[0]==0.0 and diff_color[1]==0.0 and diff_color[2]==1.0:
-                    color_tmp = 'blue'
-                elif diff_color[0]==1.0 and diff_color[1]==1.0 and diff_color[2]==0.0:
-                    color_tmp = 'yellow'
-                elif diff_color[0]==1.0 and diff_color[1]==0.0 and diff_color[2]==0.0:
-                    color_tmp = 'red'
-                elif diff_color[0]==0.0 and diff_color[1]==1.0 and diff_color[2]==0.0:
-                    color_tmp = 'green'
-        transform = block.GetTransform()
-        human_x = 0.16825
-        human_y = -0.80975
-        distance_tmp = math.sqrt(math.pow(transform[0][3]-human_x,2)+math.pow(transform[1][3]-human_y,2));
-        block_obj = block_object(block, name_tmp, color_tmp,distance_tmp)
-        block_objects.append(block_obj)
-        print str(block_obj)
-
-    block_with_right_color = [b for b in block_objects if b.get_color()==color]
-    block_with_right_color_dist = [b.get_distance() for b in block_with_right_color]
-    index_min_dist = block_with_right_color_dist.index(min(block_with_right_color_dist))
-    block_min_dist = block_with_right_color[index_min_dist]
-    print "now we are going to grab the block in %s" % block_min_dist
-
-    with Disabled(table, padding_only=True):
-        table_aabb = ComputeEnabledAABB(table)
-    table_width = table_aabb.extents()[1]
-    table_length = table_aabb.extents()[0]
-    distances_to_user = []
-    for block in blocks_in_color:
-        transform = block.GetTransform()
-        print transform
-        print transform[0][3]
-        # distances_to_user.append(table_width - transform[0][3]);
-        distances_to_user.append(transform[0][3]);
-
-    print distances_to_user
-    min_index = distances_to_user.index(min(distances_to_user))
-    min_index_ = blocks.index(blocks_in_color[min_index])
-    print "this is !!!!!"
-    print min_index_
-
-
-    import IPython; IPython.embed()
-    # for block in blocks:
-    # min_index = numpy.argmin(block_ee_distance)
+    min_index = numpy.argmin(block_ee_distance)
 
     # in real robot, if any error, then the robot may not be in the tsr, so we cannot use the 'contain'
     # block_idxs = [ idx for idx, tsr_chain in enumerate(block_tsr_list)
@@ -221,7 +165,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         # traj.Insert(0, config_after_rot)
         # config_after_rot[5] = config_after_rot[5]+numpy.pi
         # traj.Insert(1, config_after_rot)
-
+        
         # # Time the trajectory so we can execute it.
         # from openravepy import PlannerStatus
         # result = openravepy.planningutils.RetimeTrajectory(
@@ -249,8 +193,8 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         while verify_result == False and i < Settings.MAX_REGRASP_TIME:
             print 'regrasp %d, open hand' % i
             # if it fails, we have to rotate again, then grasp
-            manip.hand.MoveHand(f1=Settings.HAND_REGRASP, f2=Settings.HAND_REGRASP)
-            robot.WaitForController(0)
+            manip.hand.MoveHand(f1=Settings.HAND_REGRASP, f2=Settings.HAND_REGRASP) 
+            robot.WaitForController(0) 
             time.sleep(2)
             print 'sleep 2'
             print 'regrasp %d, rotate' % i
@@ -307,7 +251,7 @@ def roll_in_block(robot):
     else:
         config_after_rot[5] = config_after_rot[5]-numpy.pi
     traj.Insert(1, config_after_rot)
-
+    
     # Time the trajectory so we can execute it.
     from openravepy import PlannerStatus
     result = openravepy.planningutils.RetimeTrajectory(
