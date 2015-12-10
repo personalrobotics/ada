@@ -5,7 +5,7 @@ from catkin_pkg.python_setup import generate_distutils_setup
 
 package_info = generate_distutils_setup()
 package_info['packages'] = ['adapy']
-package_info['package_dir'] = {'adapy':'src/adapy'}
+package_info['package_dir'] = {'':'src'}
 package_info['install_requires'] = []
 
 setup(**package_info)
