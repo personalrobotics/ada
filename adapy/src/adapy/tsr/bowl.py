@@ -1,6 +1,6 @@
 import numpy
 from prpy.tsr.tsrlibrary import TSRFactory
-from prpy.tsr.tsr import *
+from prpy.tsr.tsr import TSR, TSRChain
 
 @TSRFactory('ada', 'bowl', 'grasp')
 def bowl_grasp(robot, glass, manip=None):
@@ -13,9 +13,8 @@ def bowl_grasp(robot, glass, manip=None):
     if manip is None:
         manip_idx = robot.GetActiveManipulatorIndex()
     else:
-        with manip.GetRobot():
-            manip.SetActive()
-            manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
+        manip.SetActive()
+        manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
 
     T0_w = glass.GetTransform()
     Tw_e = numpy.array([[ 0.,-1., 0., 0.08], #bowl width

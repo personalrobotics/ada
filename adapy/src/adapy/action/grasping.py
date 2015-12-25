@@ -20,8 +20,9 @@ def Grasp(robot, obj, manip=None, tsrlist=None, render=True, **kw_args):
         manip = robot.GetActiveManipulator()
 
     # Get the grasp tsr
-    if tsrlist is None:
-        tsrlist = robot.tsrlibrary(obj, 'grasp')
+    with robot.GetEnv():
+        if tsrlist is None:
+            tsrlist = robot.tsrlibrary(obj, 'grasp')
 
     # Plan to the grasp
     with prpy.viz.RenderTSRList(tsrlist, robot.GetEnv(), render=render):

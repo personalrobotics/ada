@@ -1,6 +1,7 @@
 import numpy
 from prpy.tsr.tsrlibrary import TSRFactory
 from prpy.tsr.tsr import TSR, TSRChain
+from prpy.util import GetManipulatorIndex
 
 @TSRFactory('ada', None, 'point')
 def point_obj(robot, transform, manip=None):
@@ -9,14 +10,9 @@ def point_obj(robot, transform, manip=None):
     @param transform The location of where the robot is pointing to
     @param manip The manipulator to point with. This must be the right arm. 
     """
-  
-    if manip is None:
-        manip = robot.arm
+    
+    (manip, manip_idx) = GetManipulatorIndex(robot, manip)
 
-    with manip.GetRobot():
-        manip.SetActive()
-        manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
-    		
     # compute T_ow
     T0_w_0 = transform
     T0_w_1 = numpy.identity(4)
@@ -54,12 +50,7 @@ def present_obj(robot, transform, manip=None):
     @param manip The manipulator to present. This must be the right arm. 
     """
 
-    if manip is None:
-        manip = robot.arm
-
-    with manip.GetRobot():
-        manip.SetActive()
-        manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
+    (manip, manip_idx) = GetManipulatorIndex(robot, manip)
 
     #Compute T0_w
     T0_w = transform
@@ -91,13 +82,7 @@ def sweep_objs(robot, transform, manip=None):
     @param manip The manipulator to sweep.
     """
 
-    if manip is None:
-        manip = robot.GetActiveManipulator()
-        manip_idx = robot.GetActiveManipulatorIndex()
-    else:
-         with manip.GetRobot():
-             manip.SetActive()
-             manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
+    (manip, manip_idx) = GetManipulatorIndex(robot, manip)
 
     #TSR for the goal
     ee_offset = 0.15

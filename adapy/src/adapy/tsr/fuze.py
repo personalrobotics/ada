@@ -1,6 +1,6 @@
 import numpy
 from prpy.tsr.tsrlibrary import TSRFactory
-from prpy.tsr.tsr import *
+from prpy.tsr.tsr import TSR, TSRChain
 
 @TSRFactory('ada', 'fuze_bottle', 'lift')
 def fuze_lift(robot, fuze, manip=None, distance=0.1):
@@ -20,10 +20,9 @@ def fuze_lift(robot, fuze, manip=None, distance=0.1):
     if manip is None:
         manip = robot.GetActiveManipulator()
         manip_idx = robot.GetActiveManipulatorIndex()
-    else:
-         with manip.GetRobot():
-             manip.SetActive()
-             manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
+    else: 
+         manip.SetActive()
+         manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
 
     #TSR for the goal
     start_position = manip.GetEndEffectorTransform()
@@ -71,9 +70,8 @@ def fuze_grasp(robot, fuze, manip=None):
     if manip is None:
         manip_idx = robot.GetActiveManipulatorIndex()
     else:
-        with manip.GetRobot():
-            manip.SetActive()
-            manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
+        manip.SetActive()
+        manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
 
     T0_w = fuze.GetTransform()
 

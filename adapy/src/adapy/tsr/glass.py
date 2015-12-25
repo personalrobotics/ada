@@ -1,6 +1,6 @@
 import numpy
 from prpy.tsr.tsrlibrary import TSRFactory
-from prpy.tsr.tsr import *
+from prpy.tsr.tsr import TSR, TSRChain
 
 @TSRFactory('ada', 'glass', 'lift')
 def glass_lift(robot, glass, manip=None, distance=0.1):
@@ -15,15 +15,12 @@ def glass_lift(robot, glass, manip=None, distance=0.1):
     @param distance The distance to lift the glass
     '''
 
-    print 'distance = %0.2f' % distance
-
     if manip is None:
         manip = robot.GetActiveManipulator()
         manip_idx = robot.GetActiveManipulatorIndex()
-    else:
-         with manip.GetRobot():
-             manip.SetActive()
-             manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
+    else: 
+         manip.SetActive()
+         manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
 
     #TSR for the goal
     start_position = manip.GetEndEffectorTransform()
@@ -71,9 +68,8 @@ def glass_grasp(robot, glass, manip=None):
     if manip is None:
         manip_idx = robot.GetActiveManipulatorIndex()
     else:
-        with manip.GetRobot():
-            manip.SetActive()
-            manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
+        manip.SetActive()
+        manip_idx = manip.GetRobot().GetActiveManipulatorIndex()
 
     T0_w = glass.GetTransform()
 
@@ -95,4 +91,3 @@ def glass_grasp(robot, glass, manip=None):
                            constrain=False, TSR = grasp_tsr)
 
     return [grasp_chain]
-
