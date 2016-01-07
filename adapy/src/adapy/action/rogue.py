@@ -80,7 +80,6 @@ def GetPointFrom(env, focus):
 
     return coord
 
-@ActionMethod
 def Point(robot, focus, manip=None, render=False):
     """
     @param robot The robot performing the point
@@ -94,7 +93,7 @@ def Point(robot, focus, manip=None, render=False):
         manip = robot.GetActiveManipulator()
 
     focus_trans = numpy.eye(4, dtype='float')
-    focus_trans[0:3, 3] = coord
+    focus_trans[0:3, 3] = focus
 
     with robot.GetEnv():
         point_tsr = robot.tsrlibrary(None, 'point', focus_trans, manip)
@@ -109,7 +108,6 @@ def Point(robot, focus, manip=None, render=False):
     #Should be closehand but that doesnt work
     robot.arm.hand.MoveHand(f1=0.9, f2=0.9)
 
-@ActionMethod
 def Present(robot, focus, manip=None, render=True):
     """
     @param robot The robot performing the presentation
@@ -123,7 +121,7 @@ def Present(robot, focus, manip=None, render=True):
         manip = robot.GetActiveManipulator()
 
     focus_trans = numpy.eye(4, dtype='float')
-    focus_trans[0:3, 3] = coord
+    focus_trans[0:3, 3] = focus
 
     with robot.GetEnv():
         present_tsr = robot.tsrlibrary(None, 'present', focus_trans, manip)
@@ -138,8 +136,7 @@ def Present(robot, focus, manip=None, render=True):
     #should be closehand() but that doesnt work
     robot.arm.hand.MoveHand(f1=0.9, f2=0.9)
 
-@ActionMethod
-def Sweep(robot, start, end, manip=None, margin=0.3, render=True):
+def Sweep(robot, start_coords, end_coords, manip=None, margin=0.3, render=True):
     """
     @param robot The robot performing the sweep
     @param start The object or 3-d position that marks the start
