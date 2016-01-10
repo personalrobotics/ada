@@ -21,7 +21,7 @@ openravepy.RaveInitialize(True, level=openravepy.DebugLevel.Debug)
 openravepy.misc.InitOpenRAVELogging();
 rospy.init_node('test_scenario', anonymous = True)
 
-env, robot = adapy.initialize(attach_viewer='qtcoin', sim=True)
+env, robot = adapy.initialize(attach_viewer='rviz', sim=True)
 manip = robot.arm
 
 
@@ -31,7 +31,7 @@ manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
 robot.arm.SetActive()
 values = robot.GetActiveDOFValues()
 values[1] = values[1] - 0.3
-robot.PlanToConfiguration(values, execute=False)
+robot.PlanToConfiguration(values, execute=True)
 
 
 from IPython import embed
