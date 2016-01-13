@@ -9,7 +9,6 @@
           type="mico_hardware" 
           output="screen" />
 
-
    <!-- load controllers -->
    <rosparam file="$(find ada_launch)/config/controllers.yaml" command="load" />
    
