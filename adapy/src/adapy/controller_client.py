@@ -76,7 +76,8 @@ class ControllerSwitcher(object):
 
     def unswitch(self):
         """ Reverts to the controllers loaded before switch() was called. """
-
+        from controller_manager_msgs.srv import SwitchControllerRequest
+        
         if (self._started_controllers is None
                 or self._stopped_controllers is None):
             raise ROSControlError('Unknown state. Did you call __enter__?')

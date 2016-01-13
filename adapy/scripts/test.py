@@ -19,9 +19,20 @@ def PlanToOffset(env, robot, offset):
 rospy.init_node('test_scenario', anonymous = True)
 openravepy.RaveInitialize(True, level=openravepy.DebugLevel.Debug)
 openravepy.misc.InitOpenRAVELogging();
-env, robot = adapy.initialize(attach_viewer='rviz', sim=False)
+rospy.init_node('test_scenario', anonymous = True)
+
+env, robot = adapy.initialize(attach_viewer='rviz', sim=True)
 manip = robot.arm
-#manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
-robot.SetActiveDOFs([0,1,2,3,4,5])
+
+
+
+manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
+#robot.SetActiveDOFs([2,3,4,5,6,7])
+robot.arm.SetActive()
+values = robot.GetActiveDOFValues()
+values[1] = values[1] - 0.3
+robot.PlanToConfiguration(values, execute=True)
+
+
 from IPython import embed
 embed()
