@@ -219,6 +219,8 @@ class ADARobot(Robot):
             return traj_future
         else:
             try:
-                return traj_future.result(timeout)
+                traj_future.result(timeout)
+                print 'ksadjfksjadfjksadfjksadfjsad'
+                return traj
             except TrajectoryExecutionFailed as e:
                 logger.exception('Trajectory execution failed.')
