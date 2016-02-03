@@ -30,16 +30,12 @@
          pos_j4_controller
          pos_j5_controller
          pos_j6_controller
-         pos_f1_controller
-         pos_f2_controller
          vel_j1_controller
          vel_j2_controller
          vel_j3_controller
          vel_j4_controller
          vel_j5_controller
          vel_j6_controller
-         vel_f1_controller
-         vel_f2_controller
          " />
    
    <!-- load a nice urdf -->
@@ -47,7 +43,7 @@
           command="cat $(find ada_description)/robots/mico.urdf"/>
    
    <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
-
+   <node ns="ada" pkg="joy" output="screen" type="joy_node" name="joy_node" />
    <!-- Camera -->
    <!--<include file="$(find softkinetic_driver)/launch/softkinetic_camera_ds325.launch"/>-->
 

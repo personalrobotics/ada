@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
 	rospy.init_node('test_velocity', anonymous=True)
 
-	velocity = 10.0
+	velocity = 0.0
 	duration = 1.0
 	joint_name = args.joint_name
 	output_path = '{:s}.csv'.format(joint_name)

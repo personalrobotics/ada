@@ -24,7 +24,7 @@ class ControllerSwitcher(object):
         self._started_controllers, self._stopped_controllers = self.switch()
 
     def __exit__(self, type, value, tb):
-        self.unswitch()
+        pass
 
     def switch(self):
         """ Switch to the requested controllers.
@@ -76,6 +76,7 @@ class ControllerSwitcher(object):
 
     def unswitch(self):
         """ Reverts to the controllers loaded before switch() was called. """
+        from controller_manager_msgs.srv import SwitchControllerRequest
 
         if (self._started_controllers is None
                 or self._stopped_controllers is None):

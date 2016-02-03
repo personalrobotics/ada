@@ -35,12 +35,7 @@ pos_j5_controller:
 pos_j6_controller:
   type: pr_ros_controllers/PrJointPositionController
   joint: j6
-pos_f1_controller:
-  type: pr_ros_controllers/PrJointPositionController
-  joint: f1
-pos_f2_controller:
-  type: pr_ros_controllers/PrJointPositionController
-  joint: f2
+
 
 # per-joint velocity controllers
 vel_j1_controller:
@@ -61,12 +56,7 @@ vel_j5_controller:
 vel_j6_controller:
   type: velocity_controllers/JointVelocityController
   joint: j6
-vel_f1_controller:
-  type: velocity_controllers/JointVelocityController
-  joint: f1
-vel_f2_controller:
-  type: velocity_controllers/JointVelocityController
-  joint: f2
+
 
 pid_j1_controller:
   type: pr_ros_controllers/PrJointVelocityController
@@ -104,22 +94,10 @@ pid_j6_controller:
   p: 3
   i: 0
   d: 0
-d_f1_controller:
-  type: pr_ros_controllers/PrJointVelocityController
-  joint: f1
-  p: 1
-  i: 0
-  d: 0
-pid_f2_controller:
-  type: pr_ros_controllers/PrJointVelocityController
-  joint: f2
-  p: 1
-  i: 0
-  d: 0
 # trajectory controller
 traj_controller:
   type: velocity_controllers/JointTrajectoryController
-  joints: [j1, j2, j3, j4, j5, j6, f1, f2]
+  joints: [j1, j2, j3, j4, j5, j6]
   constraints:
     stopped_velocity_tolerance: 1.0
   gains: # Required because we're controlling a velocity interface
@@ -128,6 +106,4 @@ traj_controller:
     j3: {p: 5,  d: 0, i: 0, i_clamp: 1}
     j4: {p: 5,  d: 0, i: 0, i_clamp: 1}
     j5: {p: 5,  d: 0, i: 0, i_clamp: 1}
-    j6: {p: 5,  d: 0, i: 0, i_clamp: 1}
-    f1: {p: 1,  d: 0, i: 0, i_clamp: 1}
-    f2: {p: 1,  d: 0, i: 0, i_clamp: 1}     
+    j6: {p: 5,  d: 0, i: 0, i_clamp: 1}   
