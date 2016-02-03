@@ -19,6 +19,7 @@ class ADARobot(Robot):
         from util import AdaPyException, find_adapy_resource
 
         self.simulated = sim
+        self.talker_simulated = sim
 
         # We need to hard-code the name. Otherwise, it defaults to
         # "mico-modified".
@@ -123,6 +124,18 @@ class ADARobot(Robot):
         
         from prpy.action import ActionLibrary
         self.actions = ActionLibrary()
+        
+        if not self.talker_simulated:
+            # Initialize herbpy ROS Node
+            import rospy
+            if not rospy.core.is_initialized():
+                rospy.init_node('adapy', anonymous=True)
+                logger.debug('Started ROS node with name "%s".', rospy.get_name())
+
+            import talker.msg
+            from actionlib import SimpleActionClient
+            self._say_action_client = SimpleActionClient('say', talker.msg.SayAction)
+       
 
     def CloneBindings(self, parent):
         super(ADARobot, self).CloneBindings(parent)
@@ -219,6 +232,25 @@ class ADARobot(Robot):
             return traj_future
         else:
             try:
-                return traj_future.result(timeout)
+                traj_future.result(timeout)
+                return traj
             except TrajectoryExecutionFailed as e:
                 logger.exception('Trajectory execution failed.')
+               
+               
+    def Say(self, words, block=True):
+        """Speak 'words' using talker action service or espeak locally in simulation"""
+        if self.talker_simulated:
+            import subprocess
+            try:
+                proc = subprocess.Popen(['espeak', '-s', '160', '"{0}"'.format(words)])
+                if block:
+                    proc.wait()
+            except OSError as e:
+                logger.error('Unable to speak. Make sure "espeak" is installed locally.\n%s' % str(e))
+        else:
+            import talker.msg
+            goal = talker.msg.SayGoal(text=words)
+            self._say_action_client.send_goal(goal)
+            if block:
+                self._say_action_client.wait_for_result()
