@@ -72,8 +72,7 @@ def Point(robot, focus, manip=None, render=False):
         with prpy.viz.RenderTSRList(point_tsr, robot.GetEnv(), render=render):
             robot.PlanToTSR(point_tsr, execute=True)
    
-    #Should be closehand but that doesnt work
-    robot.arm.hand.MoveHand(f1=0.9, f2=0.9)
+    robot.arm.hand.CloseHand()
 
 def Present(robot, focus, manip=None, render=True):
     """
@@ -101,7 +100,7 @@ def Present(robot, focus, manip=None, render=True):
             robot.PlanToTSR(present_tsr, execute=True)   
 
     #should be closehand() but that doesnt work
-    robot.arm.hand.MoveHand(f1=0.9, f2=0.9)
+    robot.arm.hand.CloseHand()
 
 def Sweep(robot, start_coords, end_coords, manip=None, margin=0.3, render=True):
     """
