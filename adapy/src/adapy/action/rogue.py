@@ -132,9 +132,8 @@ def Sweep(robot, start_coords, end_coords, manip=None, margin=0.3, render=True):
 
     end_trans = numpy.eye(4, dtype='float')
     end_trans[0:3, 3] = end_coords
- 
-    #Should be close hand but that is broken
-    hand.MoveHand(f1=0.9, f2=0.9)
+    hand.CloseHand() 
+
     q = openravepy.KinBody.SaveParameters
     with robot.CreateRobotStateSaver(q.ActiveManipulator | q.ActiveDOF):
         robot.SetActiveManipulator(manip)

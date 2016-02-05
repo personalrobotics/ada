@@ -28,9 +28,8 @@ def Grasp(robot, obj, manip=None, tsrlist=None, render=True, **kw_args):
     with prpy.viz.RenderTSRList(tsrlist, robot.GetEnv(), render=render):
         manip.PlanToTSR(tsrlist, execute=True)
 
-    #Using MoveHand since CloseHand doesnt work in simulation
-    manip.hand.MoveHand(f1=0.5, f2=0.5)
- 
+    manip.hand.CloseHand()
+
     # Manipulator must be active for grab to work properly
     p = openravepy.KinBody.SaveParameters
     with robot.CreateRobotStateSaver(p.ActiveManipulator):
