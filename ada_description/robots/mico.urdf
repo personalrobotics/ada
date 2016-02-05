@@ -302,7 +302,7 @@
     <child link="mico_link_finger_1"/>
     <axis xyz="0 0 1"/>
     <origin rpy="1.57079632679 1.57079632679 0" xyz="-0.03095 -0.0025 -0.116"/>
-    <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
+    <limit effort="30" lower="0" upper="1.35" velocity="5"/>
   </joint>
   <transmission name="mico_joint_finger_1_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -386,7 +386,7 @@
     <child link="mico_link_finger_2"/>
     <axis xyz="0 0 1"/>
     <origin rpy="-1.57079632679 1.57079632679 0" xyz="0.03095 -0.0025 -0.116"/>
-    <limit effort="30" lower="0" upper="0.698131700798" velocity="5"/>
+    <limit effort="30" lower="0" upper="1.35" velocity="5"/>
   </joint>
   <transmission name="mico_joint_finger_2_trans">
     <type>transmission_interface/SimpleTransmission</type>
