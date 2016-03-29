@@ -6790,12 +6790,12 @@
 				</technique>
 			</extra>
 			 </rigid_body>
-			<rigid_constraint	sid="Joint0-RigidConstraint" name="Coincident4(link_finger_fixed_origin-1, @world)">
+			<rigid_constraint	sid="Joint0-RigidConstraint" name="Coincident4(link_finger_fixed_origin-1, @map)">
 				<ref_attachment	rigid_body="Actor0-RigidBody"	name="link_finger_fixed_origin-1">
           <translate>0	0 0</translate>
           <rotate>0 0	1	 180</rotate>
 				</ref_attachment>
-				 <attachment node="@world">
+				 <attachment node="@map">
           <translate>0	0 0</translate>
           <rotate>0.577350259 -0.577350259	0.577350259	 120.000007629</rotate>
 				</attachment>
@@ -6874,12 +6874,12 @@
 					</technique>
 				</extra>
 			</rigid_constraint>
-			<rigid_constraint	sid="Joint1-RigidConstraint" name="Coincident5(link_finger_fixed_origin-1, @world)">
+			<rigid_constraint	sid="Joint1-RigidConstraint" name="Coincident5(link_finger_fixed_origin-1, @map)">
 				<ref_attachment	rigid_body="Actor0-RigidBody"	name="link_finger_fixed_origin-1">
           <translate>0	0 0</translate>
           <rotate>0 0.707106769	0.707106769	 180</rotate>
 				</ref_attachment>
-				 <attachment node="@world">
+				 <attachment node="@map">
           <translate>0	0 0</translate>
           <rotate>0.707106769 0	0.707106769	 180</rotate>
 				</attachment>
@@ -6958,12 +6958,12 @@
 					</technique>
 				</extra>
 			</rigid_constraint>
-			<rigid_constraint	sid="Joint2-RigidConstraint" name="Coincident6(link_finger_fixed_origin-1, @world)">
+			<rigid_constraint	sid="Joint2-RigidConstraint" name="Coincident6(link_finger_fixed_origin-1, @map)">
 				<ref_attachment	rigid_body="Actor0-RigidBody"	name="link_finger_fixed_origin-1">
           <translate>0	0 0</translate>
           <rotate>0.577350259 0.577350259	0.577350259	 120.000007629</rotate>
 				</ref_attachment>
-				 <attachment node="@world">
+				 <attachment node="@map">
           <translate>0	0 0</translate>
           <rotate>1 0	0	 180</rotate>
 				</attachment>

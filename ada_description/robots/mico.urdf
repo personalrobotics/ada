@@ -453,9 +453,9 @@
   </joint>
   <link name="mico_end_effector"/>
   <!-- Used to fix the model to the ground in Gazebo. -->
-  <link name="world"/>
-  <joint name="world_2_base_fixed" type="fixed">
-    <parent link="world"/>
+  <link name="map"/>
+  <joint name="map_2_base_fixed" type="fixed">
+    <parent link="map"/>
     <child link="mico_link_base"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
