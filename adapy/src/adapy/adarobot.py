@@ -115,12 +115,15 @@ class ADARobot(Robot):
             NamedPlanner(delegate_planner=actual_planner)
         )
 
-        from prpy.planning.retimer import ParabolicSmoother, HauserParabolicSmoother
         self.simplifier = None
-        self.smoother = Sequence(
-            ParabolicSmoother(),
-            HauserParabolicSmoother()
-        )
+        #from prpy.planning.retimer import ParabolicSmoother, HauserParabolicSmoother
+#        self.smoother = Sequence(
+#            ParabolicSmoother(),
+#            HauserParabolicSmoother()
+#        )
+        from prpy.planning.retimer import HauserParabolicSmoother
+        self.smoother = HauserParabolicSmoother()
+        self.retimer = HauserParabolicSmoother(do_blend=False, do_shortcut=False)
         
         from prpy.action import ActionLibrary
         self.actions = ActionLibrary()
