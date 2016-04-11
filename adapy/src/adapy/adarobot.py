@@ -198,6 +198,10 @@ class ADARobot(Robot):
             return Robot.ExecuteTrajectory(self, traj, defer=defer, timeout=timeout,
                                            **kwargs)
 
+        # If there was only one waypoint, at this point we are done!
+        if traj.GetNumWaypoints() == 1:
+            return traj
+
         if unswitch is None:
             unswitch = switch
 
