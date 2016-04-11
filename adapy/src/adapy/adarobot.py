@@ -198,6 +198,12 @@ class ADARobot(Robot):
             return Robot.ExecuteTrajectory(self, traj, defer=defer, timeout=timeout,
                                            **kwargs)
 
+        # Check that the current configuration of the robot matches the
+        # initial configuration specified by the trajectory.
+        if not prpy.util.IsAtTrajectoryStart(self, traj):
+            raise exceptions.TrajectoryNotExecutable(
+                'Trajectory started from different configuration than robot.')
+
         # If there was only one waypoint, at this point we are done!
         if traj.GetNumWaypoints() == 1:
             return traj
