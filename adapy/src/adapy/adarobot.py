@@ -198,6 +198,7 @@ class ADARobot(Robot):
             return Robot.ExecuteTrajectory(self, traj, defer=defer, timeout=timeout,
                                            **kwargs)
 
+
         # Check that the current configuration of the robot matches the
         # initial configuration specified by the trajectory.
         if not prpy.util.IsAtTrajectoryStart(self, traj):
