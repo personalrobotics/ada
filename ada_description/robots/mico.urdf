@@ -297,7 +297,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
+        <mesh filename="package://ada_description/meshes/structureio.dae"/>
         <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
       </geometry>
       <material name="carbon_fiber">
@@ -306,7 +306,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
+        <mesh filename="package://ada_description/meshes/structureio.dae"/>
         <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
       </geometry>
     </collision>
