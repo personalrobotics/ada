@@ -265,7 +265,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="package://ada_description/meshes/mico_link_hand.dae"/>
+        <mesh filename="package://ada_description/meshes/mico_hand_structureio.dae"/>
         <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
       </geometry>
       <material name="carbon_fiber">
@@ -274,7 +274,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ada_description/meshes/mico_link_hand.dae"/>
+        <mesh filename="package://ada_description/meshes/mico_hand_structureio.dae"/>
         <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
       </geometry>
     </collision>
