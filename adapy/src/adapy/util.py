@@ -52,6 +52,7 @@ def or_to_ros_trajectory(robot, traj, time_tolerance=0.01):
     time_from_start = 0.
     prev_time_from_start = 0.
     
+    
     for iwaypoint in xrange(traj.GetNumWaypoints()):
         waypoint = traj.GetWaypoint(iwaypoint)
 
@@ -75,9 +76,14 @@ def or_to_ros_trajectory(robot, traj, time_tolerance=0.01):
         time_from_start += dt
         deltatime = time_from_start - prev_time_from_start
 
+        # openrave includes the first trajectory point as current, with time zero
+        # ros ignores this. so if time zero, then skip
+        if time_from_start == 0:
+          continue
+
         if iwaypoint > 0 and deltatime < time_tolerance:
             logger.warning('Skipped waypoint %d because deltatime is %.3f < %.3f.',
-                deltatime, time_tolerance)
+                iwaypoint, deltatime, time_tolerance)
             continue
 
         prev_time_from_start = time_from_start

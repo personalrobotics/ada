@@ -214,6 +214,12 @@ class ADARobot(Robot):
 
         traj_msg = or_to_ros_trajectory(self, traj)
 
+        # sometimes points are removed from message
+        # ensure this trajectory is useful to send before continuing
+        if len(traj_msg.points) < 1:
+            return traj
+
+
         # The trajectory_controller expects the full set of DOFs to be
         # specified in every trajectory. We pad the trajectory by adding
         # constant values for any missing joints.
