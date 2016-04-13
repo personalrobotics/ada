@@ -193,6 +193,7 @@ class ADARobot(Robot):
         """
         from .util import or_to_ros_trajectory, pad_ros_trajectory
         from rospy import Time
+        from prpy import exceptions
 
         if self.simulated:
             return Robot.ExecuteTrajectory(self, traj, defer=defer, timeout=timeout,
@@ -201,9 +202,9 @@ class ADARobot(Robot):
 
         # Check that the current configuration of the robot matches the
         # initial configuration specified by the trajectory.
-        if not prpy.util.IsAtTrajectoryStart(self, traj):
-            raise exceptions.TrajectoryNotExecutable(
-                'Trajectory started from different configuration than robot.')
+#        if not prpy.util.IsAtTrajectoryStart(self, traj):
+#            raise exceptions.TrajectoryNotExecutable(
+#                'Trajectory started from different configuration than robot.')
 
         # If there was only one waypoint, at this point we are done!
         if traj.GetNumWaypoints() == 1:
