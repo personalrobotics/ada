@@ -295,21 +295,6 @@
         iyz="0"
         izz="0" />
     </inertial>
-    <visual>
-      <geometry>
-        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
-        <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
-      </geometry>
-      <material name="carbon_fiber">
-        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
-      </material>
-    </visual>
-    <collision>
-      <geometry>
-        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
-        <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
-      </geometry>
-    </collision>
   </link>
    <joint
     name="Camera_Joint" type = "fixed">
@@ -337,6 +322,21 @@
         iyz="0"
         izz="0" />
     </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
+        <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
+      </geometry>
+      <material name="carbon_fiber">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
+        <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
+      </geometry>
+    </collision>
   </link>
    <joint
     name="Camera_Collision_Joint" type = "fixed">
