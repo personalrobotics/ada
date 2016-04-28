@@ -30,12 +30,16 @@
          pos_j4_controller
          pos_j5_controller
          pos_j6_controller
+         pos_f1_controller
+         pos_f2_controller
          vel_j1_controller
          vel_j2_controller
          vel_j3_controller
          vel_j4_controller
          vel_j5_controller
          vel_j6_controller
+         vel_f1_controller
+         vel_f2_controller
          " />
    
    <!-- load a nice urdf -->
