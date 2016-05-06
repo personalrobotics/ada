@@ -14,8 +14,8 @@ TSR_PATHS = [
 
 class ADARobot(Robot):
     def __init__(self, sim):
-        from prpy.base.mico import Mico
-        from prpy.base.micohand import MicoHand
+        from mico import Mico
+        from micohand import MicoHand
         from util import AdaPyException, find_adapy_resource
 
         self.simulated = sim
