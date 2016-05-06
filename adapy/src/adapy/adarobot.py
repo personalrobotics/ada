@@ -135,9 +135,9 @@ class ADARobot(Robot):
                 rospy.init_node('adapy', anonymous=True)
                 logger.debug('Started ROS node with name "%s".', rospy.get_name())
 
-            import talker.msg
-            from actionlib import SimpleActionClient
-            self._say_action_client = SimpleActionClient('say', talker.msg.SayAction)
+            #import talker.msg
+            #from actionlib import SimpleActionClient
+            #self._say_action_client = SimpleActionClient('say', talker.msg.SayAction)
        
 
     def CloneBindings(self, parent):
