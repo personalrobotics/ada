@@ -46,7 +46,7 @@
     <parent link="mico_link_base"/>
     <child link="mico_link_1"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="30" velocity="0.9425"/>
+    <limit effort="30" velocity="0.84"/>
     <origin rpy="3.14159265359 0 3.14159265359" xyz="0 0 0.1535"/>
   </joint>
   <transmission name="mico_joint_1_trans">
@@ -87,7 +87,7 @@
     <child link="mico_link_2"/>
     <origin rpy="-1.57079632679 3.14159265359 0" xyz="0 0 -0.1185"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" lower="-3.8451785" upper="0.7035858" velocity="0.9425"/>
+    <limit effort="30" lower="-3.8451785" upper="0.7035858" velocity="0.8425"/>
   </joint>
   <transmission name="mico_joint_2_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -126,7 +126,7 @@
     <child link="mico_link_3"/>
     <origin rpy="3.14159265359 0 1.57079632679" xyz="0.29 0 0"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="30" lower="-4.104090" upper="0.95768524" velocity="0.9425"/>
+    <limit effort="30" lower="-4.104090" upper="0.95768524" velocity="0.83"/>
   </joint>
   <transmission name="mico_joint_3_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -165,7 +165,7 @@
     <child link="mico_link_4"/>
     <origin rpy="3.14159265359 1.57079632679 0" xyz="0.123 0 -0.00845"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="30" velocity="1.885"/>
+    <limit effort="30" velocity="0.84"/>
   </joint>
   <transmission name="mico_joint_4_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -204,7 +204,7 @@
     <child link="mico_link_5"/>
     <origin rpy="0 -1.0471975512 0" xyz="0.037 0 -0.06408"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="30" velocity="1.885"/>
+    <limit effort="30" velocity="0.84"/>
   </joint>
   <transmission name="mico_joint_5_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -243,7 +243,7 @@
     <child link="mico_link_hand"/>
     <origin rpy="-1.0471975512 0 1.57079632679" xyz="0.037 0 -0.06408"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="30" velocity="1.885"/>
+    <limit effort="30" velocity="0.84"/>
   </joint>
   <transmission name="mico_joint_6_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -305,6 +305,48 @@
       link="mico_link_hand" />
     <child
       link="Camera_RGB_Frame" />
+  </joint>
+  <link
+    name="Camera_Collision_Frame">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.05" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
+        <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
+      </geometry>
+      <material name="carbon_fiber">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
+        <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
+      </geometry>
+    </collision>
+  </link>
+   <joint
+    name="Camera_Collision_Joint" type = "fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="mico_link_hand" />
+    <child
+      link="Camera_Collision_Frame" />
   </joint>
   <link name="mico_link_finger_1">
     <inertial>

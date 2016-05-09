@@ -14,10 +14,11 @@ velocities = []
 
 def jointstate_callback(jointstate_msg):
 	if running:
-		i = jointstate_msg.name.index(joint_name)
+		i = jointstate_msg.name.index("mico_joint_"+joint_name[-1])
 		stamps.append(jointstate_msg.header.stamp.to_sec())
 		positions.append(jointstate_msg.position[i])
 		velocities.append(jointstate_msg.velocity[i])
+
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('joint_name', type=str)

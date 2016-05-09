@@ -14,8 +14,8 @@ TSR_PATHS = [
 
 class ADARobot(Robot):
     def __init__(self, sim):
-        from prpy.base.mico import Mico
-        from prpy.base.micohand import MicoHand
+        from mico import Mico
+        from micohand import MicoHand
         from util import AdaPyException, find_adapy_resource
 
         self.simulated = sim
@@ -135,9 +135,9 @@ class ADARobot(Robot):
                 rospy.init_node('adapy', anonymous=True)
                 logger.debug('Started ROS node with name "%s".', rospy.get_name())
 
-            import talker.msg
-            from actionlib import SimpleActionClient
-            self._say_action_client = SimpleActionClient('say', talker.msg.SayAction)
+            #import talker.msg
+            #from actionlib import SimpleActionClient
+            #self._say_action_client = SimpleActionClient('say', talker.msg.SayAction)
        
 
     def CloneBindings(self, parent):
@@ -193,6 +193,7 @@ class ADARobot(Robot):
         """
         from .util import or_to_ros_trajectory, pad_ros_trajectory
         from rospy import Time
+        from prpy import exceptions
 
         if self.simulated:
             return Robot.ExecuteTrajectory(self, traj, defer=defer, timeout=timeout,
@@ -201,9 +202,9 @@ class ADARobot(Robot):
 
         # Check that the current configuration of the robot matches the
         # initial configuration specified by the trajectory.
-        if not prpy.util.IsAtTrajectoryStart(self, traj):
-            raise exceptions.TrajectoryNotExecutable(
-                'Trajectory started from different configuration than robot.')
+#        if not prpy.util.IsAtTrajectoryStart(self, traj):
+#            raise exceptions.TrajectoryNotExecutable(
+#                'Trajectory started from different configuration than robot.')
 
         # If there was only one waypoint, at this point we are done!
         if traj.GetNumWaypoints() == 1:
