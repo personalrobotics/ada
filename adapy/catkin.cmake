@@ -8,8 +8,8 @@
 find_package(catkin REQUIRED COMPONENTS
                     rospy
                     prpy
-                    or_cdchomp
-                    cbirrt2
+               #     or_cdchomp
+               #     cbirrt2
             )
  
 # For system dependencies, use CMake's 'find_package' macros.

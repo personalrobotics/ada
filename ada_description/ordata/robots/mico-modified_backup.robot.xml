@@ -1,0 +1,412 @@
+<?xml version="1.0" ?>
+<Robot name="ADA">
+    <KinBody>
+        
+        <Body name="base_link" type="dynamic">
+            <Mass>
+                <total>0.64</total>
+                <inertia>0.000599 0.000000 0.000000 0.000000 0.000589 0.000000 0.000000 0.000000 0.000311</inertia>
+                <com>0.000000 -0.001870 0.000768</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/base_link.STL</Data>
+                <Render>../../meshes/base_link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.400000 0.400000 0.400000</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        
+        <Body name="j1" type="dynamic">
+            <offsetfrom>base_link</offsetfrom>
+            <translation>0.000000 0.000000 0.098750</translation>
+            <quat>1.000000 0.000000 0.000000 0.000000</quat>
+            <Mass>
+                <total>0.15215000000000001</total>
+                <inertia>0.000353 0.000000 0.000000 0.000000 0.000381 0.000000 0.000000 0.000000 0.000160</inertia>
+                <com>0.000000 0.015563 0.072664</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Shoulder_Link.STL</Data>
+                <Render>../../meshes/Shoulder_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.200000 0.200000 0.200000</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+            <Geom type="trimesh">
+		<Data>../../meshes/Shoulder_Ring_Link.STL</Data>
+                <Render>../../meshes/Shoulder_Ring_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792160 0.819610 0.933330</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="j1" type="hinge" enable="true" circular="true">
+            <Body>base_link</Body>
+            <Body>j1</Body>
+            <offsetfrom>base_link</offsetfrom>
+            <anchor>0.000000 0.000000 0.098750</anchor>
+            <axis>0.000000 0.000000 -1.000000</axis>
+	        <maxvel>0.872664625</maxvel>
+        <!--<maxvel>0.785398162</maxvel>-->
+	    <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
+	    <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
+        </Joint>
+        
+        <Body name="j2" type="dynamic">
+            <offsetfrom>j1</offsetfrom>
+            <translation>0.000000 -0.001750 0.118750</translation>
+            <quat>0.0 0.0 0.7071067811865475 0.7071067811865475</quat>
+            <Mass>
+                <total>0.2936</total>
+                <inertia>0.000202 0.000000 0.000000 0.000000 0.003362 0.000000 0.000000 0.000000 0.003488</inertia>
+                <com>-0.145030 0.000000 -0.026880</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Arm_Link.STL</Data>
+                <Render>../../meshes/Arm_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.200000 0.200000 0.200000</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+            <Geom type="trimesh">
+		<Data>../../meshes/Arm_Ring_Link.STL</Data>
+                <Render>../../meshes/Arm_Ring_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792160 0.819610 0.933330</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="j2" type="hinge" enable="true">
+            <Body>j1</Body>
+            <Body>j2</Body>
+            <offsetfrom>j1</offsetfrom>
+            <anchor>0.000000 -0.001750 0.118750</anchor>
+            <axis>-0.000007 1.000000 -0.000004</axis>
+	    <maxvel>0.872664625</maxvel>
+	    <!---<maxvel>0.785398162</maxvel>-->
+	    <!--<limitsrad>-3.920000 0.780000</limitsrad>-->
+	    <limitsrad>-3.84 0.70</limitsrad>
+        </Joint>
+        
+        <Body name="j3" type="dynamic">
+            <offsetfrom>j2</offsetfrom>
+            <translation>-0.290000 0.000000 0.000000</translation>
+            <quat>0.0 0.0 -1.000000 0.0</quat>
+            <Mass>
+                <total>0.12259</total>
+                <inertia>0.000249 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000284</inertia>
+                <com>0.000000 -0.040060 -0.021871</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Forearm_Link.STL</Data>
+                <Render>../../meshes/Forearm_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.200000 0.200000 0.200000</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+            <Geom type="trimesh">
+		<Data>../../meshes/Forearm_Ring_Link.STL</Data>
+                <Render>../../meshes/Forearm_Ring_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792160 0.819610 0.933330</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="j3" type="hinge" enable="true">
+            <Body>j2</Body>
+            <Body>j3</Body>
+            <offsetfrom>j2</offsetfrom>
+            <anchor>-0.290000 0.000000 0.000000</anchor>
+            <axis>-0.000000 0.0 -1.000000</axis>
+	    <maxvel>0.872664625</maxvel>
+	    <!--<maxvel>0.785398162</maxvel>-->
+	    <!--<limitsrad>-0.870000 4.010000</limitsrad>-->
+	    <limitsrad>-0.96 4.10</limitsrad>
+        </Joint>
+        
+        <Body name="j4" type="dynamic">
+            <offsetfrom>j3</offsetfrom>
+            <translation>0.000000 -0.123250 -0.008750</translation>
+            <quat>-0.000003 -0.000003 -0.707108 -0.707105</quat>
+            <Mass>
+                <total>0.03694</total>
+                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
+                <com>0.000000 -0.008269 -0.038029</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Wrist_1_Link.STL</Data>
+                <Render>../../meshes/Wrist_1_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.200000 0.200000 0.200000</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+            <Geom type="trimesh">
+		<Data>../../meshes/Wrist_1_Ring_Link.STL</Data>
+                <Render>../../meshes/Wrist_1_Ring_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792160 0.819610 0.933330</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="j4" type="hinge" enable="true" circular="true">
+            <Body>j3</Body>
+            <Body>j4</Body>
+            <offsetfrom>j3</offsetfrom>
+            <anchor>0.000000 -0.123250 -0.008750</anchor>
+            <axis>0.0 1.000000 0.0</axis>
+	    <maxvel>2.0</maxvel>
+	    <!--<maxvel>0.785398162</maxvel>-->
+	    <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
+	    <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
+        </Joint>
+        
+        <Body name="j5" type="dynamic">
+            <offsetfrom>j4</offsetfrom>
+            <translation>0.000000 -0.037029 -0.064136</translation>
+            <quat>-0.000003 -0.000002 0.500001 0.866025</quat>
+            <Mass>
+                <total>0.036939</total>
+                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
+                <com>0.000000 0.008268 -0.038029</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Wrist_2_Link.STL</Data>
+                <Render>../../meshes/Wrist_2_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.200000 0.200000 0.200000</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+            <Geom type="trimesh">
+		<Data>../../meshes/Wrist_2_Ring_Link.STL</Data>
+                <Render>../../meshes/Wrist_2_Ring_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792160 0.819610 0.933330</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="j5" type="hinge" enable="true" circular="true">
+            <Body>j4</Body>
+            <Body>j5</Body>
+            <offsetfrom>j4</offsetfrom>
+            <anchor>0.000000 -0.037029 -0.064136</anchor>
+            <axis>0.0 0.866027 0.499998</axis>
+	    <maxvel>2.0</maxvel>
+	    <!--<maxvel>0.785398162</maxvel>-->
+	    <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
+	    <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
+        </Joint>
+        
+        <Body name="j6" type="dynamic">
+            <offsetfrom>j5</offsetfrom>
+            <translation>0.000000 0.037029 -0.064136</translation>
+            <quat>0.866025 0.500001 0.000000 0.000000</quat>
+            <Mass>
+                <total>0.4</total>
+                <inertia>0.000209 0.000000 0.000000 0.000000 0.000155 0.000000 0.000000 0.000000 0.000125</inertia>
+                <com>0.001513 0.000000 -0.074456</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Hand_Link.STL</Data>
+                <Render>../../meshes/Hand_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.200000 0.200000 0.200000</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+            <Geom type="trimesh">
+		<Data>../../meshes/Hand_Ring_Link.STL</Data>
+                <Render>../../meshes/Hand_Ring_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792160 0.819610 0.933330</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="j6" type="hinge" enable="true" circular="true">
+            <Body>j5</Body>
+            <Body>j6</Body>
+            <offsetfrom>j5</offsetfrom>
+            <anchor>0.000000 0.037029 -0.064136</anchor>
+            <axis>0.000000 -0.866027 0.499998</axis>
+	    <maxvel>2.0</maxvel>
+	    <!--<maxvel>0.785398162</maxvel>-->
+	    <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
+	    <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
+        </Joint>
+        <Body name = "Camera_RGB_Frame" type = "dynamic">
+            <offsetfrom>j6</offsetfrom>
+            <!--<translation>0.0273 0.0141 -0.03</translation>-->
+            <translation>0.0473 0.0741 -0.09</translation>
+            <!--translation>0 0 0</translation>-->
+            <quat>0.0619 -0.6947 0.7030 -0.1396</quat>
+            <Mass>
+                <total>0.05</total>
+                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
+                <com>-0.00 0 0.0000</com>
+            </Mass>
+           <Geom type="box">
+             <Extents>0.05 0.02 0.02</Extents>
+             <Translation>0.05 0.0 -0.02</Translation>
+             <RotationAxis>0 0 0 0</RotationAxis>
+           </Geom>
+        </Body>
+        <Joint name="dummy" type="hinge" enable="false" circular="true">
+            <Body>j6</Body>
+            <Body>Camera_RGB_Frame</Body>
+            <offsetfrom>j6</offsetfrom>
+            <anchor>0.000000 0. 0.0</anchor>
+            <axis>0.000000  0 1.0</axis>
+        <maxvel>2.0</maxvel>
+        <!--<maxvel>0.785398162</maxvel>-->
+        <!--<limitsrad>-3.140000 3.140000</limitsrad>-->
+        <!--<limitsrad>-31.40000 31.40000</limitsrad>-->
+        </Joint>
+
+
+        <Body name="Finger_1_Proximal_Link" type="dynamic">
+            <offsetfrom>j6</offsetfrom>
+            <translation>0.002496 -0.030948 -0.114820</translation>
+            <quat>0.619374 0.341137 0.619377 0.341137</quat>
+            <Mass>
+                <total>0.01064</total>
+                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
+                <com>-0.008947 -0.018147 0.000000</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Finger_1_Proximal_Link.STL</Data>
+                <Render>../../meshes/Finger_1_Proximal_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792157 0.819608 0.933333</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="f1" type="hinge" enable="true">
+            <Body>j6</Body>
+            <Body>Finger_1_Proximal_Link</Body>
+            <offsetfrom>j6</offsetfrom>
+            <anchor>0.002496 -0.030948 -0.114820</anchor>
+            <axis>1.000000 0.0 0.0</axis>
+	    <!--<maxvel>0.872664625</maxvel>-->
+	    <maxvel>0.785398162</maxvel>
+            <limitsrad>0.000000 1.200000</limitsrad>
+        </Joint>
+        <Body name="Finger_2_Proximal_Link" type="dynamic">
+            <offsetfrom>j6</offsetfrom>
+            <translation>0.002496 0.030948 -0.114820</translation>
+            <quat>0.341134 0.619375 -0.341139 -0.619375</quat>
+            <Mass>
+                <total>0.01064</total>
+                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
+                <com>-0.008947 -0.018147 0.000000</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Finger_2_Proximal_Link.STL</Data>
+                <Render>../../meshes/Finger_2_Proximal_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792157 0.819608 0.933333</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="f2" type="hinge" enable="true">
+            <Body>j6</Body>
+            <Body>Finger_2_Proximal_Link</Body>
+            <offsetfrom>j6</offsetfrom>
+            <anchor>0.002496 0.030948 -0.114820</anchor>
+            <axis>-1.000000 0.0 0.0</axis>
+	    <!--<maxvel>0.872664625</maxvel>-->
+	    <maxvel>0.785398162</maxvel>
+            <limitsrad>0.000000 1.200000</limitsrad>
+        </Joint>
+	<Body name="Finger_1_Distal_Link" type="dynamic">
+            <offsetfrom>Finger_1_Proximal_Link</offsetfrom>
+            <translation>-0.003000 -0.044000 0.000000</translation>
+            <quat>0.995396 0.000000 0.000000 -0.095848</quat>
+            <Mass>
+                <total>0.012194</total>
+                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
+                <com>-0.004769 -0.013340 0.000000</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Finger_1_Distal_Link.STL</Data>
+                <Render>../../meshes/Finger_1_Distal_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792157 0.819608 0.933333</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="Finger_1_Distal_Joint" type="hinge" enable="true" mimic_pos="f1*0.5" mimic_vel="|f1 0.3">
+            <Body>Finger_1_Proximal_Link</Body>
+            <Body>Finger_1_Distal_Link</Body>
+            <offsetfrom>Finger_1_Proximal_Link</offsetfrom>
+            <anchor>-0.003000 -0.044000 0.000000</anchor>
+            <axis>0.000000 0.000000 1.000000</axis>
+	    <!--<maxvel>0.872664625</maxvel>-->
+	    <maxvel>0.785398162</maxvel>
+            <limitsrad>0.000000 1.050000</limitsrad>
+        </Joint>
+        <Body name="Finger_2_Distal_Link" type="dynamic">
+            <offsetfrom>Finger_2_Proximal_Link</offsetfrom>
+            <translation>-0.003000 -0.044000 0.000000</translation>
+            <quat>0.995396 0.000000 0.000000 -0.095848</quat>
+            <Mass>
+                <total>0.012194</total>
+                <inertia>0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000</inertia>
+                <com>-0.004769 -0.013340 0.000000</com>
+            </Mass>
+            <Geom type="trimesh">
+		<Data>../../meshes/Finger_2_Distal_Link.STL</Data>
+                <Render>../../meshes/Finger_2_Distal_Link.STL</Render>
+                <translation>0.000000 0.000000 0.000000</translation>
+                <quat>1.000000 0.000000 0.000000 0.000000</quat>
+                <diffusecolor>0.792157 0.819608 0.933333</diffusecolor>
+                <transparency>0.000000</transparency>
+            </Geom>
+        </Body>
+        <Joint name="Finger_2_Distal_Joint" type="hinge" enable="true" mimic_pos="f2*0.5" mimic_vel="|f2 0.3">
+            <Body>Finger_2_Proximal_Link</Body>
+            <Body>Finger_2_Distal_Link</Body>
+            <offsetfrom>Finger_2_Proximal_Link</offsetfrom>
+            <anchor>-0.003000 -0.044000 0.000000</anchor>
+            <axis>0.000000 0.000000 1.000000</axis>
+	    <!--<maxvel>0.872664625</maxvel>-->
+	    <maxvel>0.785398162</maxvel>
+            <limitsrad>0.000000 1.050000</limitsrad>
+        </Joint>
+    <adjacent>Finger_1_Distal_Link Finger_2_Distal_Link</adjacent>   
+    <adjacent>Finger_1_Proximal_Link Finger_2_Proximal_Link</adjacent>   
+    <adjacent>Finger_1_Proximal_Link Finger_2_Distal_Link</adjacent>
+    <adjacent>Finger_1_Distal_Link Finger_2_Proximal_Link</adjacent>
+
+    </KinBody>
+    
+    <Manipulator name="Mico">
+	<base>base_link</base>
+	<effector>j6</effector>
+	<direction>0 0 1</direction>
+	<!--<rotationaxis>1 0 0 180</rotationaxis>-->
+	<rotationaxis>0 0 -1 90</rotationaxis>
+	<translation>0.0 0.0 -0.16</translation>
+	<!--
+	<joints>Finger_1_Proximal_Joint Finger_1_Distal_Joint Finger_2_Proximal_Joint Finger_2_Distal_Joint</joints>
+	<closingdirection>1 1 1 1</closingdirection>
+	-->
+	<joints>f1 f2</joints>
+	<closingdirection>1 1</closingdirection>
+    </Manipulator>
+    
+</Robot>
