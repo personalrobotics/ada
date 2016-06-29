@@ -25,6 +25,7 @@
     <depend>or_urdf</depend>
     <depend>or_ompl</depend>
     <depend>openrave</depend>
+    <depend>block_description_generator_networkx</depend>
 </package>
 
 
