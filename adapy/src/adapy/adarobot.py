@@ -45,6 +45,11 @@ class ADARobot(Robot):
         except IOError as e:
             logger.warning('Failed loading named configurations from "%s": %s',
                            configurations_path, e.message)
+        
+        # If in sim, set the robot DOFs to not be in collision
+        if sim:
+            inds,dofs = self.configurations.get_configuration('home')
+            self.SetDOFValues(values=dofs,dofindices=inds)
 
         # Load default TSRs from YAML.
         for tsr_path_relative in TSR_PATHS:
