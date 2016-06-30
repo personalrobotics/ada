@@ -23,10 +23,10 @@ class ADARobot(Robot):
 
         # We need to hard-code the name. Otherwise, it defaults to
         # "mico-modified".
-        Robot.__init__(self, robot_name='ada')
+        Robot.__init__(self, robot_name='jaco')
 
         # Convenience attributes for accessing self components.
-        self.arm = self.GetManipulator('Mico')
+        self.arm = self.GetManipulator('Jaco')
         self.arm.hand = self.arm.GetEndEffector()
         self.manipulators = [ self.arm ]
 
