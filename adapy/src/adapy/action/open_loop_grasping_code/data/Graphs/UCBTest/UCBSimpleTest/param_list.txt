@@ -1,0 +1,6 @@
+param1-10,0.1
+param2-20,0.1
+param3-20,0.5
+param4-20,0.9
+param5-50,0.2
+param6-50,0.5

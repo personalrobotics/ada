@@ -1,0 +1,28 @@
+<package>
+  <description brief="Python library for interacting with ADA.">
+    Python library for interacting with ADA through OpenRAVE. ADA is an 
+    "Assistive Dexterous Arm" developed by the Personal Robotics Lab at 
+    Carnegie Mellon University, intended for helping elderly and people with 
+    disabilities. The system is composed of a Kinova Mico arm for manipulation 
+    accompanied by several sensors for perception and world modeling. 
+  </description>
+  <author>Tekin Mericli</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <depend package="rospy"/>
+  <depend package="prpy"/>
+  <depend package="openrave"/>
+  <depend package="cbirrt2"/>
+  <depend package="orcdchomp"/>
+  <export>
+        <!-- planners -->
+        <openrave optional="cbirrt2"/>
+        <openrave optional="orcdchomp"/>
+        <!-- controllers -->
+        <!-- sensors -->
+        <!-- utilities -->
+        <openrave optional="pr_ordata"/>
+    </export>
+</package>
+
+
