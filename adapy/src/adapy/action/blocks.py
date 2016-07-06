@@ -78,7 +78,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     block = blocks[block_idxs[0]]
 
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
-
+    '''
     # ---------------------------------------------------------
     # Shen Li
     # 1. AABB - bounding box
@@ -146,50 +146,58 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     import IPython;IPython.embed()
 
     # ---------------------------------------------------------
+    '''
     
-    
-    try:
-        with AllDisabled(env, [table] + blocks, padding_only=True):
-            # Move down until touching the table
-            with env:
-                # this is just a translation, so we just need the 4th column in GetEndEffectorTransform
-                #   as the start_point
-                start_point = manip.GetEndEffectorTransform()[0:3, 3]
-                table_aabb = ComputeEnabledAABB(table)
-                table_height = table_aabb.pos()[2] + table_aabb.extents()[2]
-                # 0.14 is the distance from finger tip to end-effector frame
-                # [2,3] is the z of finger
-                current_finger_height = manip.GetEndEffectorTransform()[2,3]-0.14
-                block_height = block.GetTransform()[2,3]
-            '''
-            manip.GetEndEffectorTransform()
-            [[ -1.26761961e-02   4.75773380e-01  -8.79476552e-01   4.53303877e-02]
-             [  6.81338158e-03   8.79567899e-01   4.75724593e-01   8.97872675e-02]
-             [  9.99896441e-01   3.81689084e-05  -1.43912008e-02   3.14018485e-01]
-             [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
-            '''
-            # h = openravepy.misc.DrawAxes(env,tran)
+    # try:
+    with AllDisabled(env, [table] + blocks, padding_only=True):
 
-            '''
-            RenderVector - prpy/src/prpy/viz.py
-            Render a vector in an openrave environment
-            @param start_pt The start point of the vector
-            @param direction The direction of the vector to render
-            @param length The length of the rendered vector
-            '''
-            # 0.16
-            min_distance = current_finger_height - table_height
-            down_direction = [0., 0., -1.]
+        # Move down until touching the table
+        with env:
+            # this is just a translation, so we just need the 4th column in GetEndEffectorTransform
+            #   as the start_point
+            start_point = manip.GetEndEffectorTransform()[0:3, 3]
+            table_aabb = ComputeEnabledAABB(table)
+            table_height = table_aabb.pos()[2] + table_aabb.extents()[2]
+            # 0.14 is the distance from finger tip to end-effector frame
+            # [2,3] is the z of finger
+            current_finger_height = manip.GetEndEffectorTransform()[2,3]-0.14
+            block_height = block.GetTransform()[2,3]
+        
+        # manip.GetEndEffectorTransform()
+        # [[ -1.26761961e-02   4.75773380e-01  -8.79476552e-01   4.53303877e-02]
+        #  [  6.81338158e-03   8.79567899e-01   4.75724593e-01   8.97872675e-02]
+        #  [  9.99896441e-01   3.81689084e-05  -1.43912008e-02   3.14018485e-01]
+        #  [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
+        
+        # h = openravepy.misc.DrawAxes(env,tran)
 
-            with AllDisabled(env, blocks + [table]):
-                with RenderVector(start_point, down_direction, min_distance, env):
-                    manip.PlanToEndEffectorOffset(direction=down_direction,
-                        distance=0.08, max_distance=0.10,
-                        timelimit=5., execute=True)
+        # RenderVector - prpy/src/prpy/viz.py
+        # Render a vector in an openrave environment
+        # @param start_pt The start point of the vector
+        # @param direction The direction of the vector to render
+        # @param length The length of the rendered vector
+        
+        # 0.16
+        min_distance = current_finger_height - table_height
+        down_direction = [0., 0., -1.]
+
+        with AllDisabled(env, blocks + [table]):
+            with RenderVector(start_point, down_direction, min_distance, env):
+                manip.PlanToEndEffectorOffset(direction=down_direction,
+                    distance=0.08, max_distance=0.10,
+                    timelimit=5., execute=True)
 
 
-        # Close the finger to grab the block
-        manip.hand.MoveHand(f1=1.,f2=1.)
+        # Policy 1 Close the finger to grab the block
+        # manip.hand.MoveHand(f1=1.,f2=1.)
+        # Policy 2 Create class object of openLoopGrasper with optimized parameters
+        from openLoopGrasper import openLoopGrasper
+        O = openLoopGrasper(robot,env)
+        (success,trajLength) = O.PolicyExecute(1.85,1,10,3)
+        # (success,trajLength) = O.PolicyExecute(4.77,1,9.55,7)
+        print success,trajLength
+        import IPython; IPython.embed()
+
         # Compute the pose of the block in the hand frame
         with env:
             # local_p = [0.01, 0, 0.24, 1.0]
@@ -199,23 +207,25 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
             # block_pose[:,3] = world_p
             block_relative = numpy.dot(numpy.linalg.inv(hand_pose), block_pose)
 
-        # Now lift the block up off the table
-        with AllDisabled(env, blocks + [table]):
-            manip.PlanToEndEffectorOffset(direction=[0, 0, 1], distance=0.05,
-                                          timelimit=5, execute=True)
 
-        # OpenRAVE trick to hallucinate the block into the correct pose relative to the hand
-        with env:
-            hand_pose = manip.GetEndEffectorTransform()
-            block_pose = numpy.dot(hand_pose, block_relative)
-            block.SetTransform(block_pose)
-            manip.GetRobot().Grab(block)
 
-    except PlanningError as e:
-        logger.error('Failed to complete block grasp')
-        raise
-    finally:
-        return block
+    # Now lift the block up off the table
+    with AllDisabled(env, blocks + [table]):
+        manip.PlanToEndEffectorOffset(direction=[0, 0, 1], distance=0.05,
+                                      timelimit=5, execute=True)
+
+    # OpenRAVE trick to hallucinate the block into the correct pose relative to the hand
+    with env:
+        hand_pose = manip.GetEndEffectorTransform()
+        block_pose = numpy.dot(hand_pose, block_relative)
+        block.SetTransform(block_pose)
+        manip.GetRobot().Grab(block)
+
+    # except PlanningError as e:
+    #     logger.error('Failed to complete block grasp')
+    #     raise
+    # finally:
+    return block
 
 
 '''
