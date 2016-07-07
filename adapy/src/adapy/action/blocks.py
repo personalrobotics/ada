@@ -11,6 +11,10 @@ from adapy.tsr import block_bin
 
 logger = logging.getLogger('ada_block_sorting')
 
+move_to_table_min_distance = 0.07
+move_to_table_max_distance = None
+
+
 class NoTSRException(Exception):
     pass
 
@@ -44,7 +48,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
 
     # 2. Now let's grab block
     # prpy/src/prpy/tsr/tsrlibrary.py
-    # we need to copy the block.py and table.py from herbpy/src/herbpy/tsr to adapy/src/adapy/tsr
+    # we need to copy the block.py and table.py from adapy/src/adapy/tsr to adapy/src/adapy/tsr
 
 
     # The TSR for ada should be different with the one for herb
@@ -55,7 +59,8 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         # Here, adapy/tsr/block.py will be called. Because it is decorated by a TSRFactory class
         # The TSR calculation will be done in block.py
         tsr_list = robot.tsrlibrary(b, 'grasp', manip=manip)
-        block_tsr_list += tsr_list
+        block_tsr_list += tsr_list    
+
 
     # we should draw the axes of manipulator in the specific pose first before the planning
     # so that we can see clearly if we can plan the hand there or not
@@ -70,12 +75,20 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     with manip.GetRobot().GetEnv():
         ee_pose = manip.GetEndEffectorTransform()
 
-    block_idxs = [ idx for idx, tsr_chain in enumerate(block_tsr_list)
-                  if tsr_chain.contains(ee_pose) ]
-    if len(block_idxs) == 0:
+    # we should use this to only pick up the blocks which is very close to the ee_pose,
+    # but because of error in real machine, it is very possible that all of our blocks are larger than the threshold distance
+    # block_idxs = [ idx for idx, tsr_chain in enumerate(block_tsr_list)
+    #               if tsr_chain.contains(ee_pose) ]
+    # if len(block_idxs) == 0:
+    #     raise NoTSRException("Failed to find the TSR PlanToTSR planned to")
+    # block = blocks[block_idxs[0]]
+    # ==>
+    # therefore, we will instead rank the distance and choose the block with a minimal distance
+    dist_list = [tsr_chain.distance(ee_pose)[0] for idx, tsr_chain in enumerate(block_tsr_list)]   
+    if len(dist_list) == 0:
         raise NoTSRException("Failed to find the TSR PlanToTSR planned to")
+    block = blocks[numpy.argmin(dist_list)]
 
-    block = blocks[block_idxs[0]]
 
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
     '''
@@ -176,15 +189,18 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         # @param start_pt The start point of the vector
         # @param direction The direction of the vector to render
         # @param length The length of the rendered vector
-        
         # 0.16
         min_distance = current_finger_height - table_height
         down_direction = [0., 0., -1.]
 
         with AllDisabled(env, blocks + [table]):
             with RenderVector(start_point, down_direction, min_distance, env):
+                # https://github.com/personalrobotics/prpy/blob/ecbf890d9e4f8e57616c049b0edae8390ee2c4c8/src/prpy/planning/workspace.py
+                # Plan to a desired end-effector offset with move-hand-straight
+                # constraint. movement less than distance will return failure.
+                # The motion will not move further than max_distance.
                 manip.PlanToEndEffectorOffset(direction=down_direction,
-                    distance=0.08, max_distance=0.10,
+                    distance=move_to_table_min_distance, max_distance=move_to_table_max_distance,
                     timelimit=5., execute=True)
 
 
@@ -196,7 +212,6 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         (success,trajLength) = O.PolicyExecute(1.85,1,10,3)
         # (success,trajLength) = O.PolicyExecute(4.77,1,9.55,7)
         print success,trajLength
-        import IPython; IPython.embed()
 
         # Compute the pose of the block in the hand frame
         with env:
@@ -286,19 +301,19 @@ def PlaceBlock(robot, block, on_obj, manip=None, **kw_args):
         then the hand will go to the deep inside the bin near the bottom
         why???????????????????????????????/
     '''
-    # 'herb', 'block_bin', 'point_on' TSR is in herbpy/src/herbpy/tsr/block_bin.py
+    # 'ada', 'block_bin', 'point_on' TSR is in adapy/src/adapy/tsr/block_bin.py
     object_place_list = robot.tsrlibrary(on_obj, 'point_on', manip=manip)
 
     '''
-    (2) place_tsr_list - the current TSR before taking the block to the bin.
-          So this TSR is a stable posture
+    (2) place_tsr_list
+          So this TSR is a stable posture, just varify EE's vertical position
           and it is equal to the posture where the hand is about to release the block.
           So we connect object_place_list with place_tsr_list into one TSR list,
           so that the hand will move toward the bottom inside the bin and after it got to
           the goal TSR position, it will open the finger and release the block.
           It will also not move to the deep inside in the bin
     '''
-    # 'herb', 'block_bin', 'place_on' TSR is in  herbpy/src/herbpy/tsr/block.py
+    # 'ada', 'block_bin', 'place_on' TSR is in  adapy/src/adapy/tsr/block.py
     place_tsr_list = robot.tsrlibrary(block, 'place_on',
         pose_tsr_chain=object_place_list[0], manip=manip)
 

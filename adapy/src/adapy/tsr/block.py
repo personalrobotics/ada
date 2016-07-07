@@ -48,8 +48,9 @@ def block_grasp(robot, block, manip=None):
     '''
     offset = 0.15 # vertical offset relative to block to the target ee
     alpha = 0. # orientation of end-effector relative to block
+    # we want the hand right above the block
     ee_in_block = numpy.array(
-        [[numpy.cos(alpha),     0.,     -numpy.sin(alpha),  0.3*numpy.sin(alpha) + 0.04],
+        [[numpy.cos(alpha),     0.,     -numpy.sin(alpha),  0.],
         [ 0.,                   -1,     0,                  0.],
         [-numpy.sin(alpha),     0.,     -numpy.cos(alpha),  0.15+offset],
         [ 0.,                   0.,     0.,                 1.]])
@@ -178,7 +179,7 @@ def block_on_surface(robot, block, pose_tsr_chain, manip=None):
     block_pose = block.GetTransform()
     block_pose[:3,:3] = numpy.eye(3) # ignore orientation
     ee_in_block = numpy.dot(numpy.linalg.inv(block_pose), manip.GetEndEffectorTransform())
-    Bw = numpy.zeros((6,2)) 
+    Bw = numpy.zeros((6,2))
     Bw[2,:] = [0., 0.04]  # Allow some vertical movement
    
     for tsr in pose_tsr_chain.TSRs:
@@ -189,5 +190,4 @@ def block_on_surface(robot, block, pose_tsr_chain, manip=None):
     all_tsrs = list(pose_tsr_chain.TSRs) + [grasp_tsr]
     place_chain = prpy.tsr.TSRChain(sample_start = False, sample_goal = True, constrain = False,
                            TSRs = all_tsrs)
-
     return  [ place_chain ]

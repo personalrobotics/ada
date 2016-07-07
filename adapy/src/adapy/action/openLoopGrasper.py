@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# By Lerrel Pinto, RI, CMU, lerrelp@andrew.cmu.edu
+# Developed by Lerrel Pinto, RI, CMU, lerrelp@andrew.cmu.edu
+# Modified by Shen Li
 import adapy, openravepy, numpy, prpy, rospy
 from IPython import embed
 import numpy as np
@@ -16,6 +17,9 @@ import matplotlib.pyplot as plt
 FINGER_ONE_INDEX = 6
 FINGER_TWO_INDEX = 7
 WRIST_INDEX = 5
+
+left_finger_init = -0.1
+right_finger_init = -0.1
 
 class openLoopGrasper(object):
 
@@ -40,7 +44,7 @@ class openLoopGrasper(object):
 
     def OpenTandem(self):
         self.pub_open = rospy.Publisher('gripper_open', Time, queue_size=1)
-        self.robot.arm.hand.MoveHand(0.1,0.1)
+        self.robot.arm.hand.MoveHand(left_finger_init,right_finger_init)
         self.pub_open.publish(Time(rospy.Time.now()))
 
     def callback_grasp(self,data):
@@ -70,7 +74,7 @@ class openLoopGrasper(object):
         # at the same time, graspChecker is running to gather data, analyze data, and verify grasp
         self.CloseTandem()
         rospy.sleep(5)
-        self.OpenTandem()
+        # self.OpenTandem()
         # in the end, after verifacation, return
         # TODO: this is temporarily without grasp verification
         self.grasp_bool = True
@@ -124,27 +128,42 @@ class openLoopGrasper(object):
             while currConfig[FINGER_ONE_INDEX]<minConfig:
                 # rotate the wrist and close the fingers (finger config is increasing) at the same time
                 currConfig = currConfig - d_policy
+                
+                # we have to make sure that the fingers will not open too wide
+                if currConfig[FINGER_ONE_INDEX]>=minConfig:
+                    currConfig[FINGER_ONE_INDEX]=minConfig
+                if currConfig[FINGER_TWO_INDEX]>=minConfig:
+                    currConfig[FINGER_TWO_INDEX]=minConfig
+
                 # print currConfig
                 currInd = currInd + 1
                 traj.Insert(currInd,currConfig)
                 self.Traj2DOF.append([currConfig[FINGER_ONE_INDEX],currConfig[WRIST_INDEX]])
 
-            # make sure after all the iterations, the finger configs will be minConfig
-            currConfig[FINGER_ONE_INDEX]=minConfig
-            currConfig[FINGER_TWO_INDEX]=minConfig
-            currInd = currInd + 1
-            traj.Insert(currInd,currConfig)
-            self.Traj2DOF.append([currConfig[FINGER_ONE_INDEX],currConfig[WRIST_INDEX]])
+            # # make sure after all the iterations, the finger configs will be minConfig
+            # currConfig[FINGER_ONE_INDEX]=minConfig
+            # currConfig[FINGER_TWO_INDEX]=minConfig
+            # currInd = currInd + 1
+            # traj.Insert(currInd,currConfig)
+            # self.Traj2DOF.append([currConfig[FINGER_ONE_INDEX],currConfig[WRIST_INDEX]])
 
             # opening fingers should be much faster than closing fingers, therefore we have a backFactor
             d_policy = np.array([0.,0.,0.,0.,0.,d_rot,backFactor*alpha*d_rot,backFactor*alpha*d_rot,0.])
             while currConfig[FINGER_ONE_INDEX]>maxConfig:
                 # rotate the wrist and open the fingers (finger config is decreasing) at the same time
                 currConfig = currConfig - d_policy
+
+                # we have to make sure that the fingers will not open too wide
+                if currConfig[FINGER_ONE_INDEX]<=maxConfig:
+                    currConfig[FINGER_ONE_INDEX]=maxConfig
+                if currConfig[FINGER_TWO_INDEX]<=maxConfig:
+                    currConfig[FINGER_TWO_INDEX]=maxConfig
+
                 # print currConfig
                 currInd = currInd + 1
                 traj.Insert(currInd,currConfig)
                 self.Traj2DOF.append([currConfig[FINGER_ONE_INDEX],currConfig[WRIST_INDEX]])
+
         self.Traj2DOF = np.array(self.Traj2DOF)
         return traj
 
