@@ -199,6 +199,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 # Plan to a desired end-effector offset with move-hand-straight
                 # constraint. movement less than distance will return failure.
                 # The motion will not move further than max_distance.
+                import IPython;IPython.embed()
                 manip.PlanToEndEffectorOffset(direction=down_direction,
                     distance=move_to_table_min_distance, max_distance=move_to_table_max_distance,
                     timelimit=5., execute=True)
