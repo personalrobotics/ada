@@ -11,15 +11,22 @@ from adapy.tsr import block_bin
 
 logger = logging.getLogger('ada_block_sorting')
 
-move_to_table_min_distance = 0.07
+move_to_table_min_distance = 0.01
 move_to_table_max_distance = None
 
+# if we need to stop moving into the table now.
+stop = False
 
 class NoTSRException(Exception):
     pass
 
 def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
               **kw_args):
+    
+    # we need to subcribe this msg from ada_block_sorting/scripts/move_until_touch_efforts_gathering.py
+    # to know when to stop moving into the table
+    self.subscriber = rospy.Subscriber('touching_table_flag', Bool, touchingTableCallBack)
+
     """
     @param robot The robot performing the grasp
     @param block The block to grab
@@ -199,10 +206,13 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
                 # Plan to a desired end-effector offset with move-hand-straight
                 # constraint. movement less than distance will return failure.
                 # The motion will not move further than max_distance.
+                while stop == False:
+                    manip.PlanToEndEffectorOffset(direction=down_direction,
+                        distance=move_to_table_min_distance, max_distance=move_to_table_max_distance,
+                        timelimit=5., execute=True)
                 import IPython;IPython.embed()
-                manip.PlanToEndEffectorOffset(direction=down_direction,
-                    distance=move_to_table_min_distance, max_distance=move_to_table_max_distance,
-                    timelimit=5., execute=True)
+                stop = False
+
 
 
         # Policy 1 Close the finger to grab the block
@@ -243,6 +253,10 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     # finally:
     return block
 
+
+def touchingTableCallBack(data):
+    if data == True:
+        stop = True
 
 '''
 function decorator
