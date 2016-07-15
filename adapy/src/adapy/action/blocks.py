@@ -9,23 +9,30 @@ from prpy.tsr.tsr import *
 from adapy.tsr import block
 from adapy.tsr import block_bin
 
+from scipy import signal
+
+
+
+import rospy
+from std_msgs.msg import Bool
+from sensor_msgs.msg import JointState
+
 logger = logging.getLogger('ada_block_sorting')
 
+reaching_table_speed = 0.02
 move_to_table_min_distance = 0.01
 move_to_table_max_distance = None
 
-# if we need to stop moving into the table now.
-stop = False
+joint_1_ptp = 0.01
+joint_2_ptp = 0.04
+joint_3_ptp = 0.06
+
 
 class NoTSRException(Exception):
     pass
 
 def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
               **kw_args):
-    
-    # we need to subcribe this msg from ada_block_sorting/scripts/move_until_touch_efforts_gathering.py
-    # to know when to stop moving into the table
-    self.subscriber = rospy.Subscriber('touching_table_flag', Bool, touchingTableCallBack)
 
     """
     @param robot The robot performing the grasp
@@ -98,7 +105,7 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
 
 
     # h = openravepy.misc.DrawAxes(env,manip.GetEndEffectorTransform())
-    '''
+    
     # ---------------------------------------------------------
     # Shen Li
     # 1. AABB - bounding box
@@ -130,14 +137,12 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
 
         bounding_box = bb.ComputeAABB()
 
-        # we need to reverse x with y because now the y is actually horizontal
-        # for example, in this example, the robot is closest to the yellow one,
-        # so we have to rotate the table to make it consistent
-        block_data[block_name]['AABB_pos'] = [bounding_box.pos()[1], bounding_box.pos()[0]]
-        block_data[block_name]['AABB_ext'] = [bounding_box.extents()[1], bounding_box.extents()[0]]
+        block_data[block_name]['AABB_pos'] = [bounding_box.pos()[0], bounding_box.pos()[1]]
+        block_data[block_name]['AABB_ext'] = [-1.*bounding_box.extents()[0], -1.*bounding_box.extents()[1]]
 
-    table_AABB_pos = [table.ComputeAABB().pos()[1], table.ComputeAABB().pos()[0]]
-    table_AABB_ext = [table.ComputeAABB().extents()[1], table.ComputeAABB().extents()[0]]
+    # need to mirror the scenario to make the graph same as the simulation
+    table_AABB_pos = [table.ComputeAABB().pos()[0], table.ComputeAABB().pos()[1]]
+    table_AABB_ext = [-1.*table.ComputeAABB().extents()[0], -1.*table.ComputeAABB().extents()[1]]
     # for key, value in block_data.iteritems():
         # print value
     # with open('./block_scenario.yml', 'w') as outfile:
@@ -161,62 +166,73 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
         print 'best_solution='+ best_solution
         print 'spatial_desc_gen ends-----------------------------'
 
-    import IPython;IPython.embed()
     robot.Say(desc_list[0])
-    import IPython;IPython.embed()
 
     # ---------------------------------------------------------
-    '''
+    
     
     # try:
     with AllDisabled(env, [table] + blocks, padding_only=True):
-
-        # Move down until touching the table
         with env:
-            # this is just a translation, so we just need the 4th column in GetEndEffectorTransform
-            #   as the start_point
-            start_point = manip.GetEndEffectorTransform()[0:3, 3]
-            table_aabb = ComputeEnabledAABB(table)
-            table_height = table_aabb.pos()[2] + table_aabb.extents()[2]
-            # 0.14 is the distance from finger tip to end-effector frame
-            # [2,3] is the z of finger
-            current_finger_height = manip.GetEndEffectorTransform()[2,3]-0.14
-            block_height = block.GetTransform()[2,3]
+            start_point = manip.GetEndEffectorTransform()
         
-        # manip.GetEndEffectorTransform()
-        # [[ -1.26761961e-02   4.75773380e-01  -8.79476552e-01   4.53303877e-02]
-        #  [  6.81338158e-03   8.79567899e-01   4.75724593e-01   8.97872675e-02]
-        #  [  9.99896441e-01   3.81689084e-05  -1.43912008e-02   3.14018485e-01]
-        #  [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.00000000e+00]]
-        
-        # h = openravepy.misc.DrawAxes(env,tran)
-
-        # RenderVector - prpy/src/prpy/viz.py
-        # Render a vector in an openrave environment
-        # @param start_pt The start point of the vector
-        # @param direction The direction of the vector to render
-        # @param length The length of the rendered vector
-        # 0.16
-        min_distance = current_finger_height - table_height
         down_direction = [0., 0., -1.]
+        up_direction = [0., 0., 1.]
 
         with AllDisabled(env, blocks + [table]):
-            with RenderVector(start_point, down_direction, min_distance, env):
-                # https://github.com/personalrobotics/prpy/blob/ecbf890d9e4f8e57616c049b0edae8390ee2c4c8/src/prpy/planning/workspace.py
-                # Plan to a desired end-effector offset with move-hand-straight
-                # constraint. movement less than distance will return failure.
-                # The motion will not move further than max_distance.
-                while stop == False:
-                    manip.PlanToEndEffectorOffset(direction=down_direction,
-                        distance=move_to_table_min_distance, max_distance=move_to_table_max_distance,
-                        timelimit=5., execute=True)
-                import IPython;IPython.embed()
-                stop = False
+            # https://github.com/personalrobotics/prpy/blob/ecbf890d9e4f8e57616c049b0edae8390ee2c4c8/src/prpy/planning/workspace.py
+            # Plan to a desired end-effector offset with move-hand-straight
+            # constraint. movement less than distance will return failure.
+            # The motion will not move further than max_distance.
+            table_reached = False
 
+            # ------------------------------------------------------------------
+            rawData = numpy.array([])
+            filteredData = numpy.array([])
+            bufferMaxSize = 100
+            b, a = signal.butter(4, 0.5, 'low', analog=False)     
+
+            while table_reached == False:
+                data = rospy.wait_for_message("/joint_states", JointState)
+                # we just need the joint efforts from joint 1, 2, 3
+                if rawData.size == 0:
+                    rawData = numpy.array([data.effort[1], data.effort[2], data.effort[3]])
+                else:
+                    if len(rawData) < bufferMaxSize:
+                        rawData = numpy.vstack([rawData, numpy.array([data.effort[1], data.effort[2], data.effort[3]])])
+                    else:
+                        rawData = numpy.vstack([rawData[1:], numpy.array([data.effort[1], data.effort[2], data.effort[3]])])
+                    assert(len(rawData) <= bufferMaxSize)
+                    print len(rawData)
+
+                    # if len(rawData) >= bufferMaxSize:
+                    if len(rawData) > 1:
+                        filteredData = signal.lfilter(b, a, rawData)
+                        # peak to peak
+                        print filteredData[:,0].max(), filteredData[:,0].min(), filteredData[:,0].ptp()
+                        print filteredData[:,1].max(), filteredData[:,1].min(), filteredData[:,1].ptp()
+                        print filteredData[:,2].max(), filteredData[:,2].min(), filteredData[:,2].ptp()
+                        if filteredData[:,0].ptp() >= joint_1_ptp or filteredData[:,1].ptp() >= joint_2_ptp or filteredData[:,2].ptp() >= joint_3_ptp:
+                            print "Efforts gatherer: Efforts exceeding limits"
+                            table_reached = True
+                        else:
+                            manip.PlanToEndEffectorOffset(direction=down_direction,
+                                distance=reaching_table_speed, max_distance=move_to_table_max_distance,
+                                timelimit=5., execute=True)
+            manip.PlanToEndEffectorOffset(direction=up_direction,
+                distance=move_to_table_min_distance, max_distance=move_to_table_max_distance,
+                timelimit=5., execute=True)
+
+            # cur_height = manip.GetEndEffectorTransform()[2,3]
+            # start_point[2,3] = cur_height 
+            # import IPython;IPython.embed()
+            # robot.PlanToEndEffectorPose(start_point, execute=True)
+
+            # ------------------------------------------------------------------
 
 
         # Policy 1 Close the finger to grab the block
-        # manip.hand.MoveHand(f1=1.,f2=1.)
+        # manip.hand.MoveHand(f1=1.34,f2=1.34)
         # Policy 2 Create class object of openLoopGrasper with optimized parameters
         from openLoopGrasper import openLoopGrasper
         O = openLoopGrasper(robot,env)
@@ -253,10 +269,6 @@ def _GrabBlock(robot, blocks, table, manip=None, preshape=None,
     # finally:
     return block
 
-
-def touchingTableCallBack(data):
-    if data == True:
-        stop = True
 
 '''
 function decorator

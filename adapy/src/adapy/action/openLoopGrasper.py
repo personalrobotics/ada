@@ -18,8 +18,6 @@ FINGER_ONE_INDEX = 6
 FINGER_TWO_INDEX = 7
 WRIST_INDEX = 5
 
-left_finger_init = -0.1
-right_finger_init = -0.1
 
 class openLoopGrasper(object):
 
@@ -36,13 +34,15 @@ class openLoopGrasper(object):
 
     def CloseTandem(self):
         self.pub_close = rospy.Publisher('gripper_close', Time, queue_size=1)
-        self.robot.arm.hand.MoveHand(1.34,0.1)
-        rospy.sleep(1)
         self.robot.arm.hand.MoveHand(1.34,1.34)
-        rospy.sleep(0.1)
+        rospy.sleep(1)
+        # self.robot.arm.hand.MoveHand(1.34,1.34)
+        # rospy.sleep(0.1)
         self.pub_close.publish(Time(rospy.Time.now()))
 
     def OpenTandem(self):
+        left_finger_init = -0.1
+        right_finger_init = -0.1
         self.pub_open = rospy.Publisher('gripper_open', Time, queue_size=1)
         self.robot.arm.hand.MoveHand(left_finger_init,right_finger_init)
         self.pub_open.publish(Time(rospy.Time.now()))
@@ -60,8 +60,8 @@ class openLoopGrasper(object):
         # if we move hand to 0.2, then we must use the sleep function after movehand
         # XXX: there is a bug in prpy, sometimes the robot will get to the next execution
         # before the robot complete an action
-        # self.robot.arm.hand.MoveHand(0.2,0.2)
-        # rospy.sleep(1)
+        self.robot.arm.hand.MoveHand(0.1,0.1)
+        rospy.sleep(1)
 
         # 1. rotate wrist while closing fingers
         # after completely closed, open fingers fast and repeat
@@ -79,7 +79,7 @@ class openLoopGrasper(object):
         # TODO: this is temporarily without grasp verification
         self.grasp_bool = True
         return (self.grasp_bool,self.traj.GetNumWaypoints())
-        #self.robot.arm.hand.MoveHand(1.2,1.2)
+        self.robot.arm.hand.MoveHand(1.2,1.2)
 
     # Three parameter policy
     def FreqPolicyToTraj(self,alpha,deltatime,backFactor,NoI):
@@ -147,22 +147,24 @@ class openLoopGrasper(object):
             # traj.Insert(currInd,currConfig)
             # self.Traj2DOF.append([currConfig[FINGER_ONE_INDEX],currConfig[WRIST_INDEX]])
 
-            # opening fingers should be much faster than closing fingers, therefore we have a backFactor
-            d_policy = np.array([0.,0.,0.,0.,0.,d_rot,backFactor*alpha*d_rot,backFactor*alpha*d_rot,0.])
-            while currConfig[FINGER_ONE_INDEX]>maxConfig:
-                # rotate the wrist and open the fingers (finger config is decreasing) at the same time
-                currConfig = currConfig - d_policy
+            # we will not open the fingers in the end
+            if closeLooper < NoI-1:
+                # opening fingers should be much faster than closing fingers, therefore we have a backFactor
+                d_policy = np.array([0.,0.,0.,0.,0.,d_rot,backFactor*alpha*d_rot,backFactor*alpha*d_rot,0.])
+                while currConfig[FINGER_ONE_INDEX]>maxConfig:
+                    # rotate the wrist and open the fingers (finger config is decreasing) at the same time
+                    currConfig = currConfig - d_policy
 
-                # we have to make sure that the fingers will not open too wide
-                if currConfig[FINGER_ONE_INDEX]<=maxConfig:
-                    currConfig[FINGER_ONE_INDEX]=maxConfig
-                if currConfig[FINGER_TWO_INDEX]<=maxConfig:
-                    currConfig[FINGER_TWO_INDEX]=maxConfig
+                    # we have to make sure that the fingers will not open too wide
+                    if currConfig[FINGER_ONE_INDEX]<=maxConfig:
+                        currConfig[FINGER_ONE_INDEX]=maxConfig
+                    if currConfig[FINGER_TWO_INDEX]<=maxConfig:
+                        currConfig[FINGER_TWO_INDEX]=maxConfig
 
-                # print currConfig
-                currInd = currInd + 1
-                traj.Insert(currInd,currConfig)
-                self.Traj2DOF.append([currConfig[FINGER_ONE_INDEX],currConfig[WRIST_INDEX]])
+                    # print currConfig
+                    currInd = currInd + 1
+                    traj.Insert(currInd,currConfig)
+                    self.Traj2DOF.append([currConfig[FINGER_ONE_INDEX],currConfig[WRIST_INDEX]])
 
         self.Traj2DOF = np.array(self.Traj2DOF)
         return traj

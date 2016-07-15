@@ -19,7 +19,9 @@ class ADARobot(Robot):
         from util import AdaPyException, find_adapy_resource
 
         self.simulated = sim
-        self.talker_simulated = sim
+        # self.talker_simulated = sim
+        # Shen Li temporarily changed this so that every time ada will speak through the computer
+        self.talker_simulated = True
 
         # We need to hard-code the name. Otherwise, it defaults to
         # "mico-modified".
@@ -135,10 +137,9 @@ class ADARobot(Robot):
                 rospy.init_node('adapy', anonymous=True)
                 logger.debug('Started ROS node with name "%s".', rospy.get_name())
 
-            #import talker.msg
-            #from actionlib import SimpleActionClient
-            #self._say_action_client = SimpleActionClient('say', talker.msg.SayAction)
-       
+            # import talker.msg
+            # from actionlib import SimpleActionClient
+            # self._say_action_client = SimpleActionClient('say', talker.msg.SayAction)
 
     def CloneBindings(self, parent):
         super(ADARobot, self).CloneBindings(parent)
