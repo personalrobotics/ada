@@ -57,7 +57,7 @@ class Mico(Manipulator):
             accel_limits[dof_indices[5]] = 1.77
             robot.SetDOFAccelerationLimits(accel_limits)
 
-        # Load or_nlopt_ik as the IK solver. Unfortunately, IKFast doesn't work
+        # Load trac_ik as the IK solver. Unfortunately, IKFast doesn't work
         # on the Mico.
         if iktype is not None:
             with env:
