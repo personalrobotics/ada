@@ -12,7 +12,7 @@
         <link name="j2n6a300_link_finger_tip_3"/>
     </group>
 
-    <end_effector name="Jaco" group="hand" parent_link="j2n6a300_link_6"
+    <end_effector name="Jaco" group="hand" parent_link="j2n6a300_end_effector"
                   parent_group="Jaco"/>
 
     <disable_collisions link1="j2n6a300_link_finger_1" link2="j2n6a300_link_finger_2"/>
