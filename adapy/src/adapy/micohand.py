@@ -58,7 +58,7 @@ class MicoHand(EndEffector):
 
         self.simulated = True
 
-    def MoveHand(self, f1, f2, timeout=None):
+    def MoveHand(self, f1, f2, f3=None, timeout=None):
         """
         Change the hand preshape. This function blocks until trajectory
         execution finishes. This can be changed by changing the timeout
@@ -85,6 +85,7 @@ class MicoHand(EndEffector):
             desired_preshape = current_preshape.copy()
             if f1 is not None: desired_preshape[0] = f1
             if f2 is not None: desired_preshape[1] = f2
+            if f3 is not None: desired_preshape[2] = f3
 
         # Create a two waypoint trajectory to the target configuration.
         traj = openravepy.RaveCreateTrajectory(robot.GetEnv(), '')
@@ -121,13 +122,22 @@ class MicoHand(EndEffector):
 
             return None
         else:
-            return self.MoveHand(f1=value, f2=value, timeout=timeout)
+            num_dofs = len(self.GetIndices())
+            if num_dofs == 2:
+                return self.MoveHand(f1=value, f2=value, timeout=timeout)
+            else:
+                return self.MoveHand(f1=value, f2=value, f3=value, timeout=timeout)
+
 
     def CloseHand(self, value=0.8, timeout=None):
         """ Close the hand.
         @param timeout blocking execution timeout
         """
-        return self.MoveHand(f1=value, f2=value, timeout=timeout)
+        num_dofs = len(self.GetIndices())
+        if num_dofs == 2:
+            return self.MoveHand(f1=value, f2=value, timeout=timeout)
+        else:
+            return self.MoveHand(f1=value, f2=value, f3=value, timeout=timeout)
 
     def CloseHandTight(self, value=1.2, timeout=None):
         """ Close the hand tightly.
