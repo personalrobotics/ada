@@ -324,6 +324,63 @@
       </geometry>
     </collision>
   </link>
+
+  <link
+    name="Camera_Depth_Frame">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.05" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+  </link>
+   <joint
+    name="Camera_Joint" type = "fixed">
+    <origin
+      xyz="-0.047 0.05 -0.090 "
+      rpy="-2.92 0.000 0" />
+    <parent
+      link="j2n6a300_link_6" />
+    <child
+      link="Camera_Depth_Frame" />
+  </joint>
+  <joint
+    name="Camera_Depth_Joint" type = "fixed">
+    <origin
+      xyz="0.045 -0.015 -0.03"
+      rpy="0 0.000 0" />
+    <parent
+      link="Camera_Depth_Frame" />
+    <child
+      link="Camera_RGB_Frame" />
+  </joint>
+   <link
+    name="Camera_RGB_Frame">
+        <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.05" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+  </link>
+
+
 <!--
   <joint name="j2n6a300_end_effector_offset" type="fixed">
     <parent link="j2n6a300_link_6"/>
