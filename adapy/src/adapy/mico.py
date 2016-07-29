@@ -62,6 +62,8 @@ class Mico(Manipulator):
         if iktype is not None:
             with env:
                 self.iksolver = openravepy.RaveCreateIkSolver(env, 'TracIK')
+                if self.iksolver is None:
+                    raise Exception('Could not create the ik solver')
                 set_ik_succeeded = self.SetIKSolver(self.iksolver);
                 if not set_ik_succeeded:
                     raise Exception('could not set the ik solver')
