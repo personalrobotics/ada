@@ -275,3 +275,20 @@ class ADARobot(Robot):
             self._say_action_client.send_goal(goal)
             if block:
                 self._say_action_client.wait_for_result()
+
+    
+
+    def SwitchToTeleopController(self):
+        for arm in self.manipulators:
+            #turn on velocity controllers for each arm
+            for controller_name in arm.velocity_controller_names:
+                velocity_controller = self._controller_client.request(controller_name)
+                velocity_controller.switch()
+            #turn on velocity controller for each hand
+            for controller_name in arm.hand.velocity_controller_names:
+                velocity_controller = self._controller_client.request(controller_name)
+                velocity_controller.switch()
+
+
+    #def SwitchToTrajController(self):
+    #    self._velocity_joint_mode_controller.switch()

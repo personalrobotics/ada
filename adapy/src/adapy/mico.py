@@ -73,7 +73,9 @@ class Mico(Manipulator):
                                                   watchdog_timeout=0.1)
         else:
             #if not simulation, create publishers for each joint
-            self.velocity_topic_names = ['vel_j'+str(i)+'_controller/command' for i in range(1,7)]
+            self.velocity_controller_names = ['vel_j' + str(i) + '_controller' for i in range(1,7)]
+            self.velocity_topic_names = [controller_name + '/command' for controller_name in self.velocity_controller_names]
+
             self.velocity_publishers = [rospy.Publisher(topic_name, Float64, queue_size=1) for topic_name in self.velocity_topic_names]
             self.velocity_publisher_lock = threading.Lock()
             
