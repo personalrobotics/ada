@@ -30,6 +30,9 @@
 
 import numpy
 import openravepy
+from std_msgs.msg import Float64
+import rospy
+import threading
 from prpy import util
 from prpy.exceptions import PrPyException
 from prpy.base.endeffector import EndEffector
@@ -42,6 +45,9 @@ class MicoHand(EndEffector):
         env = robot.GetEnv()
 
         self.simulated = sim
+
+        low_lims, hi_lims = robot.GetDOFLimits()
+        self.limits = [low_lims[self.GetIndices()], hi_lims[self.GetIndices()]]
 
         with env:
             accel_limits = robot.GetDOFAccelerationLimits()
@@ -56,6 +62,10 @@ class MicoHand(EndEffector):
         #store names of finger controllers
         num_dofs = len(self.GetIndices())
         self.velocity_controller_names = ['vel_f' + str(i) + '_controller' for i in range(1,num_dofs+1)]
+        self.velocity_topic_names = [controller_name + '/command' for controller_name in self.velocity_controller_names]
+
+        self.velocity_publishers = [rospy.Publisher(topic_name, Float64, queue_size=1) for topic_name in self.velocity_topic_names]
+        self.velocity_publisher_lock = threading.Lock()
 
     def CloneBindings(self, parent):
         super(MicoHand, self).CloneBindings(parent)
@@ -148,3 +158,38 @@ class MicoHand(EndEffector):
         @param timeout blocking execution timeout
         """
         return self.CloseHand(value=value, timeout=timeout)
+
+
+    def Servo(self, velocities):
+        """
+        Servo with an instantaneous vector of joint velocities.
+        @param velocities instantaneous joint velocities in radians per second
+        """
+        num_dof = len(self.GetIndices())
+
+        if len(velocities) != num_dof:
+            raise ValueError(
+                'Incorrect number of joint velocities.'
+                ' Expected {:d}; got {:d}.'.format(num_dof, len(velocities)))
+
+        if self.simulated:
+            #self.GetRobot().GetController().Reset(0)
+            #self.servo_simulator.SetVelocity(velocities)
+            #TODO get simulator for this
+            dofs_to_set = self.GetDOFValues() + velocities*0.05
+
+            #make sure within limits
+            dofs_to_set = numpy.maximum(dofs_to_set, self.limits[0]+1e-8)
+            dofs_to_set = numpy.minimum(dofs_to_set, self.limits[1]-1e-8)
+
+            self.SetDOFValues(dofs_to_set)
+        else:
+            self.SendVelocitiesToMico(velocities)
+            #reset watchdog timer
+            self.servo_watchdog.reset()
+
+
+    def SendVelocitiesToMico(self, velocities):
+        with self.velocity_publisher_lock:
+            for velocity_publisher,velocity in zip(self.velocity_publishers, velocities):
+                velocity_publisher.publish(velocity)
