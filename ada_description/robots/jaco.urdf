@@ -381,7 +381,6 @@
   </link>
 
 
-<!--
   <joint name="j2n6a300_end_effector_offset" type="fixed">
     <parent link="j2n6a300_link_6"/>
     <child link="j2n6a300_end_effector"/>
@@ -390,7 +389,7 @@
     <origin rpy="3.14159265359 0 0" xyz="0 0 -0.1600"/>
   </joint>
 </robot>
--->
+<!--
   <joint name="j2n6a300_end_effector_offset" type="fixed">
     <parent link="j2n6a300_link_6"/>
     <child link="j2n6a300_end_effector"/>
@@ -398,4 +397,5 @@
     <limit effort="30" lower="0" upper="0" velocity="0.35"/>
     <origin rpy="0 0 1.570795" xyz="0 0 0.000"/>
   </joint>
+-->
 </robot>
