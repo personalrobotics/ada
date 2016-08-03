@@ -386,7 +386,7 @@
     <child link="j2n6a300_end_effector"/>
     <axis xyz="0 0 0"/>
     <limit effort="30" lower="0" upper="0" velocity="0.35"/>
-    <origin rpy="3.14159265359 0 0" xyz="0 0 -0.1600"/>
+    <origin rpy="3.14159265359 0 1.570795" xyz="0 0 -0.1600"/>
   </joint>
 </robot>
 <!--
