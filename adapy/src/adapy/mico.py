@@ -49,12 +49,12 @@ class Mico(Manipulator):
         with env:
             dof_indices = self.GetIndices()
             accel_limits = robot.GetDOFAccelerationLimits()
-            accel_limits[dof_indices[0]] = 1.65
-            accel_limits[dof_indices[1]] = 1.76
-            accel_limits[dof_indices[2]] = 1.70
-            accel_limits[dof_indices[3]] = 1.80
-            accel_limits[dof_indices[4]] = 1.70
-            accel_limits[dof_indices[5]] = 1.77
+            accel_limits[dof_indices[0]] = 0.757
+            accel_limits[dof_indices[1]] = 0.868
+            accel_limits[dof_indices[2]] = 0.758
+            accel_limits[dof_indices[3]] = 0.926
+            accel_limits[dof_indices[4]] = 0.825
+            accel_limits[dof_indices[5]] = 0.842
             robot.SetDOFAccelerationLimits(accel_limits)
 
         # Load trac_ik as the IK solver. Unfortunately, IKFast doesn't work
@@ -75,8 +75,8 @@ class Mico(Manipulator):
 
             self.controller = robot.AttachController(
                 self.GetName(), '', self.GetArmIndices(), 0, True)
-            self.servo_simulator = ServoSimulator(self, rate=20,
-                                                  watchdog_timeout=0.1)
+            self.servo_simulator = ServoSimulator(self, rate=0.1,
+                                                  watchdog_timeout=10)
         else:
             #if not simulation, create publishers for each joint
             self.velocity_controller_names = ['vel_j' + str(i) + '_controller' for i in range(1,7)]

@@ -199,7 +199,7 @@
     <parent link="j2n6a300_link_base"/>
     <child link="j2n6a300_link_1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="0.35"/>
+    <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="0.618"/>
     <origin rpy="0 3.14159265359 0" xyz="0 0 0.15675"/>
   </joint>
   <link name="j2n6a300_link_2">
@@ -221,7 +221,7 @@
     <parent link="j2n6a300_link_1"/>
     <child link="j2n6a300_link_2"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" lower="-2.35" upper="2.35" velocity="0.35"/>
+    <limit effort="30" lower="-2.35" upper="2.35" velocity="0.628"/>
     <origin rpy="-1.57079632679 0 3.14159265359" xyz="0 0.0016 -0.11875"/>
   </joint>
   <link name="j2n6a300_link_3">
@@ -243,7 +243,7 @@
     <parent link="j2n6a300_link_2"/>
     <child link="j2n6a300_link_3"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" lower="-2.65" upper="2.65" velocity="0.35"/>
+    <limit effort="30" lower="-2.65" upper="2.65" velocity="0.607"/>
     <origin rpy="0 3.14159265359 0" xyz="0 -0.410 0"/>
   </joint>
   <link name="j2n6a300_link_4">
@@ -265,7 +265,7 @@
     <parent link="j2n6a300_link_3"/>
     <child link="j2n6a300_link_4"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="0.35"/>
+    <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="0.8197"/>
     <origin rpy="-1.57079632679 0 3.14159265359" xyz="0 0.2073 -0.0114"/>
   </joint>
   <link name="j2n6a300_link_5">
@@ -287,7 +287,7 @@
     <parent link="j2n6a300_link_4"/>
     <child link="j2n6a300_link_5"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="0.35"/>
+    <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="0.829"/>
     <origin rpy="1.0471975512 0 3.14159265359" xyz="0 -0.03703 -0.06414"/>
   </joint>
   <link name="j2n6a300_link_6">
@@ -309,7 +309,7 @@
     <parent link="j2n6a300_link_5"/>
     <child link="j2n6a300_link_6"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="0.35"/>
+    <limit effort="30" lower="-6.28318530718" upper="6.28318530718" velocity="0.820"/>
     <origin rpy="1.0471975512 0 3.14159265359" xyz="0 -0.03703 -0.06414"/>
   </joint>
   <link name="j2n6a300_end_effector">
