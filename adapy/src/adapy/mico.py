@@ -75,8 +75,8 @@ class Mico(Manipulator):
 
             self.controller = robot.AttachController(
                 self.GetName(), '', self.GetArmIndices(), 0, True)
-            self.servo_simulator = ServoSimulator(self, rate=0.1,
-                                                  watchdog_timeout=10)
+            self.servo_simulator = ServoSimulator(self, rate=20,
+                                                  watchdog_timeout=0.1)
         else:
             #if not simulation, create publishers for each joint
             self.velocity_controller_names = ['vel_j' + str(i) + '_controller' for i in range(1,7)]
