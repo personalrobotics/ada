@@ -3,6 +3,7 @@ import logging
 import prpy
 from prpy import Cloned
 from prpy.base.robot import Robot
+import os
 
 logger = logging.getLogger(PACKAGE)
 
@@ -109,10 +110,24 @@ class ADARobot(Robot):
         self.cbirrt_planner = CBiRRTPlanner()
         self.vectorfield_planner = VectorFieldPlanner()
 
+        # Hide TrajOpt logging.
+        os.environ.setdefault('TRAJOPT_LOG_THRESH', 'WARN')
+
+        # Trajectory optimizer.
+        try:
+            from or_trajopt import TrajoptPlanner
+            self.trajopt_planner = TrajoptPlanner()  
+        except ImportError:
+            self.trajopt_planner = None
+            logger.warning('Failed creating TrajoptPlanner. Is the or_trajopt'
+                           ' package in your workspace and built?')
+
+
         actual_planner = Sequence(
             self.snap_planner,
             self.vectorfield_planner,
             self.greedyik_planner,
+            self.trajopt_planner,
             self.cbirrt_planner
         )
         self.planner = FirstSupported(
