@@ -142,8 +142,8 @@ class ADARobot(Robot):
 #            HauserParabolicSmoother()
 #        )
         from prpy.planning.retimer import HauserParabolicSmoother
-        self.smoother = HauserParabolicSmoother()
-        self.retimer = HauserParabolicSmoother(do_blend=False, do_shortcut=False)
+        self.smoother = HauserParabolicSmoother(do_blend=True, do_shortcut=True)
+        self.retimer = HauserParabolicSmoother(do_blend=True, do_shortcut=False)
         
         from prpy.action import ActionLibrary
         self.actions = ActionLibrary()
