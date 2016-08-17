@@ -34,6 +34,7 @@ from std_msgs.msg import Float64
 import rospy
 import threading
 from prpy import util
+from prpy.util import Watchdog
 from prpy.exceptions import PrPyException
 from prpy.base.endeffector import EndEffector
 
@@ -66,6 +67,8 @@ class MicoHand(EndEffector):
 
         self.velocity_publishers = [rospy.Publisher(topic_name, Float64, queue_size=1) for topic_name in self.velocity_topic_names]
         self.velocity_publisher_lock = threading.Lock()
+
+        self.servo_watchdog = Watchdog(timeout_duration=0.25, handler=self.SendVelocitiesToMico, args=[[0.]*num_dofs])
 
     def CloneBindings(self, parent):
         super(MicoHand, self).CloneBindings(parent)
