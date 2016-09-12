@@ -101,6 +101,7 @@ class ADARobot(Robot):
             NamedPlanner,
             SBPLPlanner,
             SnapPlanner,
+            IKPlanner,
             TSRPlanner,
             VectorFieldPlanner
         )
@@ -123,10 +124,21 @@ class ADARobot(Robot):
                            ' package in your workspace and built?')
 
 
+        ik_planners = Sequence(
+            self.snap_planner,
+            self.trajopt_planner,
+        )
+        planner_for_ik = FirstSupported(
+            ik_planners,
+            NamedPlanner(delegate_planner=ik_planners)
+        )
+        self.ik_planner = IKPlanner(delegate_planner=planner_for_ik)
+
         actual_planner = Sequence(
             self.snap_planner,
             self.vectorfield_planner,
-            self.greedyik_planner,
+            self.ik_planner,
+            #self.greedyik_planner,
             self.trajopt_planner,
             self.cbirrt_planner
         )
