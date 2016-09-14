@@ -46,6 +46,11 @@ class ADARobot(Robot):
         except IOError as e:
             logger.warning('Failed loading named configurations from "%s": %s',
                            configurations_path, e.message)
+        
+        # If in sim, set the robot DOFs to not be in collision
+        if sim:
+            inds,dofs = self.configurations.get_configuration('home')
+            self.SetDOFValues(values=dofs,dofindices=inds)
 
         # Load default TSRs from YAML.
         for tsr_path_relative in TSR_PATHS:
@@ -96,6 +101,7 @@ class ADARobot(Robot):
             NamedPlanner,
             SBPLPlanner,
             SnapPlanner,
+            IKPlanner,
             TSRPlanner,
             VectorFieldPlanner
         )
@@ -118,10 +124,21 @@ class ADARobot(Robot):
                            ' package in your workspace and built?')
 
 
+        ik_planners = Sequence(
+            self.snap_planner,
+            self.trajopt_planner,
+        )
+        planner_for_ik = FirstSupported(
+            ik_planners,
+            NamedPlanner(delegate_planner=ik_planners)
+        )
+        self.ik_planner = IKPlanner(delegate_planner=planner_for_ik)
+
         actual_planner = Sequence(
             self.snap_planner,
             self.vectorfield_planner,
-            self.greedyik_planner,
+            self.ik_planner,
+            #self.greedyik_planner,
             self.trajopt_planner,
             self.cbirrt_planner
         )

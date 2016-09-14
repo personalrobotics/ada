@@ -30,8 +30,8 @@ if __name__ == "__main__":
     if args.debug:
         openravepy.RaveSetDebugLevel(openravepy.DebugLevel.Debug)
 
-    if not args.sim:
-        rospy.init_node('adapy', anonymous=True)
+    #if not args.sim:
+    rospy.init_node('adapy', anonymous=True)
 
     env, robot = adapy.initialize(
         sim=args.sim,
