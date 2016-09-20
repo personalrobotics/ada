@@ -136,10 +136,10 @@ class ADARobot(Robot):
 
         actual_planner = Sequence(
             self.snap_planner,
-            self.vectorfield_planner,
             self.ik_planner,
-            #self.greedyik_planner,
             self.trajopt_planner,
+            self.vectorfield_planner,
+            #self.greedyik_planner,
             self.cbirrt_planner
         )
         self.planner = FirstSupported(
