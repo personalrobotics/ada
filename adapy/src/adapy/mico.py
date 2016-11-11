@@ -39,6 +39,11 @@ class Mico(Manipulator):
     def __init__(self, sim,
                  iktype=openravepy.IkParameterization.Type.Transform6D):
         Manipulator.__init__(self)
+        """
+        Initialize Mico manipulator
+        @parameter sim: a boolean variable indicating whether we want to run it in simulation or not
+        @parameter iktype: the type of IK
+        """
 
         self.simulated = sim
         self.iktype = iktype
@@ -125,6 +130,10 @@ class Mico(Manipulator):
 
 
     def SendVelocitiesToMico(self, velocities):
+        """
+        Send the velocities to Mico publisher
+        @param velocities instantaneous joint velocities in radians per second
+        """
         with self.velocity_publisher_lock:
             for velocity_publisher,velocity in zip(self.velocity_publishers, velocities):
                 velocity_publisher.publish(velocity)
