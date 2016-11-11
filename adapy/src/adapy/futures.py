@@ -58,6 +58,10 @@ class Future(object):
         be raised.
 
         If the call raised, this method will raise the same exception.
+
+        @param timeout: seconds to wait for a result, None to wait forever
+        @type  timeout: int or float or None
+        @returns: the result of the call wrapped by the future
         """
         with self.lock:
             self._condition.wait(timeout)
@@ -83,6 +87,9 @@ class Future(object):
         be raised.
 
         If the call completed without raising, None is returned.
+
+        @param timeout: Time, in seconds, to wait for a result
+        @type  timeout: float 
         """
         with self.lock:
             self._condition.wait(timeout)
@@ -111,6 +118,9 @@ class Future(object):
 
         If the future has already completed or been cancelled, fn will be
         called immediately.
+
+        @param fn: Function to call when done
+        @type  fn: function 
         """
         with self.lock:
             if self._is_done:
@@ -129,6 +139,8 @@ class Future(object):
         """ Removes the callable fn to the future.
 
         If fn is not registered as a callback, this will raise an Exception.
+        @param fn: Function to be removed
+        @type  fn: function
         """
         with self.lock:
             try:

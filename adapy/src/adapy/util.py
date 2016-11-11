@@ -9,6 +9,16 @@ class AdaPyException(PrPyException):
 
 
 def find_adapy_resource(relative_path, package='adapy'):
+    """ Returns the full path to a desired file given a ROS package, and the relative path
+    of that file in the package.
+
+    @param relative_path: The path and filename relative to the package path
+    @type relative_path: str
+    @param package: Name of the ROS package
+    @type package: str
+    @return Full path and filename
+    @rtype str
+    """
     from catkin.find_in_workspaces import find_in_workspaces
 
     paths = find_in_workspaces(project=package, search_dirs=['share'],
@@ -109,7 +119,7 @@ def pad_ros_trajectory(robot, traj_ros, joint_names):
     @type  robot: openravepy.Robot
     @param traj_ros: ROS trajectory message
     @type  traj_ros: trajectory_msgs.msg.JointTrajectory
-    @param joint_names: list of joint names to ensure are present
+    @param joint_names: List of joint names to ensure are present
     @type  joint_names: [str]
     """
     missing_names = set(joint_names).difference(traj_ros.joint_names)
