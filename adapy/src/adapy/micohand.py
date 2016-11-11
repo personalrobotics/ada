@@ -39,7 +39,14 @@ from prpy.exceptions import PrPyException
 from prpy.base.endeffector import EndEffector
 
 class MicoHand(EndEffector):
+
     def __init__(self, sim, manipulator):
+        """ End effector wrapper for the MICO hand.
+
+        This class wraps the MICO end effector. 
+        @param sim Whether the hand is simulated
+        @param manipulator The manipulator the hand is attached to
+        """
         EndEffector.__init__(self, manipulator)
 
         robot = manipulator.GetRobot()
@@ -76,15 +83,16 @@ class MicoHand(EndEffector):
         self.simulated = True
 
     def MoveHand(self, f1, f2, f3=None, timeout=None):
-        """
-        Change the hand preshape. This function blocks until trajectory
+        """ Change the hand preshape. 
+
+        This function blocks until trajectory
         execution finishes. This can be changed by changing the timeout
         parameter to a maximum number of seconds. Pass zero to return
-        instantantly.
+        instantly.
 
-        @param f1 finger 1 angle
-        @param f2 finger 2 angle
-        @param timeout blocking execution timeout
+        @param f1 Finger 1 angle
+        @param f2 Finger 2 angle
+        @param timeout Blocking execution timeout, in seconds
         """
 
         from openravepy import PlannerStatus
@@ -122,9 +130,9 @@ class MicoHand(EndEffector):
         return robot.ExecuteTrajectory(traj)
        
     def OpenHand(self, value=0., timeout=None):
-        """
-        Open the hand.
-        @param timeout blocking execution timeout
+        """ Open the hand.
+
+        @param timeout Blocking execution timeout, in seconds
         """
         if self.simulated:
             robot = self.manipulator.GetRobot()
@@ -148,7 +156,8 @@ class MicoHand(EndEffector):
 
     def CloseHand(self, value=0.8, timeout=None):
         """ Close the hand.
-        @param timeout blocking execution timeout
+
+        @param timeout Blocking execution timeout, in seconds
         """
         num_dofs = len(self.GetIndices())
         if num_dofs == 2:
@@ -158,15 +167,16 @@ class MicoHand(EndEffector):
 
     def CloseHandTight(self, value=1.2, timeout=None):
         """ Close the hand tightly.
-        @param timeout blocking execution timeout
+
+        @param timeout Blocking execution timeout, in seconds
         """
         return self.CloseHand(value=value, timeout=timeout)
 
 
     def Servo(self, velocities):
-        """
-        Servo with an instantaneous vector of joint velocities.
-        @param velocities instantaneous joint velocities in radians per second
+        """ Servo with an instantaneous vector of joint velocities.
+
+        @param velocities Instantaneous joint velocities in radians per second
         """
         num_dof = len(self.GetIndices())
 
@@ -193,6 +203,12 @@ class MicoHand(EndEffector):
 
 
     def SendVelocitiesToMico(self, velocities):
+        """ Send velocities to the motor controller.
+
+        Publish individual joint velocities to the velocity publishers.
+        @param velocities List of velocities 
+
+        """
         with self.velocity_publisher_lock:
             for velocity_publisher,velocity in zip(self.velocity_publishers, velocities):
                 velocity_publisher.publish(velocity)
