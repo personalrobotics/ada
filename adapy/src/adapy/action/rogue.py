@@ -13,6 +13,7 @@ def PointAt(robot, focus, manip=None, render=False):
 
     Note that this is identical to Point except that the focus can be an object
     or 3d position.
+
     @param robot The robot performing the point
     @param focus The 3-D coordinate in space or object
                  that is being pointed at
@@ -28,6 +29,7 @@ def PresentAt(robot, focus, manip=None, render=True):
 
     Note that this is identical to Present except that the focus can be an
     object or 3d position.
+
     @param robot The robot performing the presentation
     @param focus The 3-D coordinate in space or object that
                  is being presented
@@ -43,6 +45,7 @@ def SweepAt(robot, start, end, manip=None, margin=0.3, render=True):
 
     Note that this is identical to Sweep except start and end can be designated
     by objects.
+
     @param robot The robot performing the sweep
     @param start The object or 3-D position that marks the start
     @param end The object or 3-D position that marks the end
@@ -88,6 +91,7 @@ def Present(robot, focus, manip=None, render=True):
 
     The 'present' gesture is like pointing, except all the fingers are open
     and the palm is held up.
+
     @param robot The robot performing the presentation
     @param focus The 3-D coordinate in space or object that
                  is being presented
@@ -119,6 +123,7 @@ def Sweep(robot, start_coords, end_coords, manip=None, margin=0.3, render=True):
 
     Roughly, this instructs the robot to start by pointing at one position and
     then transition to pointing at another.
+
     @param robot The robot performing the sweep
     @param start The object or 3-d position that marks the start
     @param end The object of 3-d position that marks the end

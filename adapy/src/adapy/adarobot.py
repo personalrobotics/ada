@@ -182,6 +182,8 @@ class ADARobot(Robot):
         This is an internal function that you should not call directly.
         See https://github.com/personalrobotics/prpy/blob/master/README.md#cloning-bound-subclasses
         for the rationale for this function.
+
+        @param parent: The ADARobot to copy fields from.
         """
         super(ADARobot, self).CloneBindings(parent)
 
