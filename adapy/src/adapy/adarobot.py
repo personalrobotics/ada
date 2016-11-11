@@ -15,6 +15,10 @@ TSR_PATHS = [
 
 class ADARobot(Robot):
     def __init__(self, sim):
+        """ Create an ADARobot.
+
+        @param sim: Set to True to run the robot in simulation.
+        """
         from mico import Mico
         from micohand import MicoHand
         from util import AdaPyException, find_adapy_resource
@@ -46,7 +50,7 @@ class ADARobot(Robot):
         except IOError as e:
             logger.warning('Failed loading named configurations from "%s": %s',
                            configurations_path, e.message)
-        
+
         # If in sim, set the robot DOFs to not be in collision
         if sim:
             inds,dofs = self.configurations.get_configuration('home')
@@ -117,7 +121,7 @@ class ADARobot(Robot):
         # Trajectory optimizer.
         try:
             from or_trajopt import TrajoptPlanner
-            self.trajopt_planner = TrajoptPlanner()  
+            self.trajopt_planner = TrajoptPlanner()
         except ImportError:
             self.trajopt_planner = None
             logger.warning('Failed creating TrajoptPlanner. Is the or_trajopt'
@@ -156,10 +160,10 @@ class ADARobot(Robot):
         from prpy.planning.retimer import HauserParabolicSmoother
         self.smoother = HauserParabolicSmoother(do_blend=True, do_shortcut=True)
         self.retimer = HauserParabolicSmoother(do_blend=True, do_shortcut=False)
-        
+
         from prpy.action import ActionLibrary
         self.actions = ActionLibrary()
-        
+
         if not self.talker_simulated:
             # Initialize herbpy ROS Node
             import rospy
@@ -170,9 +174,17 @@ class ADARobot(Robot):
             #import talker.msg
             #from actionlib import SimpleActionClient
             #self._say_action_client = SimpleActionClient('say', talker.msg.SayAction)
-       
+
 
     def CloneBindings(self, parent):
+        """ Copies fields added in Python to allow OpenRave environment cloning.
+
+        This is an internal function that you should not call directly.
+        See https://github.com/personalrobotics/prpy/blob/master/README.md#cloning-bound-subclasses
+        for the rationale for this function.
+
+        @param parent: The ADARobot to copy fields from.
+        """
         super(ADARobot, self).CloneBindings(parent)
 
         self.arm = Cloned(parent.arm)
@@ -195,7 +207,7 @@ class ADARobot(Robot):
         will be raised). If timeout is a float (including timeout = 0), this
         function will return None once the timeout has ellapsed, even if the
         trajectory is still being executed.
-        
+
         NOTE: We suggest that you either use timeout=None or defer=True. If
         trajectory execution times out, there is no way to tell whether
         execution was successful or not. Other values of timeout are only
@@ -259,7 +271,7 @@ class ADARobot(Robot):
         #print traj_msg
         #print "\n\n\n\n\n\n"
         #print traj.serialize()
-        
+
         #from IPython import embed
         #embed()
         with self.GetEnv():
@@ -289,10 +301,20 @@ class ADARobot(Robot):
                 return traj
             except TrajectoryExecutionFailed as e:
                 logger.exception('Trajectory execution failed.')
-               
-               
+
+
     def Say(self, words, block=True):
-        """Speak 'words' using talker action service or espeak locally in simulation"""
+        """ Speak 'words' through text-to-speech.
+
+        On the live robot this will use the talker action service;
+        in simulation it will use espeak. By default the function will block
+        until the synthesized speech has finished playing.
+
+        @param words: the string to say
+        @type  words: string
+        @param block: whether the function blocks until the utterance is done
+        @type  block: bool
+        """
         if self.talker_simulated:
             import subprocess
             try:
@@ -308,9 +330,16 @@ class ADARobot(Robot):
             if block:
                 self._say_action_client.wait_for_result()
 
-    
+
 
     def SwitchToTeleopController(self):
+        """ Set the robot into velocity control mode for teleop.
+
+        Note that this does not by itself implement any teleop controls, it
+        only puts the robot into velocity control mode to allow teleop
+        controllers to send velocity commands at interactive rates rather than
+        having to go through the trajectory/planning pipeline.
+        """
         for arm in self.manipulators:
             #turn on velocity controllers for each arm
             for controller_name in arm.velocity_controller_names:
