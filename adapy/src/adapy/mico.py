@@ -39,6 +39,13 @@ class Mico(Manipulator):
     def __init__(self, sim,
                  iktype=openravepy.IkParameterization.Type.Transform6D):
         Manipulator.__init__(self)
+        """
+        Initialize Mico manipulator
+        @parameter sim: a boolean variable indicating whether we want to run it in simulation or not
+        @type sim: bool
+        @parameter iktype: the type of IK
+        @type iktype: openravepy.IkParameterization.Type
+        """
 
         self.simulated = sim
         self.iktype = iktype
@@ -106,7 +113,8 @@ class Mico(Manipulator):
     def Servo(self, velocities):
         """
         Servo with an instantaneous vector of joint velocities.
-        @param velocities instantaneous joint velocities in radians per second
+        @param velocities: Instantaneous joint velocities in radians per second
+        @type velocities: [float] or numpy.array
         """
         num_dof = len(self.GetArmIndices())
 
@@ -125,6 +133,11 @@ class Mico(Manipulator):
 
 
     def SendVelocitiesToMico(self, velocities):
+        """
+        Send the velocities to Mico publisher
+        @param velocities: Instantaneous joint velocities in radians per second
+        @type velocities: [float] or numpy.array
+        """
         with self.velocity_publisher_lock:
             for velocity_publisher,velocity in zip(self.velocity_publishers, velocities):
                 velocity_publisher.publish(velocity)
