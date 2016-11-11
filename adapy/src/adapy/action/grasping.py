@@ -7,10 +7,11 @@ logger = logging.getLogger('adapy')
 
 @ActionMethod
 def Grasp(robot, obj, manip=None, tsrlist=None, render=True, **kw_args):
-    """
+    """ Have a robot grasp an object.
+
     @param robot The robot performing the grasp
     @param obj The object to grasp
-    @param manip The manipulator to perform the grasp with 
+    @param manip The manipulator to perform the grasp with
        (if None active manipulator is used)
     @param tsrlist A list of TSRCHain objects to use for planning to grasp pose
        (if None, the 'grasp' tsr from tsrlibrary is used)
@@ -34,4 +35,4 @@ def Grasp(robot, obj, manip=None, tsrlist=None, render=True, **kw_args):
     p = openravepy.KinBody.SaveParameters
     with robot.CreateRobotStateSaver(p.ActiveManipulator):
         robot.SetActiveManipulator(manip)
-        robot.Grab(obj) 
+        robot.Grab(obj)
