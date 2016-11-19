@@ -21,12 +21,12 @@ openravepy.RaveInitialize(True, level=openravepy.DebugLevel.Debug)
 openravepy.misc.InitOpenRAVELogging();
 rospy.init_node('test_scenario', anonymous = True)
 
-env, robot = adapy.initialize(attach_viewer='rviz', sim=False)
+env, robot = adapy.initialize(attach_viewer='rviz', sim=True)
 manip = robot.arm
 
 
 
-manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
+#manip.SetIkSolver(openravepy.RaveCreateIkSolver(env, 'NloptIK'))
 #robot.SetActiveDOFs([2,3,4,5,6,7])
 robot.arm.SetActive()
 values = robot.GetActiveDOFValues()
