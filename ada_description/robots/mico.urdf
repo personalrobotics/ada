@@ -299,8 +299,8 @@
    <joint
     name="Camera_Joint" type = "fixed">
     <origin
-      xyz="-0.047 0.05 -0.090 "
-      rpy="-2.92 0.000 0" />
+      xyz="-0.042 0.073 -0.104"
+      rpy="0.0 0.000 0" />
     <parent
       link="mico_link_hand" />
     <child
