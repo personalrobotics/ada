@@ -353,7 +353,7 @@
     <visual>
       <geometry>
         <!--<mesh filename="package://ada_description/meshes/StructureIO.stl"/>-->
-        <mesh filename="package://ada_description/meshes/structureio.dae"/>
+        <mesh filename="package://ada_description/meshes/astra.stl"/>
         <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
       </geometry>
       <material name="carbon_fiber">
@@ -362,7 +362,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
+        <mesh filename="package://ada_description/meshes/astra.stl"/>
         <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
       </geometry>
     </collision>
@@ -370,8 +370,8 @@
    <joint
     name="Camera_Collision_Joint" type = "fixed">
     <origin
-      xyz="0 0 0"
-      rpy="0 0 0" />
+      xyz="0 0 -0.004"
+      rpy="0 3.14159 0" />
     <parent
       link="mico_link_hand" />
     <child
