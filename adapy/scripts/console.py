@@ -12,6 +12,36 @@ import numpy
 import openravepy
 import rospy
 
+import threading
+import tf
+
+def publish_tf(robot, br):
+    
+    # Make world and map the same (for rendering purposes)
+    br.sendTransform((0, 0, 0),
+                     (0, 0, 0, 1),
+                     rospy.Time.now(),
+                     'world',
+                     'map')
+    
+    # Loop over all links and publish transforms
+    for link in robot.GetLinks():
+        parents = link.GetParentLinks()
+        for p in parents:
+            l_T = link.GetTransform()
+            p_T = p.GetTransform()
+            T = numpy.dot(numpy.linalg.inv(p_T), l_T)
+            l_frame = link.GetName()
+            p_frame = p.GetName()
+            br.sendTransform(tf.transformations.translation_from_matrix(T),
+                             tf.transformations.quaternion_from_matrix(T),
+                             rospy.Time.now(),
+                             l_frame,
+                             p_frame)
+    if not rospy.is_shutdown():   
+        new_tf_thread = threading.Timer(1, publish_tf, (robot, br))
+        new_tf_thread.start()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='utility script for loading AdaPy')
     parser.add_argument('-s', '--sim', action='store_true',
@@ -38,5 +68,15 @@ if __name__ == "__main__":
         attach_viewer=args.viewer,
         env_path=args.env_xml
     )
+    
+    if args.sim:
+        # Create a tf broadcaster
+        br = tf.TransformBroadcaster()
+        
+        # Start a thread to publish the tf values
+        tf_thread = threading.Thread(target=publish_tf, args=(robot,br))
+        tf_thread.start()
+        
 
     IPython.embed()
+    rospy.signal_shutdown('Finished running console.py')
