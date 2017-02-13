@@ -300,7 +300,7 @@
     name="Camera_Joint" type = "fixed">
     <origin
       xyz="-0.042 0.073 -0.104"
-      rpy="0.0 0.000 0" />
+      rpy="-2.9578426535897933 0.000 0" />
     <parent
       link="mico_link_hand" />
     <child
@@ -310,7 +310,7 @@
     name="Camera_RGB_Joint" type = "fixed">
     <origin
       xyz="-0.0135 0.0725 -0.104"
-      rpy="0.18375 0.000 0" />
+      rpy="-2.9578426535897933 0.000 0" />
     <parent
       link="mico_link_hand" />
     <child
