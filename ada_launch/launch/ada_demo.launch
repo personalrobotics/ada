@@ -1,0 +1,19 @@
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" />
+
+  <include file="$(find ada_launch)/launch/kinova_joystick.launch" />
+  <include file="$(find ada_launch)/launch/default.launch" />
+  <include file="$(find openni2_launch)/launch/openni2.launch" />
+
+  <node name="morsel_detector" 
+        pkg="morsel_detector" 
+        type="biteserver.py" 
+        cwd="node"
+	args="--configfile $(find morsel_detector)/detector/config/structureio_settings.json $(find morsel_detector)/detector/config/verbose.json" />
+
+
+  <node name="meal_scenario_demo"
+        pkg="ada_meal_scenario"
+        type="runBiteServing.py"
+        args="--real --no-pupil-tracking" />
+</launch>
