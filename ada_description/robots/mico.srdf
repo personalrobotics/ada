@@ -10,7 +10,7 @@
         <link name="mico_link_finger_tip_2"/>
     </group>
 
-    <end_effector name="Mico_hand" group="hand" parent_link="mico_end_effector"
+    <end_effector name="Mico" group="hand" parent_link="mico_end_effector"
                   parent_group="Mico"/>
 
     <disable_collisions link1="mico_link_finger_1" link2="mico_link_finger_2"/>
