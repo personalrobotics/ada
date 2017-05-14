@@ -13,6 +13,14 @@ dependencies:
 $ wstool merge https://raw.githubusercontent.com/personalrobotics/pr-rosinstalls/master/ada.rosinstall
 ```
 
+### Troubleshooting ###
+If a catkin build fails on `pr_control_msgs` with a Java-related error, it may be that rosjava is looking for Java descriptions of our custom message types. Uninstall `rosjava` using the following (`rosjava` is not required to run Ada):
+```shell
+sudo apt-get remove ros-indigo-rosjava
+sudo apt-get autoremove
+catkin clean -y
+```
+
 ### Set up the udev rules ###
 
 Create a file called `/etc/udev/rules.d/45-jaco.rules` with the content:
@@ -23,7 +31,7 @@ SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor} =="22cd", MODE="066
 
 > A note on USB 3.0: the mico arm does not work with USB 3.0 ports. If your computer has no USB 2.0 ports, you will need to disable xHCI in your BIOS.
 
-### Running Ada ###
+## Running Ada ##
 You use ada in your script by simply calling the ``initialize`` function:
 
 ```python
