@@ -299,20 +299,20 @@
    <joint
     name="Camera_Joint" type = "fixed">
     <origin
-      xyz="-0.047 0.05 -0.090 "
-      rpy="-2.92 0.000 0" />
+      xyz="-0.042 0.073 -0.104"
+      rpy="-2.9578426535897933 0.000 0" />
     <parent
       link="mico_link_hand" />
     <child
       link="Camera_Depth_Frame" />
   </joint>
   <joint
-    name="Camera_Depth_Joint" type = "fixed">
+    name="Camera_RGB_Joint" type = "fixed">
     <origin
-      xyz="0.045 -0.015 -0.03"
-      rpy="0 0.000 0" />
+      xyz="-0.0135 0.0725 -0.104"
+      rpy="-2.9578426535897933 0.000 0" />
     <parent
-      link="Camera_Depth_Frame" />
+      link="mico_link_hand" />
     <child
       link="Camera_RGB_Frame" />
   </joint>
@@ -353,7 +353,7 @@
     <visual>
       <geometry>
         <!--<mesh filename="package://ada_description/meshes/StructureIO.stl"/>-->
-        <mesh filename="package://ada_description/meshes/structureio.dae"/>
+        <mesh filename="package://ada_description/meshes/astra.stl"/>
         <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
       </geometry>
       <material name="carbon_fiber">
@@ -362,7 +362,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://ada_description/meshes/StructureIO.stl"/>
+        <mesh filename="package://ada_description/meshes/astra.stl"/>
         <!-- <mesh filename="package://ada_description/meshes/Hand_Link_camera.STL"/>  -->
       </geometry>
     </collision>
@@ -370,8 +370,8 @@
    <joint
     name="Camera_Collision_Joint" type = "fixed">
     <origin
-      xyz="0 0 0"
-      rpy="0 0 0" />
+      xyz="0 0 -0.004"
+      rpy="0 3.14159 0" />
     <parent
       link="mico_link_hand" />
     <child
