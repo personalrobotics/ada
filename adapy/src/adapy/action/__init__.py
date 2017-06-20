@@ -1,3 +1,3 @@
 from grasping import Grasp
 from rogue import *
-from eating import SkewerFromPlate
+from eating import SkewerFromPlate, BringToMouth, MoveToRest
