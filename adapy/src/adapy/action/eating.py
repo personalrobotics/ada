@@ -140,7 +140,3 @@ def SkewerFromPlate(robot, goal_position, z_offset=None, plate=None, fork=None, 
 				path = robot.arm.PlanToEndEffectorOffset(direction=direction, distance=distance, execute=True)
 	except PlanningError, e:
 		raise ActionError('Failed to plan straight line path to grab morsal: %s' % str(e))
-		
-		
-		
-		
