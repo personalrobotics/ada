@@ -51,7 +51,7 @@ def MoveToRest(robot):
 	"""
 	@param robot the robot performing the motion
 	"""
-	robot.PlanToNamedConfiguration('home',execute=True)
+	robot.PlanToNamedConfiguration('eating_rest',execute=True)
 	
 @ActionMethod
 def SkewerFromPlate(robot, goal_position, z_offset=None, plate=None, fork=None, manip=None):
