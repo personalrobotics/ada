@@ -18,7 +18,7 @@ def BringToMouth(robot, mouth_position, fork=None, manip=None):
 	# Get the fork kinbody
 	env = robot.GetEnv()
 	if fork is None:
-		fork = env.GetKinBody('fork')
+		fork = env.GetKinBody('forque')
 		if fork is None:
 			raise ActionError("Failed to find fork in the robot's environment")
 			
@@ -70,7 +70,7 @@ def SkewerFromPlate(robot, goal_position, z_offset=None, plate=None, fork=None, 
 	# Get the fork kinbody
 	env = robot.GetEnv()
 	if fork is None:
-		fork = env.GetKinBody('fork')
+		fork = env.GetKinBody('forque')
 		if fork is None:
 			raise ActionError("Failed to find fork in the robot's environment")
 
@@ -129,7 +129,10 @@ def SkewerFromPlate(robot, goal_position, z_offset=None, plate=None, fork=None, 
 				path = robot.arm.PlanToEndEffectorOffset(direction=direction, distance=distance, execute=True)
 	except PlanningError, e:
 		raise ActionError('Failed to plan straight line path to grab morsal: %s' % str(e))
-		
+	
+	# At the end of the motion, get the final fork tinetip location
+	final_fork_transform = fork.GetLink('tinetip').GetTransformPose()
+	
 	# move back up to the offset provided
 	try:
 		direction = numpy.array([0., 0., 1.])
@@ -140,3 +143,5 @@ def SkewerFromPlate(robot, goal_position, z_offset=None, plate=None, fork=None, 
 				path = robot.arm.PlanToEndEffectorOffset(direction=direction, distance=distance, execute=True)
 	except PlanningError, e:
 		raise ActionError('Failed to plan straight line path to grab morsal: %s' % str(e))
+		
+	return final_fork_transform
